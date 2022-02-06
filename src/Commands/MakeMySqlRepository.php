@@ -2,7 +2,7 @@
 
 namespace Changiz\DatabaseRepository\Commands;
 
-use App\Traits\CustomMySqlQueries;
+use Changiz\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
 class MakeMySqlRepository extends Command
