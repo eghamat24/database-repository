@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Repositories;
+namespace Changiz\DatabaseRepository\Models\Repository;
 
 use App\Models\Entities\Entity;
 use App\Models\Factories\IFactory;

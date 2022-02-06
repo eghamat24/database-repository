@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Changiz\DatabaseRepository\Commands;
 
 use App\Traits\CustomMySqlQueries;
 use Illuminate\Console\Command;

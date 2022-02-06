@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Entities;
+namespace Changiz\DatabaseRepository\Models\Entity;
 
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
