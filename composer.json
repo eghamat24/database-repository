@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Changiz\\DatabaseRepository\\": "src/"
+            "Nanvaie\\DatabaseRepository\\": "src/"
         }
     },
     "extra": {

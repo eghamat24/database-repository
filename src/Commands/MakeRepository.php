@@ -1,6 +1,6 @@
 <?php
 
-namespace Changiz\DatabaseRepository\Commands;
+namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
 

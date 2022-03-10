@@ -1,6 +1,6 @@
 <?php
 
-namespace Changiz\DatabaseRepository;
+namespace Nanvaie\DatabaseRepository;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

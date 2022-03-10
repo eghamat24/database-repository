@@ -1,6 +1,6 @@
 <?php
 
-namespace Changiz\DatabaseRepository\Models\Factory;
+namespace Nanvaie\DatabaseRepository\Models\Factory;
 
 use App\Models\Entities\Entity;
 use Illuminate\Support\Collection;

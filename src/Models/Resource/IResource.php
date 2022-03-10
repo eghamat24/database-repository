@@ -1,6 +1,6 @@
 <?php
 
-namespace Changiz\DatabaseRepository\Models\Resource;
+namespace Nanvaie\DatabaseRepository\Models\Resource;
 
 use Illuminate\Support\Collection;
 

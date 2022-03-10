@@ -1,17 +1,17 @@
 <?php
 
 
-namespace Changiz\DatabaseRepository;
+namespace Nanvaie\DatabaseRepository;
 
 
-use Changiz\DatabaseRepository\Commands\MakeAllRepository;
-use Changiz\DatabaseRepository\Commands\MakeEntity;
-use Changiz\DatabaseRepository\Commands\MakeFactory;
-use Changiz\DatabaseRepository\Commands\MakeInterfaceRepository;
-use Changiz\DatabaseRepository\Commands\MakeMySqlRepository;
-use Changiz\DatabaseRepository\Commands\MakeRedisRepository;
-use Changiz\DatabaseRepository\Commands\MakeRepository;
-use Changiz\DatabaseRepository\Commands\MakeResource;
+use Nanvaie\DatabaseRepository\Commands\MakeAllRepository;
+use Nanvaie\DatabaseRepository\Commands\MakeEntity;
+use Nanvaie\DatabaseRepository\Commands\MakeFactory;
+use Nanvaie\DatabaseRepository\Commands\MakeInterfaceRepository;
+use Nanvaie\DatabaseRepository\Commands\MakeMySqlRepository;
+use Nanvaie\DatabaseRepository\Commands\MakeRedisRepository;
+use Nanvaie\DatabaseRepository\Commands\MakeRepository;
+use Nanvaie\DatabaseRepository\Commands\MakeResource;
 use Illuminate\Support\ServiceProvider;
 
 /**

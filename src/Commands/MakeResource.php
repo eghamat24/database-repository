@@ -1,8 +1,8 @@
 <?php
 
-namespace Changiz\DatabaseRepository\Commands;
+namespace Nanvaie\DatabaseRepository\Commands;
 
-use Changiz\DatabaseRepository\CustomMySqlQueries;
+use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
 class MakeResource extends Command
