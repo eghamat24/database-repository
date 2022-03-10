@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": "^8.0",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "laravel/helpers": "^1.5"
     },
     "autoload": {
         "psr-4": {
