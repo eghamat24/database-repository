@@ -17,5 +17,12 @@
         "psr-4": {
             "Changiz\\DatabaseRepository\\": "src/"
         }
+    },
+    "extra": {
+    "laravel": {
+        "providers": [
+            "DatabaseRepositoryServiceProvider"
+        ]
     }
+}
 }
