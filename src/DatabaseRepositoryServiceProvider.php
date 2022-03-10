@@ -11,6 +11,7 @@ use Changiz\DatabaseRepository\Commands\MakeInterfaceRepository;
 use Changiz\DatabaseRepository\Commands\MakeMySqlRepository;
 use Changiz\DatabaseRepository\Commands\MakeRedisRepository;
 use Changiz\DatabaseRepository\Commands\MakeRepository;
+use Changiz\DatabaseRepository\Commands\MakeResource;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -80,14 +81,14 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
         });
 
         $this->commands([
-            'command:make-all-repository',
-            'command:make-entity',
-            'command:make-factory',
-            'command:make-interface-repository',
-            'command:make-mysql-repository',
-            'command:make-redis-repository',
-            'command:make-repository',
-            'command:make-resource'
+            'command.make-all-repository',
+            'command.make-entity',
+            'command.make-factory',
+            'command.make-interface-repository',
+            'command.make-mysql-repository',
+            'command.make-redis-repository',
+            'command.make-repository',
+            'command.make-resource'
         ]);
     }
 
