@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Nanvaie\DatabaseRepository;
-
 
 use Nanvaie\DatabaseRepository\Commands\MakeAllRepository;
 use Nanvaie\DatabaseRepository\Commands\MakeEntity;
