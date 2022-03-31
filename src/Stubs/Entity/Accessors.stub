@@ -1,0 +1,16 @@
+
+    /**
+    * @return AttributeType
+    */
+    public function getGetterName(): AttributeType
+    {
+        return $this->AttributeName;
+    }
+
+    /**
+    * @param AttributeType $AttributeName
+    */
+    public function setSetterName(AttributeType $AttributeName): void
+    {
+        $this->AttributeName = $AttributeName;
+    }

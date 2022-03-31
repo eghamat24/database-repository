@@ -34,29 +34,17 @@ class MakeEntity extends Command
     use CustomMySqlQueries;
 
     /**
-     * Generate a getter for given attribute.
+     * Generate getter and setter for given attribute.
+     * @param string $accessorStub
      * @param string $attributeName
      * @param string $attributeType
      * @return string
      */
-    private function writeGetter(string $attributeName, string $attributeType): string
+    private function writeAccessors(string $accessorStub, string $attributeName, string $attributeType): string
     {
-        return "\n\t/**\n\t * @return $attributeType\n\t */\n\t" .
-            "public function get" . ucfirst($attributeName) . "(): $attributeType\n\t" .
-            "{\n\t\treturn \$this->$attributeName;\n\t}\n";
-    }
-
-    /**
-     * Generate a setter for given attribute.
-     * @param string $attributeName
-     * @param string $attributeType
-     * @return string
-     */
-    private function writeSetter(string $attributeName, string $attributeType): string
-    {
-        return "\n\t/**\n\t * @param $attributeType \$$attributeName\n\t */\n\t" .
-            "public function set" . ucfirst($attributeName) . "($attributeType \$$attributeName): void\n\t" .
-            "{\n\t\t\$this->$attributeName = \$$attributeName;\n\t}\n";
+        return str_replace(['AttributeType', 'AttributeName', 'GetterName', 'SetterName'],
+            [$attributeType, $attributeName, ucfirst($attributeName), ucfirst($attributeName)],
+            $accessorStub);
     }
 
     /**
@@ -69,27 +57,31 @@ class MakeEntity extends Command
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
+        $entityNamespace = config('repository.path.namespace.entities');
         $relativeEntitiesPath = config('repository.path.relative.entities');
+        $entityStubsPath = config('repository.path.stubs.entity');
+        $filenameWithPath = $relativeEntitiesPath.$entityName.'.php';
 
         if ($this->option('delete')) {
-            unlink("$relativeEntitiesPath/$entityName.php");
+            unlink($filenameWithPath);
             $this->info("Entity \"$entityName\" has been deleted.");
             return 0;
         }
 
-        if (!file_exists($relativeEntitiesPath)) {
-            mkdir($relativeEntitiesPath, 775, true);
+        if ( ! file_exists($relativeEntitiesPath) && ! mkdir($relativeEntitiesPath, 775, true) && ! is_dir($relativeEntitiesPath)) {
+            $this->alert("Directory \"$relativeEntitiesPath\" was not created");
+            return 0;
         }
 
-        if (class_exists("$relativeEntitiesPath\\$entityName") && !$this->option('force')) {
-            $this->alert("Entity $entityName is already exist!");
-            die;
+        if (class_exists($entityNamespace.'\\'.$entityName) && ! $this->option('force')) {
+            $this->alert("Entity \"$entityName\" is already exist!");
+            return 0;
         }
 
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table \"$tableName\"! Perhaps table's name is misspelled.");
             die;
         }
 
@@ -101,40 +93,43 @@ class MakeEntity extends Command
             $_column->COLUMN_NAME = camel_case($_column->COLUMN_NAME);
         }
 
+        $baseContent = file_get_contents($entityStubsPath.'Class.stub');
+        $accessorsStub = file_get_contents($entityStubsPath.'Accessors.stub');
+
         // Initialize Class
-        $entityContent = "<?php\n\nnamespace $relativeEntitiesPath;\n\n";
-        $entityContent .= "class $entityName extends Entity\n{\n";
+        $baseContent = str_replace(['EntityNameSpace', 'EntityName'], [$entityNamespace, $entityName], $baseContent);
 
         // Create Attributes
         foreach ($columns as $_column) {
-            $entityContent .= "\tprotected \$$_column->COLUMN_NAME;\n";
+            $baseContent = substr_replace($baseContent,
+                "\tprotected " . $this->dataTypes[$_column->DATA_TYPE] . " \$$_column->COLUMN_NAME;\n",
+                -1, 0);
         }
         // Create Additional Attributes from Foreign Keys
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $entityContent .= "\n\tprotected \$" . $_foreignKey->VARIABLE_NAME . ";";
+                $baseContent = substr_replace($baseContent,
+                    "\tprotected " . $_foreignKey->ENTITY_DATA_TYPE . " \$$_foreignKey->VARIABLE_NAME;\n",
+                    -1, 0);
             }
-            $entityContent .= "\n";
         }
 
         // Create Setters and Getters
         foreach ($columns as $_column) {
-            $dataType = $this->dataTypes[$_column->DATA_TYPE];
-            $entityContent .= $this->writeGetter($_column->COLUMN_NAME, $dataType);
-            $entityContent .= $this->writeSetter($_column->COLUMN_NAME, $dataType);
+            $baseContent = substr_replace($baseContent,
+                $this->writeAccessors($accessorsStub, $_column->COLUMN_NAME, $this->dataTypes[$_column->DATA_TYPE]),
+                -1, 0);
         }
         // Create Additional Setters and Getters from Foreign keys
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $entityContent .= $this->writeGetter($_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE);
-                $entityContent .= $this->writeSetter($_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE);
+                $baseContent = substr_replace($baseContent, $this->writeAccessors($accessorsStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE), -1, 0);
             }
         }
-        $entityContent .= "}";
 
-        file_put_contents("$relativeEntitiesPath/$entityName.php", $entityContent);
+        file_put_contents($filenameWithPath, $baseContent);
 
-        shell_exec("git add $relativeEntitiesPath/$entityName.php");
+        shell_exec('git add '.$filenameWithPath);
 
         $this->info("Entity \"$entityName\" has been created.");
 

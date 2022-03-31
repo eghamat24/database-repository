@@ -1,0 +1,7 @@
+<?php
+
+namespace EntityNameSpace;
+
+class EntityName extends Entity
+{
+}
