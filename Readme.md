@@ -15,7 +15,7 @@ Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class
 ### Setup for Lumen
 Navigate to `app.php` in `bootstrap` folder and add following line after config registrations:
 ```php
-$this->register->config('')
+$this->app->configure('repository')
 ```
 
 Note: Make sure to run `composer dump-autoload` after these changes.
