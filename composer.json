@@ -23,7 +23,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "DatabaseRepositoryServiceProvider"
+                "Nanvaie\\DatabaseRepository\\DatabaseRepositoryServiceProvider"
             ]
         }
     }
