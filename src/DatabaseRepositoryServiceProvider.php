@@ -28,15 +28,19 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/Config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
-        ], 'config');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/Config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
+            ], 'config');
+
+            $this->register();
+        }
     }
 
     /**
      * Register the service provider.
      */
-    public function register()
+    public function register(): void
     {
         $this->registerCommand();
     }
@@ -44,7 +48,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     /**
      * Register custom commands.
      */
-    private function registerCommand()
+    private function registerCommand(): void
     {
         $this->app->singleton('command.make-all-repository', function () {
             return new MakeAllRepository();
@@ -79,14 +83,14 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
         });
 
         $this->commands([
-            'command.make-all-repository',
-            'command.make-entity',
-            'command.make-factory',
-            'command.make-interface-repository',
-            'command.make-mysql-repository',
-            'command.make-redis-repository',
-            'command.make-repository',
-            'command.make-resource'
+            MakeAllRepository::class,
+            MakeEntity::class,
+            MakeFactory::class,
+            MakeInterfaceRepository::class,
+            MakeMySqlRepository::class,
+            MakeRedisRepository::class,
+            MakeRepository::class,
+            MakeResource::class
         ]);
     }
 
