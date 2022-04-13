@@ -11,10 +11,11 @@ use Nanvaie\DatabaseRepository\Commands\MakeRedisRepository;
 use Nanvaie\DatabaseRepository\Commands\MakeRepository;
 use Nanvaie\DatabaseRepository\Commands\MakeResource;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Lumen\Application as LumenApplication;
+use Illuminate\Foundation\Application as LaravelApplication;
 
 /**
- * Laravel service provider for DatabaseRepositor.
- *
+ * Laravel service provider for DatabaseRepository.
  */
 class DatabaseRepositoryServiceProvider extends ServiceProvider
 {
@@ -28,13 +29,15 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
+        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/Config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
-            ], 'config');
-
-            $this->register();
+                __DIR__.'/config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
+            ], 'telegram-config');
+        } elseif ($this->app instanceof LumenApplication) {
+            $this->app->configure('telegram');
         }
+
+        $this->register();
     }
 
     /**
