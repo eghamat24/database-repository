@@ -20,9 +20,15 @@ use Illuminate\Foundation\Application as LaravelApplication;
 class DatabaseRepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap the application events.
+     * Register the service provider.
      */
-    public function boot()
+    public function register(): void
+    {
+        $this->offerPublishing();
+        $this->registerCommands();
+    }
+
+    public function offerPublishing(): void
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([
@@ -31,14 +37,6 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
         } elseif ($this->app instanceof LumenApplication) {
             $this->app->configure('repository');
         }
-    }
-
-    /**
-     * Register the service provider.
-     */
-    public function register(): void
-    {
-        $this->registerCommands();
     }
 
     /**
