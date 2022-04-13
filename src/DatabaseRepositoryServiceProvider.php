@@ -41,7 +41,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
+                __DIR__.'/Config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
             ], 'config');
         } elseif ($this->app instanceof LumenApplication) {
             $this->app->configure('repository');
