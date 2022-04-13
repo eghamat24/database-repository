@@ -26,13 +26,6 @@ return [
             'repository' => 'app'.DR.'Models'.DR.'Repositories'.DR,
         ],
 
-        'absolute' => [
-            'entities' => app_path('Models'.DR.'Entities'.DR),
-            'factories' => app_path('Models'.DR.'Factories'.DR),
-            'resource' => app_path('Http'.DR.'Resources'.DR.'Admin'.DR),
-            'repository' => app_path('Models'.DR.'Repositories'.DR),
-        ]
-
     ]
 
 ];

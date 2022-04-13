@@ -17,6 +17,7 @@ Navigate to `app.php` in `bootstrap` folder and add following line after config 
 ```php
 $app->register(Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class)
 ```
+Copy [repository.php](./src/Config/repository.php) to project config folder located at project root.
 
 Note: Make sure to run `composer dump-autoload` after these changes.
 
