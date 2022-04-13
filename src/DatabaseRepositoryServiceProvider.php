@@ -27,7 +27,17 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application events.
      */
-    public function boot()
+//    public function boot()
+//    {
+//
+//
+//        $this->register();
+//    }
+
+    /**
+     * Register the service provider.
+     */
+    public function register(): void
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->publishes([
@@ -37,14 +47,6 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
             $this->app->configure('repository');
         }
 
-        $this->register();
-    }
-
-    /**
-     * Register the service provider.
-     */
-    public function register(): void
-    {
         $this->registerCommand();
     }
 
