@@ -20,34 +20,27 @@ use Illuminate\Foundation\Application as LaravelApplication;
 class DatabaseRepositoryServiceProvider extends ServiceProvider
 {
     /**
-     * The package configuration file.
-     */
-    const CONFIG_FILE = 'repository.php';
-
-    /**
      * Bootstrap the application events.
      */
-//    public function boot()
-//    {
-//
-//
-//        $this->register();
-//    }
+    public function boot()
+    {
+        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/Config/repository.php' => config_path('repository.php'),
+            ], 'repository-config');
+        } elseif ($this->app instanceof LumenApplication) {
+            $this->app->configure('repository');
+        }
+
+        $this->registerCommand();
+    }
 
     /**
      * Register the service provider.
      */
     public function register(): void
     {
-        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/Config/' . self::CONFIG_FILE => config_path(self::CONFIG_FILE),
-            ], 'config');
-        } elseif ($this->app instanceof LumenApplication) {
-            $this->app->configure('repository');
-        }
 
-        $this->registerCommand();
     }
 
     /**
