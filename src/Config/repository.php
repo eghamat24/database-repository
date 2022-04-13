@@ -13,7 +13,7 @@ return [
         ],
 
         'stubs' => [
-            'entity' => __DIR__.DR.'..'.DR.'Stubs'.DR.'Entity'.DR,
+            'entity' => 'app'.'Stubs'.DR.'Entity'.DR,
             'factory' => 'app'.DR.'Stubs'.DR.'Factory'.DR,
             'resource' => 'app'.DR.'Stubs'.DR.'Resource'.DR,
             'repository' => 'app'.DR.'Stubs'.DR.'Repository'.DR,
