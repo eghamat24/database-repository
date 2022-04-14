@@ -1,6 +1,6 @@
 <?php
 
-const DR = DIRECTORY_SEPARATOR;
+$source = realpath(base_path('vendor/nanvaie/database-repository/src'));
 
 return [
 
@@ -13,17 +13,17 @@ return [
         ],
 
         'stubs' => [
-            'entity' => 'app'.DR.'Stubs'.DR.'Entity'.DR,
-            'factory' => 'app'.DR.'Stubs'.DR.'Factory'.DR,
-            'resource' => 'app'.DR.'Stubs'.DR.'Resource'.DR,
-            'repository' => 'app'.DR.'Stubs'.DR.'Repository'.DR,
+            'entity' => $source.'Stubs/Entity/',
+            'factory' => $source.'Stubs/Factory/',
+            'resource' => $source.'Stubs/Resource/',
+            'repository' => $source.'Stubs/Repository/',
         ],
 
         'relative' => [
-            'entities' => 'app'.DR.'Models'.DR.'Entities'.DR,
-            'factories' => 'app'.DR.'Models'.DR.'Factories'.DR,
-            'resource' => 'app'.DR.'Http'.DR.'Resources'.DR.'Admin'.DR,
-            'repository' => 'app'.DR.'Models'.DR.'Repositories'.DR,
+            'entities' => 'app/Models/Entities/',
+            'factories' => 'app/Models/Factories/',
+            'resource' => 'app/Http/Resources/Admin/',
+            'repository' => 'app/Models/Repositories/',
         ],
 
     ]
