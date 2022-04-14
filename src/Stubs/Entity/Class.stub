@@ -2,6 +2,8 @@
 
 namespace EntityNameSpace;
 
+use Nanvaie\DatabaseRepository\Models\Entity\Entity;
+
 class EntityName extends Entity
 {
 }
