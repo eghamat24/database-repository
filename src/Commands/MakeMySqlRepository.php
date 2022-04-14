@@ -83,6 +83,7 @@ class MakeMySqlRepository extends Command
         $factoryName = $entityName . "Factory";
         $interfaceName = "I$entityName" . "Repository";
         $mysqlRepositoryName = "MySql$entityName" . "Repository";
+        $mysqlRepositoryNamespace = config('repository.path.namespace.repository');
         $relativeMysqlRepositoryPath = config('repository.path.relative.repository') . "\\$entityName";
 
         if ($this->option('delete')) {
@@ -112,7 +113,7 @@ class MakeMySqlRepository extends Command
         }
 
         // Initialize MySql Repository
-        $mysqlRepositoryContent = "<?php\n\nnamespace $relativeMysqlRepositoryPath;\n\n";
+        $mysqlRepositoryContent = "<?php\n\nnamespace $mysqlRepositoryNamespace\\$entityName;\n\n";
         $mysqlRepositoryContent .= "use App\Models\Entities\\$entityName;\n";
         $mysqlRepositoryContent .= "use App\Models\Factories\\$factoryName;\n";
         $mysqlRepositoryContent .= "use App\Models\Repositories\MySqlRepository;\n";
