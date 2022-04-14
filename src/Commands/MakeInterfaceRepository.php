@@ -45,6 +45,7 @@ class MakeInterfaceRepository extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $interfaceName = "I$entityName" . "Repository";
+        $interfaceNamespace = config('repository.path.namespace.repository');
         $relativeInterfacePath = config('repository.path.relative.repository') . "\\$entityName";
 
         if ($this->option('delete')) {
@@ -53,8 +54,9 @@ class MakeInterfaceRepository extends Command
             return 0;
         }
 
-        if (!file_exists($relativeInterfacePath)) {
-            mkdir($relativeInterfacePath, 775, true);
+        if ( ! file_exists($relativeInterfacePath) && ! mkdir($relativeInterfacePath, 775, true) && ! is_dir($relativeInterfacePath)) {
+            $this->alert("Directory \"$relativeInterfacePath\" was not created");
+            return 0;
         }
 
         if (class_exists("$relativeInterfacePath\\$interfaceName") && !$this->option('force')) {
@@ -74,7 +76,7 @@ class MakeInterfaceRepository extends Command
         }
 
         // Initialize Interface
-        $interfaceContent = "<?php\n\nnamespace $relativeInterfacePath;\n\n";
+        $interfaceContent = "<?php\n\nnamespace $interfaceNamespace\\$entityName;\n\n";
         $interfaceContent .= "use App\Models\Entities\\$entityName;\n";
         $interfaceContent .= "use Illuminate\Support\Collection;\n\n";
         $interfaceContent .= "interface $interfaceName\n{";
