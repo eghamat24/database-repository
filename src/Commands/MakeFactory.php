@@ -44,6 +44,7 @@ class MakeFactory extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $factoryName = $entityName . "Factory";
+        $factoryNamespace = config('repository.path.namespace.factories');
         $relativeFactoriesPath = config('repository.path.relative.factories');
 
         if ($this->option('delete')) {
@@ -52,8 +53,9 @@ class MakeFactory extends Command
             return 0;
         }
 
-        if (!file_exists($relativeFactoriesPath)) {
-            mkdir($relativeFactoriesPath, 775, true);
+        if ( ! file_exists($relativeFactoriesPath) && ! mkdir($relativeFactoriesPath, 775, true) && ! is_dir($relativeFactoriesPath)) {
+            $this->alert("Directory \"$relativeFactoriesPath\" was not created");
+            return 0;
         }
 
         if (class_exists("$relativeFactoriesPath\\$factoryName") && !$this->option('force')) {
@@ -69,7 +71,7 @@ class MakeFactory extends Command
         }
 
         // Initialize Class
-        $factoryContent = "<?php\n\nnamespace $relativeFactoriesPath;\n\n";
+        $factoryContent = "<?php\n\nnamespace $factoryNamespace;\n\n";
         $factoryContent .= "use App\Models\Entities\\$entityName;\nuse stdClass;\n\n";
         $factoryContent .= "class $factoryName extends Factory\n{\n";
 
