@@ -41,6 +41,7 @@ class MakeRepository extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $mysqlRepositoryName = "MySql$entityName" . "Repository";
         $repository = $entityName . "Repository";
+        $repositoryNamespace = config('repository.path.namespace.repository');
         $relativeRepositoryPath = config('repository.path.relative.repository') . "\\$entityName";
 
         if ($this->option('delete')) {
@@ -49,8 +50,9 @@ class MakeRepository extends Command
             return 0;
         }
 
-        if (!file_exists($relativeRepositoryPath)) {
-            mkdir($relativeRepositoryPath, 775, true);
+        if ( ! file_exists($relativeRepositoryPath) && ! mkdir($relativeRepositoryPath, 775, true) && ! is_dir($relativeRepositoryPath)) {
+            $this->alert("Directory \"$relativeRepositoryPath\" was not created");
+            return 0;
         }
 
         if (class_exists("$relativeRepositoryPath\\$repository") && !$this->option('force')) {
@@ -59,7 +61,7 @@ class MakeRepository extends Command
         }
 
         // Initialize Repository
-        $repositoryContent = "<?php\n\nnamespace $relativeRepositoryPath;\n\n";
+        $repositoryContent = "<?php\n\nnamespace $repositoryNamespace\\$entityName;\n\n";
         $repositoryContent .= "class $repository extends $mysqlRepositoryName\n{\n\n}";
 
         file_put_contents("$relativeRepositoryPath/$repository.php", $repositoryContent);

@@ -57,7 +57,7 @@ class MakeRedisRepository extends Command
         }
 
         if ( ! file_exists($relativeRedisRepositoryPath) && ! mkdir($relativeRedisRepositoryPath) && ! is_dir($relativeRedisRepositoryPath)) {
-            $this->info("MySql Repository \"$relativeRedisRepositoryPath\" has been deleted.");
+            $this->alert("Directory \"$relativeRedisRepositoryPath\" was not created");
             return 0;
         }
 
