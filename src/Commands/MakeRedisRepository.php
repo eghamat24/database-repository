@@ -79,7 +79,7 @@ class MakeRedisRepository extends Command
 
         // Initialize Redis Repository
         $redisRepositoryContent = "<?php\n\nnamespace $redisRepositoryNamespace\\$entityName;\n\n";
-        $redisRepositoryContent .= "use App\Models\Repositories\RedisRepository;\n\n";
+        $redisRepositoryContent .= "use Nanvaie\DatabaseRepository\Models\Repository\RedisRepository;\n\n";
         $redisRepositoryContent .= "class $redisRepositoryName extends RedisRepository\n{";
         $redisRepositoryContent .= "}";
 
