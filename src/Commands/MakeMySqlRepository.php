@@ -92,8 +92,9 @@ class MakeMySqlRepository extends Command
             return 0;
         }
 
-        if (!file_exists($relativeMysqlRepositoryPath)) {
-            mkdir($relativeMysqlRepositoryPath);
+        if ( ! file_exists($relativeMysqlRepositoryPath) && ! mkdir($relativeMysqlRepositoryPath) && ! is_dir($relativeMysqlRepositoryPath)) {
+            $this->alert("Directory \"$relativeMysqlRepositoryPath\" was not created");
+            return 0;
         }
 
         if (class_exists("$relativeMysqlRepositoryPath\\$mysqlRepositoryName") && !$this->option('force')) {
