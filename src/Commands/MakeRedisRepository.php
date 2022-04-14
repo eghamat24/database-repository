@@ -47,6 +47,7 @@ class MakeRedisRepository extends Command
         $factoryName = $entityName . "Factory";
         $interfaceName = "I$entityName" . "Repository";
         $redisRepositoryName = "Redis$entityName" . "Repository";
+        $redisRepositoryNamespace = config('repository.path.namespace.repository');
         $relativeRedisRepositoryPath = config('repository.path.relative.repository') . "\\$entityName";
 
         if ($this->option('delete')) {
@@ -55,8 +56,9 @@ class MakeRedisRepository extends Command
             return 0;
         }
 
-        if (!file_exists($relativeRedisRepositoryPath)) {
-            mkdir($relativeRedisRepositoryPath);
+        if ( ! file_exists($relativeRedisRepositoryPath) && ! mkdir($relativeRedisRepositoryPath) && ! is_dir($relativeRedisRepositoryPath)) {
+            $this->info("MySql Repository \"$relativeRedisRepositoryPath\" has been deleted.");
+            return 0;
         }
 
         if (class_exists("$relativeRedisRepositoryPath\\$redisRepositoryName") && !$this->option('force')) {
@@ -76,7 +78,7 @@ class MakeRedisRepository extends Command
         }
 
         // Initialize Redis Repository
-        $redisRepositoryContent = "<?php\n\nnamespace $relativeRedisRepositoryPath;\n\n";
+        $redisRepositoryContent = "<?php\n\nnamespace $redisRepositoryNamespace\\$entityName;\n\n";
         $redisRepositoryContent .= "use App\Models\Repositories\RedisRepository;\n\n";
         $redisRepositoryContent .= "class $redisRepositoryName extends RedisRepository\n{";
         $redisRepositoryContent .= "}";
