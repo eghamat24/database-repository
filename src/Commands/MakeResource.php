@@ -45,6 +45,7 @@ class MakeResource extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $resourceName = $entityName . "Resource";
+        $resourceNamespace = config('repository.path.namespace.resource');
         $relativeResourcesPath = config('repository.path.relative.resource');
 
         if ($this->option('delete')) {
@@ -53,8 +54,9 @@ class MakeResource extends Command
             return 0;
         }
 
-        if (!file_exists($relativeResourcesPath)) {
-            mkdir($relativeResourcesPath, 775, true);
+        if ( ! file_exists($relativeResourcesPath) && ! mkdir($relativeResourcesPath, 775, true) && ! is_dir($relativeResourcesPath)) {
+            $this->alert("Directory \"$relativeResourcesPath\" was not created");
+            return 0;
         }
 
         if (class_exists("$relativeResourcesPath\\$resourceName") && !$this->option('force')) {
@@ -74,7 +76,7 @@ class MakeResource extends Command
         }
 
         // Initialize Class
-        $resourceContent = "<?php\n\nnamespace $relativeResourcesPath;\n\n";
+        $resourceContent = "<?php\n\nnamespace $resourceNamespace;\n\n";
         $resourceContent .= "use App\Http\Resources\Resource;\n";
         $resourceContent .= "use App\Models\Entities\\$entityName;\n\n";
         $resourceContent .= "class $resourceName extends Resource\n{\n";
