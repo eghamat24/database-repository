@@ -151,7 +151,7 @@ class MakeMySqlRepository extends Command
             if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
                 $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => \$" . $entityVariableName . "->get" . ucfirst(camel_case($_column->COLUMN_NAME)) . "(),";
             } elseif ($_column->COLUMN_NAME === 'created_at') {
-                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => now()->toDateTimeString(),";
+                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => date('Y-m-d H:i:s'),";
             }
         }
         $mysqlRepositoryContent .= "\n\t\t\t]);\n";
@@ -168,7 +168,7 @@ class MakeMySqlRepository extends Command
             if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
                 $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => \$" . $entityVariableName . "->get" . ucfirst(camel_case($_column->COLUMN_NAME)) . "(),";
             } elseif ($_column->COLUMN_NAME === 'updated_at') {
-                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => now()->toDateTimeString(),";
+                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => date('Y-m-d H:i:s'),";
             }
         }
         $mysqlRepositoryContent .= "\n\t\t\t]);\n\t}\n";
@@ -180,7 +180,7 @@ class MakeMySqlRepository extends Command
             $mysqlRepositoryContent .= "\n\t\treturn \$this->newQuery()";
             $mysqlRepositoryContent .= "\n\t\t\t->where(\$this->primaryKey, \$" . $entityVariableName . "->getPrimaryKey())";
             $mysqlRepositoryContent .= "\n\t\t\t->update([";
-            $mysqlRepositoryContent .= "\n\t\t\t\t'deleted_at' => now()->toDateTimeString(),";
+            $mysqlRepositoryContent .= "\n\t\t\t\t'deleted_at' => date('Y-m-d H:i:s'),";
             $mysqlRepositoryContent .= "\n\t\t\t]);\n\t}\n";
 
             $mysqlRepositoryContent .= "\n\t/**\n\t * @param $entityName \$$entityVariableName\n\t * @return int\n\t */";
