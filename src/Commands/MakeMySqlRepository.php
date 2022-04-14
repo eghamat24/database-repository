@@ -117,7 +117,7 @@ class MakeMySqlRepository extends Command
         $mysqlRepositoryContent = "<?php\n\nnamespace $mysqlRepositoryNamespace\\$entityName;\n\n";
         $mysqlRepositoryContent .= "use App\Models\Entities\\$entityName;\n";
         $mysqlRepositoryContent .= "use App\Models\Factories\\$factoryName;\n";
-        $mysqlRepositoryContent .= "use App\Models\Repositories\MySqlRepository;\n";
+        $mysqlRepositoryContent .= "use Nanvaie\DatabaseRepository\Models\Repository\MySqlRepository;\n";
         $mysqlRepositoryContent .= "use Illuminate\Support\Collection;\n\n";
         $mysqlRepositoryContent .= "class $mysqlRepositoryName extends MySqlRepository implements $interfaceName\n{";
 

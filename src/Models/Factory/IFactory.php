@@ -2,7 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Models\Factory;
 
-use App\Models\Entities\Entity;
+use Nanvaie\DatabaseRepository\Models\Entity\Entity;
 use Illuminate\Support\Collection;
 use stdClass;
 

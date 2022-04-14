@@ -2,10 +2,9 @@
 
 namespace Nanvaie\DatabaseRepository\Models\Repository;
 
-use App\Models\Entities\Entity;
-use App\Models\Factories\IFactory;
-use App\Models\General\Polygon;
-use App\Models\Griew\FilterOperator;
+use Nanvaie\DatabaseRepository\Models\Entity\Entity;
+use Nanvaie\DatabaseRepository\Models\Factory\IFactory;
+use Nanvaie\DatabaseRepository\Models\Enums\GriewFilterOperator;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -209,13 +208,13 @@ abstract class MySqlRepository
     {
         foreach ($filters as $filter) {
             switch (strtolower(snake_case($filter->operator))) {
-                case FilterOperator::IS_NULL:
+                case GriewFilterOperator::IS_NULL:
                     $query->whereNull($filter->name);
                     break;
-                case FilterOperator::IS_NOT_NULL:
+                case GriewFilterOperator::IS_NOT_NULL:
                     $query->whereNotNull($filter->name);
                     break;
-                case FilterOperator::IS_EQUAL_TO:
+                case GriewFilterOperator::IS_EQUAL_TO:
                     if (is_string($filter->operand1) && Str::contains($filter->operand1, '|')) {
                         // create in functionality with equal string
                         $arr = array_filter(explode('|', $filter->operand1));
@@ -224,7 +223,7 @@ abstract class MySqlRepository
                         $query->where($filter->name, '=', $filter->operand1);
                     }
                     break;
-                case FilterOperator::IS_NOT_EQUAL_TO:
+                case GriewFilterOperator::IS_NOT_EQUAL_TO:
                     if (is_string($filter->operand1) && Str::contains($filter->operand1, '|')) {
                         // create in functionality with equal string
                         $arr = array_filter(explode('|', $filter->operand1));
@@ -233,48 +232,42 @@ abstract class MySqlRepository
                         $query->where($filter->name, '<>', $filter->operand1);
                     }
                     break;
-                case FilterOperator::START_WITH:
+                case GriewFilterOperator::START_WITH:
                     $query->where($filter->name, 'LIKE', $filter->operand1 . '%');
                     break;
-                case FilterOperator::DOES_NOT_CONTAINS:
+                case GriewFilterOperator::DOES_NOT_CONTAINS:
                     $query->where($filter->name, 'NOT LIKE', '%' . $filter->operand1 . '%');
                     break;
-                case FilterOperator::CONTAINS:
+                case GriewFilterOperator::CONTAINS:
                     $query->where($filter->name, 'LIKE', '%' . $filter->operand1 . '%');
                     break;
-                case FilterOperator::ENDS_WITH:
+                case GriewFilterOperator::ENDS_WITH:
                     $query->where($filter->name, 'LIKE', '%' . $filter->operand1);
                     break;
-                case FilterOperator::IN:
+                case GriewFilterOperator::IN:
                     $query->whereIn($filter->name, $filter->operand1);
                     break;
-                case FilterOperator::NOT_IN:
+                case GriewFilterOperator::NOT_IN:
                     $query->whereNotIn($filter->name, $filter->operand1);
                     break;
-                case FilterOperator::BETWEEN:
+                case GriewFilterOperator::BETWEEN:
                     $query->whereBetween($filter->name, array($filter->operand1, $filter->operand2));
                     break;
-                case FilterOperator::IS_AFTER_THAN_OR_EQUAL_TO:
-                case FilterOperator::IS_GREATER_THAN_OR_EQUAL_TO:
+                case GriewFilterOperator::IS_AFTER_THAN_OR_EQUAL_TO:
+                case GriewFilterOperator::IS_GREATER_THAN_OR_EQUAL_TO:
                     $query->where($filter->name, '>=', $filter->operand1);
                     break;
-                case FilterOperator::IS_AFTER_THAN:
-                case FilterOperator::IS_GREATER_THAN:
+                case GriewFilterOperator::IS_AFTER_THAN:
+                case GriewFilterOperator::IS_GREATER_THAN:
                     $query->where($filter->name, '>', $filter->operand1);
                     break;
-                case FilterOperator::IS_LESS_THAN_OR_EQUAL_TO:
-                case FilterOperator::IS_BEFORE_THAN_OR_EQUAL_TO:
+                case GriewFilterOperator::IS_LESS_THAN_OR_EQUAL_TO:
+                case GriewFilterOperator::IS_BEFORE_THAN_OR_EQUAL_TO:
                     $query->where($filter->name, '<=', $filter->operand1);
                     break;
-                case FilterOperator::IS_LESS_THAN:
-                case FilterOperator::IS_BEFORE_THAN:
+                case GriewFilterOperator::IS_LESS_THAN:
+                case GriewFilterOperator::IS_BEFORE_THAN:
                     $query->where($filter->name, '<', $filter->operand1);
-                    break;
-                case FilterOperator::IS_INSIDE_POLYGON:
-                    $name = $filter->name;
-                    /** @var Polygon $polygon */
-                    $polygon = $filter->operand1;
-                    $query->whereRaw("Contains(GeomFromText('{$polygon->toRaw()}'),{$name})");
                     break;
             }
         }

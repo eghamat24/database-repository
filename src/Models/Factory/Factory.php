@@ -2,13 +2,13 @@
 
 namespace Nanvaie\DatabaseRepository\Models\Factory;
 
-use App\Models\Entities\Entity;
+use Nanvaie\DatabaseRepository\Models\Entity\Entity;
 use Illuminate\Support\Collection;
 use stdClass;
 
 abstract class Factory implements IFactory
 {
-    public abstract function makeEntityFromStdClass(stdClass $entity): Entity;
+    abstract public function makeEntityFromStdClass(stdClass $entity): Entity;
 
     public function makeCollectionOfEntities(Collection|array $entities): Collection
     {

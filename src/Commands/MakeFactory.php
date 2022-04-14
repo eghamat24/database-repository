@@ -72,7 +72,9 @@ class MakeFactory extends Command
 
         // Initialize Class
         $factoryContent = "<?php\n\nnamespace $factoryNamespace;\n\n";
-        $factoryContent .= "use App\Models\Entities\\$entityName;\nuse stdClass;\n\n";
+        $factoryContent .= "use stdClass;";
+        $factoryContent .= "\nuse App\Models\Entities\\$entityName;";
+        $factoryContent .= "\nuse Nanvaie\DatabaseRepository\Models\Factory\Factory;\n\n";
         $factoryContent .= "class $factoryName extends Factory\n{\n";
 
         // Create "makeEntityFromStdClass" Function
