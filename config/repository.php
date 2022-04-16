@@ -2,6 +2,8 @@
 
 return [
 
+    'php_version' => env('REPOSITORY_PHP_VERSION', '8.0'),
+
     'path' => [
         'namespace' => [
             'entities' => 'App\Models\Entities',
@@ -11,10 +13,10 @@ return [
         ],
 
         'stubs' => [
-            'entity' => 'stubs/repository/entity/',
-            'factory' => 'stubs/repository/factory/',
-            'resource' => 'stubs/repository/resource/',
-            'repository' => 'stubs/repository/repository/',
+            'entity' => 'stubs/PHP'.config('repository.php_version').'/repository.entity.',
+            'factory' => 'stubs/PHP'.config('repository.php_version').'/repository.factory.',
+            'resource' => 'stubs/PHP'.config('repository.php_version').'/repository.resource.',
+            'repository' => 'stubs/PHP'.config('repository.php_version').'/repository.repository.',
         ],
 
         'relative' => [

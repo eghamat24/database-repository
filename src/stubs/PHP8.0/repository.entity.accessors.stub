@@ -1,16 +1,16 @@
 
     /**
-    * @return AttributeType
+    * @return {{ AttributeType }}
     */
-    public function getGetterName(): AttributeType
+    public function get{{ GetterName }}(): {{ AttributeType }}
     {
-        return $this->AttributeName;
+        return $this->{{ AttributeName }};
     }
 
     /**
-    * @param AttributeType $AttributeName
+    * @param {{ AttributeType }} ${{ AttributeName }}
     */
-    public function setSetterName(AttributeType $AttributeName): void
+    public function set{{ SetterName }}({{ AttributeType }} ${{ AttributeName }}): void
     {
-        $this->AttributeName = $AttributeName;
+        $this->{{ AttributeName }} = ${{ AttributeName }};
     }

@@ -38,6 +38,19 @@ class MakeEntity extends Command
     use CustomMySqlQueries;
 
     /**
+     * @param string $attributeStub
+     * @param string $attributeName
+     * @param string $attributeType
+     * @return string
+     */
+    private function writeAttribute(string $attributeStub, string $attributeName, string $attributeType): string
+    {
+        return str_replace(['{{ AttributeType }}', '{{ AttributeName }}'],
+            [$attributeType, $attributeName],
+            $attributeStub);
+    }
+
+    /**
      * Generate getter and setter for given attribute.
      * @param string $accessorStub
      * @param string $attributeName
@@ -46,7 +59,7 @@ class MakeEntity extends Command
      */
     private function writeAccessors(string $accessorStub, string $attributeName, string $attributeType): string
     {
-        return str_replace(['AttributeType', 'AttributeName', 'GetterName', 'SetterName'],
+        return str_replace(['{{ AttributeType }}', '{{ AttributeName }}', '{{ GetterName }}', '{{ SetterName }}'],
             [$attributeType, $attributeName, ucfirst($attributeName), ucfirst($attributeName)],
             $accessorStub);
     }
@@ -97,8 +110,9 @@ class MakeEntity extends Command
             $_column->COLUMN_NAME = camel_case($_column->COLUMN_NAME);
         }
 
-        $baseContent = file_get_contents($entityStubsPath.'Class.stub');
-        $accessorsStub = file_get_contents($entityStubsPath.'Accessors.stub');
+        $baseContent = file_get_contents($entityStubsPath.'class.stub');
+        $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
+        $accessorsStub = file_get_contents($entityStubsPath.'accessors.stub');
 
         // Initialize Class
         $baseContent = str_replace(['EntityNameSpace', 'EntityName'], [$entityNamespace, $entityName], $baseContent);
@@ -106,14 +120,14 @@ class MakeEntity extends Command
         // Create Attributes
         foreach ($columns as $_column) {
             $baseContent = substr_replace($baseContent,
-                "\tprotected " . $this->dataTypes[$_column->DATA_TYPE] . " \$$_column->COLUMN_NAME;\n",
+                $this->writeAttribute($attributeStub, $this->dataTypes[$_column->DATA_TYPE], $_column->COLUMN_NAME),
                 -1, 0);
         }
         // Create Additional Attributes from Foreign Keys
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
                 $baseContent = substr_replace($baseContent,
-                    "\tprotected " . $_foreignKey->ENTITY_DATA_TYPE . " \$$_foreignKey->VARIABLE_NAME;\n",
+                    $this->writeAttribute($attributeStub, $_foreignKey->ENTITY_DATA_TYPE, $_foreignKey->VARIABLE_NAME),
                     -1, 0);
             }
         }
