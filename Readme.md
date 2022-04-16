@@ -7,15 +7,23 @@ composer require nanvaie/database-repository --dev
 ```
 
 ### Setup for Laravel
-Navigate to `app.php` in `config` folder and add following line in 'provider' section:
+Navigate to `AppServiceProvider.php` in `app/Providers` folder and add following code snippet (or it's equivalent) in 'register' function:
 ```php
-Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class
+// snip
+if ($this->app->environment('local', 'testing')) {
+    $this->app->register(Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class);
+}
+// snip
 ```
 
 ### Setup for Lumen
-Navigate to `app.php` in `bootstrap` folder and add following line after config registrations:
+Navigate to `app.php` in `bootstrap` folder and add following line after service providers registrations:
 ```php
-$app->register(Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class)
+// snip
+if ($app->environment('local', 'testing')) {
+    $app->register(Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class);
+}
+// snip
 ```
 Copy [repository.php](config/repository.php) to project config folder located at project root.
 
@@ -24,16 +32,22 @@ Note: Make sure to run `composer dump-autoload` after these changes.
 ## Usage
 List of artisan commands:
 
-| Command                             | Inputs      | Options    | Description                       |
-|-------------------------------------|-------------|------------|-----------------------------------|
-| `command:make-entity`               | table_name  | -f, -d, -k | Create new Entity                 |
-| `command:make-factory`              | table_name  | -f, -d     | Create new Factory                |
-| `command:make-resource`             | table_name  | -f, -d, -k | Create new Resource               |
-| `command:make-interface-repository` | table_name  | -f, -d, -k | Create new Repository Interface   |
-| `command:make-repository`           | table_name  | -f, -d     | Create new Base Repository        |
-| `command:make-mysql-repository`     | table_name  | -f, -d, -k | Create new MySql Repository class |
-| `command:make-redis-repository`     | table_name  | -f, -d, -k | Create new Redis Repository class |
-| `command:make-all-repository`       | table_names | -f, -d, -k | Run all of the above commands     |
+| Command                             | Inputs      | Options        | Description                       |
+|-------------------------------------|-------------|----------------|-----------------------------------|
+| `command:make-entity`               | table_name  | -f, -d, -k, -g | Create new Entity                 |
+| `command:make-factory`              | table_name  | -f, -d, -g     | Create new Factory                |
+| `command:make-resource`             | table_name  | -f, -d, -k, -g | Create new Resource               |
+| `command:make-interface-repository` | table_name  | -f, -d, -k, -g | Create new Repository Interface   |
+| `command:make-repository`           | table_name  | -f, -d, -g     | Create new Base Repository        |
+| `command:make-mysql-repository`     | table_name  | -f, -d, -k, -g | Create new MySql Repository class |
+| `command:make-redis-repository`     | table_name  | -f, -d, -k, -g | Create new Redis Repository class |
+| `command:make-all-repository`       | table_names | -f, -d, -k, -g | Run all of the above commands     |
+
+### Options Explanation
+- `-f|--force`: Force commands to override existing files.
+- `-d|--delete`: Delete already created files.
+- `-k|--foreign-keys`: Try to detect foreign keys of table.
+- `-g|--add-to-git`: Add created files to git repository.
 
 Example 1. Create new Entity for a table named 'users'.
 ```bash
@@ -42,5 +56,5 @@ php artisan command:make-entity users
 
 Example 2. Create all necessary classes for two tables named 'users' and 'customers' with enabled foreign key option.
 ```bash
-php artisan command:make-all-repository users,customers
+php artisan command:make-all-repository users customers
 ```
