@@ -25,16 +25,6 @@ class MakeRedisRepository extends Command
      */
     protected $description = 'Create a new Redis repository class';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     use CustomMySqlQueries;
 
     /**

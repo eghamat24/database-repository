@@ -25,16 +25,6 @@ class MakeResource extends Command
      */
     protected $description = 'Create new resource';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     use CustomMySqlQueries;
 
     /**

@@ -25,16 +25,6 @@ class MakeInterfaceRepository extends Command
      */
     protected $description = 'Create a new interface for repository';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     use CustomMySqlQueries;
 
     /**
