@@ -4,14 +4,14 @@ namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
 
-class MakeAllRepository extends Command
+class MakeAll extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'repository:make-all-repository {table_names*}
+    protected $signature = 'repository:make-all {table_names*}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing classes}

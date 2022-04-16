@@ -2,7 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository;
 
-use Nanvaie\DatabaseRepository\Commands\MakeAllRepository;
+use Nanvaie\DatabaseRepository\Commands\MakeAll;
 use Nanvaie\DatabaseRepository\Commands\MakeEntity;
 use Nanvaie\DatabaseRepository\Commands\MakeFactory;
 use Nanvaie\DatabaseRepository\Commands\MakeInterfaceRepository;
@@ -52,7 +52,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->app->singleton('repository.make-all-repository', function () {
-                return new MakeAllRepository();
+                return new MakeAll();
             });
 
             $this->app->singleton('repository.make-entity', function () {
@@ -84,7 +84,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
             });
 
             $this->commands([
-                MakeAllRepository::class,
+                MakeAll::class,
                 MakeEntity::class,
                 MakeFactory::class,
                 MakeInterfaceRepository::class,

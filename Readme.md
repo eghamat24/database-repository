@@ -41,7 +41,7 @@ List of artisan commands:
 | `repository:make-repository`           | table_name  | -f, -d, -g     | Create new Base Repository        |
 | `repository:make-mysql-repository`     | table_name  | -f, -d, -k, -g | Create new MySql Repository class |
 | `repository:make-redis-repository`     | table_name  | -f, -d, -k, -g | Create new Redis Repository class |
-| `repository:make-all-repository`       | table_names | -f, -d, -k, -g | Run all of the above commands     |
+| `repository:make-all`                  | table_names | -f, -d, -k, -g | Run all of the above commands     |
 
 ### Options Explanation
 - `-f|--force`: Force commands to override existing files.
