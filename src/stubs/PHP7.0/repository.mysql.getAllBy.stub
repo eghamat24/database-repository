@@ -1,0 +1,13 @@
+
+	/**
+	 * @param array ${{ AttributeNamePlural }}
+	 * @return Collection
+	 */
+	public function getAllBy{{ FunctionNamePlural }}(${{ AttributeNamePlural }})
+	{
+		${{ EntityVariableName }} = $this->newQuery()
+			->whereIn('{{ AttributeName }}', ${{ AttributeNamePlural }})
+			->get();
+
+		return $this->factory->makeCollectionOfEntities(${{ EntityVariableName }});
+	}

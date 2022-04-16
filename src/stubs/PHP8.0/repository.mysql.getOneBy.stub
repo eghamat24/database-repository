@@ -1,0 +1,13 @@
+
+    /**
+	 * @param {{ AttributeType }} ${{ AttributeName }}
+	 * @return {{ EntityName }}|null
+	 */
+	public function getOneBy{{ FunctionName }}({{ AttributeType }} ${{ AttributeName }}): ?{{ EntityName }}
+	{
+		${{ EntityVariableName }} = $this->newQuery()
+			->where('{{ AttributeName }}', ${{ AttributeName }})
+			->first();
+
+		return ${{ EntityVariableName }} ? $this->factory->makeEntityFromStdClass(${{ EntityVariableName }}) : null;
+	}
