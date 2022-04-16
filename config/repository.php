@@ -1,7 +1,5 @@
 <?php
 
-$source = realpath(base_path('vendor/nanvaie/database-repository/src'));
-
 return [
 
     'path' => [
@@ -13,10 +11,10 @@ return [
         ],
 
         'stubs' => [
-            'entity' => $source.'Stubs/Entity/',
-            'factory' => $source.'Stubs/Factory/',
-            'resource' => $source.'Stubs/Resource/',
-            'repository' => $source.'Stubs/Repository/',
+            'entity' => 'stubs/Entity/',
+            'factory' => 'stubs/Factory/',
+            'resource' => 'stubs/Resource/',
+            'repository' => 'stubs/Repository/',
         ],
 
         'relative' => [
