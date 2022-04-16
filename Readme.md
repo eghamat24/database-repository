@@ -56,5 +56,5 @@ php artisan command:make-entity users
 
 Example 2. Create all necessary classes for two tables named 'users' and 'customers' with enabled foreign key option.
 ```bash
-php artisan command:make-all-repository users customers
+php artisan command:make-all-repository users customers -k
 ```
