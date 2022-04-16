@@ -11,10 +11,10 @@ return [
         ],
 
         'stubs' => [
-            'entity' => 'stubs/Entity/',
-            'factory' => 'stubs/Factory/',
-            'resource' => 'stubs/Resource/',
-            'repository' => 'stubs/Repository/',
+            'entity' => 'stubs/repository/entity/',
+            'factory' => 'stubs/repository/factory/',
+            'resource' => 'stubs/repository/resource/',
+            'repository' => 'stubs/repository/repository/',
         ],
 
         'relative' => [

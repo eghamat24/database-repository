@@ -40,7 +40,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
             ], 'repository-config');
 
             $this->publishes([
-                __DIR__ . '/stubs' => $this->app->basePath('stubs/database-repository'),
+                __DIR__ . '/stubs' => $this->app->basePath('stubs/repository'),
             ], 'repository-stubs');
         }
     }
