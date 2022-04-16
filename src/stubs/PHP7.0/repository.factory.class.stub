@@ -1,0 +1,21 @@
+<?php
+
+namespace {{ FactoryNamespace }};
+
+use {{ EntityNamespace }}\{{ EntityName }};
+use stdClass;
+
+class {{ FactoryName }} extends Factory
+{
+    /**
+     * @param stdClass $entity
+     * @return {{ EntityName }}
+     */
+    public function makeEntityFromStdClass($entity)
+    {
+        ${{ EntityVariableName }} = new {{ EntityName }}();
+
+
+        return ${{ EntityVariableName }};
+    }
+}
