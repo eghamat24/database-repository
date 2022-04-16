@@ -32,16 +32,16 @@ Note: Make sure to run `composer dump-autoload` after these changes.
 ## Usage
 List of artisan commands:
 
-| Command                             | Inputs      | Options        | Description                       |
-|-------------------------------------|-------------|----------------|-----------------------------------|
-| `command:make-entity`               | table_name  | -f, -d, -k, -g | Create new Entity                 |
-| `command:make-factory`              | table_name  | -f, -d, -g     | Create new Factory                |
-| `command:make-resource`             | table_name  | -f, -d, -k, -g | Create new Resource               |
-| `command:make-interface-repository` | table_name  | -f, -d, -k, -g | Create new Repository Interface   |
-| `command:make-repository`           | table_name  | -f, -d, -g     | Create new Base Repository        |
-| `command:make-mysql-repository`     | table_name  | -f, -d, -k, -g | Create new MySql Repository class |
-| `command:make-redis-repository`     | table_name  | -f, -d, -k, -g | Create new Redis Repository class |
-| `command:make-all-repository`       | table_names | -f, -d, -k, -g | Run all of the above commands     |
+| Command                                | Inputs      | Options        | Description                       |
+|----------------------------------------|-------------|----------------|-----------------------------------|
+| `repository:make-entity`               | table_name  | -f, -d, -k, -g | Create new Entity                 |
+| `repository:make-factory`              | table_name  | -f, -d, -g     | Create new Factory                |
+| `repository:make-resource`             | table_name  | -f, -d, -k, -g | Create new Resource               |
+| `repository:make-interface-repository` | table_name  | -f, -d, -k, -g | Create new Repository Interface   |
+| `repository:make-repository`           | table_name  | -f, -d, -g     | Create new Base Repository        |
+| `repository:make-mysql-repository`     | table_name  | -f, -d, -k, -g | Create new MySql Repository class |
+| `repository:make-redis-repository`     | table_name  | -f, -d, -k, -g | Create new Redis Repository class |
+| `repository:make-all-repository`       | table_names | -f, -d, -k, -g | Run all of the above commands     |
 
 ### Options Explanation
 - `-f|--force`: Force commands to override existing files.
