@@ -57,7 +57,7 @@ abstract class Entity implements JsonSerializable, Arrayable
     /**
      * @return int
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): int
     {
         return $this->getId();
     }
@@ -72,6 +72,7 @@ abstract class Entity implements JsonSerializable, Arrayable
 
     /**
      * get an Array of current Attributes value
+     * @return array
      */
     public function toArray(): array
     {
@@ -146,7 +147,7 @@ abstract class Entity implements JsonSerializable, Arrayable
         return false;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
