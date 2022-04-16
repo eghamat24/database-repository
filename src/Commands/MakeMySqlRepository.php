@@ -12,7 +12,11 @@ class MakeMySqlRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-mysql-repository {table_name} {--k|foreign-keys : Detect foreign keys} {--d|delete : Delete resource} {--f|force : Override/Delete existing mysql repository}';
+    protected $signature = 'command:make-mysql-repository {table_name}
+    {--k|foreign-keys : Detect foreign keys}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing mysql repository}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -196,7 +200,9 @@ class MakeMySqlRepository extends Command
 
         file_put_contents("$relativeMysqlRepositoryPath/$mysqlRepositoryName.php", $mysqlRepositoryContent);
 
-        shell_exec("git add $relativeMysqlRepositoryPath/$mysqlRepositoryName.php");
+        if ($this->option('add-to-git')) {
+            shell_exec("git add $relativeMysqlRepositoryPath/$mysqlRepositoryName.php");
+        }
 
         $this->info("MySql Repository \"$mysqlRepositoryName\" has been created.");
 

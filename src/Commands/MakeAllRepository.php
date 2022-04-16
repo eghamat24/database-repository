@@ -11,7 +11,11 @@ class MakeAllRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-all-repository {table_names*} {--k|foreign-keys : Detect foreign keys} {--d|delete : Delete resource} {--f|force : Override/Delete existing classes}';
+    protected $signature = 'command:make-all-repository {table_names*}
+    {--k|foreign-keys : Detect foreign keys}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing classes}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -39,22 +43,24 @@ class MakeAllRepository extends Command
         $force = $this->option('force');
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
+        $addToGit = $this->option('add-to-git');
 
         foreach ($tableNames as $_tableName) {
             $arguments = [
                 'table_name' => $_tableName,
                 '--foreign-keys' => $detectForeignKeys,
                 '--delete' => $delete,
-                '--force' => $force
+                '--force' => $force,
+                '--add-to-git' => $addToGit
             ];
 
             $this->call('command:make-entity', $arguments);
-            $this->call('command:make-factory', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force]);
+            $this->call('command:make-factory', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
             $this->call('command:make-resource', $arguments);
             $this->call('command:make-interface-repository', $arguments);
             $this->call('command:make-mysql-repository', $arguments);
             $this->call('command:make-redis-repository', $arguments);
-            $this->call('command:make-repository', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force]);
+            $this->call('command:make-repository', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
         }
     }
 }

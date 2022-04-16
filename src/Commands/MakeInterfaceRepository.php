@@ -12,7 +12,11 @@ class MakeInterfaceRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-interface-repository {table_name} {--k|foreign-keys : Detect foreign keys} {--d|delete : Delete resource} {--f|force : Override/Delete existing mysql repository}';
+    protected $signature = 'command:make-interface-repository {table_name}
+    {--k|foreign-keys : Detect foreign keys}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing mysql repository}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -105,7 +109,9 @@ class MakeInterfaceRepository extends Command
 
         file_put_contents("$relativeInterfacePath/$interfaceName.php", $interfaceContent);
 
-        shell_exec("git add $relativeInterfacePath/$interfaceName.php");
+        if ($this->option('add-to-git')) {
+            shell_exec("git add $relativeInterfacePath/$interfaceName.php");
+        }
 
         $this->info("Interface \"$interfaceName\" has been created.");
 

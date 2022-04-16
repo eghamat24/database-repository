@@ -12,7 +12,10 @@ class MakeFactory extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-factory {table_name} {--d|delete : Delete resource} {--f|force : Override/Delete existing factory class}';
+    protected $signature = 'command:make-factory {table_name}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing factory class}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -88,7 +91,9 @@ class MakeFactory extends Command
 
         file_put_contents("$relativeFactoriesPath/$factoryName.php", $factoryContent);
 
-        shell_exec("git add $relativeFactoriesPath/$factoryName.php");
+        if ($this->option('add-to-git')) {
+            shell_exec("git add $relativeFactoriesPath/$factoryName.php");
+        }
 
         $this->info("Factory \"$factoryName\" has been created.");
 

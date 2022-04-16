@@ -12,7 +12,11 @@ class MakeEntity extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-entity {table_name} {--k|foreign-keys : Detect foreign keys} {--d|delete : Delete resource} {--f|force : Override/Delete existing mysql repository}';
+    protected $signature = 'command:make-entity {table_name}
+    {--k|foreign-keys : Detect foreign keys}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing mysql repository}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -123,13 +127,17 @@ class MakeEntity extends Command
         // Create Additional Setters and Getters from Foreign keys
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent, $this->writeAccessors($accessorsStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE), -1, 0);
+                $baseContent = substr_replace($baseContent,
+                    $this->writeAccessors($accessorsStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
+                    -1, 0);
             }
         }
 
         file_put_contents($filenameWithPath, $baseContent);
 
-        shell_exec('git add '.$filenameWithPath);
+        if ($this->option('add-to-git')) {
+            shell_exec('git add '.$filenameWithPath);
+        }
 
         $this->info("Entity \"$entityName\" has been created.");
 

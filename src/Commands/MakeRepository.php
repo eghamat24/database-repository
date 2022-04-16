@@ -11,7 +11,10 @@ class MakeRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-repository {table_name} {--d|delete : Delete resource} {--f|force : Override/Delete existing repository class}';
+    protected $signature = 'command:make-repository {table_name}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing repository class}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -66,7 +69,9 @@ class MakeRepository extends Command
 
         file_put_contents("$relativeRepositoryPath/$repository.php", $repositoryContent);
 
-        shell_exec("git add $relativeRepositoryPath/$repository.php");
+        if ($this->option('add-to-git')) {
+            shell_exec("git add $relativeRepositoryPath/$repository.php");
+        }
 
         $this->info("Repository \"$repository\" has been created.");
 

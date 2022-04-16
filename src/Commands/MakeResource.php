@@ -12,7 +12,11 @@ class MakeResource extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-resource {table_name} {--k|foreign-keys : Detect foreign keys} {--d|delete : Delete resource} {--f|force : Override/Delete existing mysql repository}';
+    protected $signature = 'command:make-resource {table_name}
+    {--k|foreign-keys : Detect foreign keys}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing mysql repository}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -105,7 +109,9 @@ class MakeResource extends Command
 
         file_put_contents("$relativeResourcesPath/$resourceName.php", $resourceContent);
 
-        shell_exec("git add $relativeResourcesPath/$resourceName.php");
+        if ($this->option('add-to-git')) {
+            shell_exec("git add $relativeResourcesPath/$resourceName.php");
+        }
 
         $this->info("Resource \"$resourceName\" has been created.");
 

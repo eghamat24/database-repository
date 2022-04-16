@@ -12,7 +12,11 @@ class MakeRedisRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-redis-repository {table_name} {--k|foreign-keys : Detect foreign keys} {--d|delete : Delete resource} {--f|force : Override/Delete existing redis repository}';
+    protected $signature = 'command:make-redis-repository {table_name}
+    {--k|foreign-keys : Detect foreign keys}
+    {--d|delete : Delete resource}
+    {--f|force : Override/Delete existing redis repository}
+    {--g|add-to-git : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -85,7 +89,9 @@ class MakeRedisRepository extends Command
 
         file_put_contents("$relativeRedisRepositoryPath/$redisRepositoryName.php", $redisRepositoryContent);
 
-        shell_exec("git add $relativeRedisRepositoryPath/$redisRepositoryName.php");
+        if ($this->option('add-to-git')) {
+            shell_exec("git add $relativeRedisRepositoryPath/$redisRepositoryName.php");
+        }
 
         $this->info("Redis Repository \"$redisRepositoryName\" has been created.");
 
