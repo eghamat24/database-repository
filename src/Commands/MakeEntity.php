@@ -12,7 +12,7 @@ class MakeEntity extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-entity {table_name}
+    protected $signature = 'repository:make-entity {table_name}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing mysql repository}

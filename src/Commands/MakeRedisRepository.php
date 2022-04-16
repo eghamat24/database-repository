@@ -12,7 +12,7 @@ class MakeRedisRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-redis-repository {table_name}
+    protected $signature = 'repository:make-redis-repository {table_name}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing redis repository}

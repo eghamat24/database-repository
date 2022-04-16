@@ -12,7 +12,7 @@ class MakeFactory extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-factory {table_name}
+    protected $signature = 'repository:make-factory {table_name}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing factory class}
     {--g|add-to-git : Add created file to git repository}';

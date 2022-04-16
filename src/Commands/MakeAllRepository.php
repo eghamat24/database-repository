@@ -11,7 +11,7 @@ class MakeAllRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-all-repository {table_names*}
+    protected $signature = 'repository:make-all-repository {table_names*}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing classes}

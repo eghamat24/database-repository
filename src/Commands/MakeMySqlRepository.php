@@ -12,7 +12,7 @@ class MakeMySqlRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-mysql-repository {table_name}
+    protected $signature = 'repository:make-mysql-repository {table_name}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing mysql repository}

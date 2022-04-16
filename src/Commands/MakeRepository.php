@@ -11,7 +11,7 @@ class MakeRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-repository {table_name}
+    protected $signature = 'repository:make-repository {table_name}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing repository class}
     {--g|add-to-git : Add created file to git repository}';

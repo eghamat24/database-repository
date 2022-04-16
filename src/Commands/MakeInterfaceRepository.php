@@ -12,7 +12,7 @@ class MakeInterfaceRepository extends Command
      *
      * @var string
      */
-    protected $signature = 'command:make-interface-repository {table_name}
+    protected $signature = 'repository:make-interface-repository {table_name}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing mysql repository}

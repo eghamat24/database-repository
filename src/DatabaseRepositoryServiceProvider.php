@@ -25,17 +25,23 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->offerPublishing();
+
+        // Automatically apply the package configuration
+        $this->mergeConfigFrom(__DIR__ . '/../config/repository.php', 'repository');
+
         $this->registerCommands();
     }
 
     public function offerPublishing(): void
     {
-        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
+        if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '../config/repository.php' => config_path('repository.php'),
+                __DIR__ . '/../config/repository.php' => $this->app->configPath('repository.php'),
             ], 'repository-config');
-        } elseif ($this->app instanceof LumenApplication) {
-            $this->app->configure('repository');
+
+            $this->publishes([
+                __DIR__ . '/stubs' => $this->app->basePath('stubs/database-repository'),
+            ], 'repository-stubs');
         }
     }
 
@@ -45,35 +51,35 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     private function registerCommands(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->app->singleton('command.make-all-repository', function () {
+            $this->app->singleton('repository.make-all-repository', function () {
                 return new MakeAllRepository();
             });
 
-            $this->app->singleton('command.make-entity', function () {
+            $this->app->singleton('repository.make-entity', function () {
                 return new MakeEntity();
             });
 
-            $this->app->singleton('command.make-factory', function () {
+            $this->app->singleton('repository.make-factory', function () {
                 return new MakeFactory();
             });
 
-            $this->app->singleton('command.make-interface-repository', function () {
+            $this->app->singleton('repository.make-interface-repository', function () {
                 return new MakeInterfaceRepository();
             });
 
-            $this->app->singleton('command.make-mysql-repository', function () {
+            $this->app->singleton('repository.make-mysql-repository', function () {
                 return new MakeMySqlRepository();
             });
 
-            $this->app->singleton('command.make-redis-repository', function () {
+            $this->app->singleton('repository.make-redis-repository', function () {
                 return new MakeRedisRepository();
             });
 
-            $this->app->singleton('command.make-repository', function () {
+            $this->app->singleton('repository.make-repository', function () {
                 return new MakeRepository();
             });
 
-            $this->app->singleton('command.make-resource', function () {
+            $this->app->singleton('repository.make-resource', function () {
                 return new MakeResource();
             });
 
