@@ -105,19 +105,19 @@ class MakeEntity extends Command
         $accessorsStub = file_get_contents($entityStubsPath.'accessors.stub');
 
         // Initialize Class
-        $baseContent = str_replace(['EntityNameSpace', 'EntityName'], [$entityNamespace, $entityName], $baseContent);
+        $baseContent = str_replace(['{{ EntityNamespace }}', '{{ EntityName }}'], [$entityNamespace, $entityName], $baseContent);
 
         // Create Attributes
         foreach ($columns as $_column) {
             $baseContent = substr_replace($baseContent,
-                $this->writeAttribute($attributeStub, $this->dataTypes[$_column->DATA_TYPE], $_column->COLUMN_NAME),
+                $this->writeAttribute($attributeStub, $_column->COLUMN_NAME, $this->dataTypes[$_column->DATA_TYPE]),
                 -1, 0);
         }
         // Create Additional Attributes from Foreign Keys
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
                 $baseContent = substr_replace($baseContent,
-                    $this->writeAttribute($attributeStub, $_foreignKey->ENTITY_DATA_TYPE, $_foreignKey->VARIABLE_NAME),
+                    $this->writeAttribute($attributeStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
                     -1, 0);
             }
         }
