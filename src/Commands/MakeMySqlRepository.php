@@ -77,8 +77,8 @@ class MakeMySqlRepository extends Command
         $factoryName = $entityName . "Factory";
         $interfaceName = "I$entityName" . "Repository";
         $mysqlRepositoryName = "MySql$entityName" . "Repository";
-        $mysqlRepositoryNamespace = config('repository.path.namespace.repository');
-        $relativeMysqlRepositoryPath = config('repository.path.relative.repository') . "\\$entityName";
+        $mysqlRepositoryNamespace = config('repository.path.namespace.repositories');
+        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
 
         if ($this->option('delete')) {
             unlink("$relativeMysqlRepositoryPath/$mysqlRepositoryName.php");

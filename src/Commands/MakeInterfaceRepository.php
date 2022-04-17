@@ -39,8 +39,8 @@ class MakeInterfaceRepository extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $interfaceName = "I$entityName" . "Repository";
-        $interfaceNamespace = config('repository.path.namespace.repository');
-        $relativeInterfacePath = config('repository.path.relative.repository') . "\\$entityName";
+        $interfaceNamespace = config('repository.path.namespace.repositories');
+        $relativeInterfacePath = config('repository.path.relative.repositories') . "\\$entityName";
 
         if ($this->option('delete')) {
             unlink("$relativeInterfacePath/$interfaceName.php");

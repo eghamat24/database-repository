@@ -41,8 +41,8 @@ class MakeRedisRepository extends Command
         $factoryName = $entityName . "Factory";
         $interfaceName = "I$entityName" . "Repository";
         $redisRepositoryName = "Redis$entityName" . "Repository";
-        $redisRepositoryNamespace = config('repository.path.namespace.repository');
-        $relativeRedisRepositoryPath = config('repository.path.relative.repository') . "\\$entityName";
+        $redisRepositoryNamespace = config('repository.path.namespace.repositories');
+        $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
 
         if ($this->option('delete')) {
             unlink("$relativeRedisRepositoryPath/$redisRepositoryName.php");

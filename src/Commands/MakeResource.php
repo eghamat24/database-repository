@@ -39,8 +39,8 @@ class MakeResource extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $resourceName = $entityName . "Resource";
-        $resourceNamespace = config('repository.path.namespace.resource');
-        $relativeResourcesPath = config('repository.path.relative.resource');
+        $resourceNamespace = config('repository.path.namespace.resources');
+        $relativeResourcesPath = config('repository.path.relative.resources');
 
         if ($this->option('delete')) {
             unlink("$relativeResourcesPath/$resourceName.php");

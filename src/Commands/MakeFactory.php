@@ -37,8 +37,10 @@ class MakeFactory extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $factoryName = $entityName . "Factory";
+        $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $relativeFactoriesPath = config('repository.path.relative.factories');
+        $factoryStubsPath = config('repository.path.stub.factories');
 
         if ($this->option('delete')) {
             unlink("$relativeFactoriesPath/$factoryName.php");

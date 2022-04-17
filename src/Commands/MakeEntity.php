@@ -66,7 +66,7 @@ class MakeEntity extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityNamespace = config('repository.path.namespace.entities');
         $relativeEntitiesPath = config('repository.path.relative.entities');
-        $entityStubsPath = config('repository.path.stubs.entity');
+        $entityStubsPath = config('repository.path.stub.entities');
         $filenameWithPath = $relativeEntitiesPath.$entityName.'.php';
 
         if ($this->option('delete')) {

@@ -34,8 +34,8 @@ class MakeRepository extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $mysqlRepositoryName = "MySql$entityName" . "Repository";
         $repository = $entityName . "Repository";
-        $repositoryNamespace = config('repository.path.namespace.repository');
-        $relativeRepositoryPath = config('repository.path.relative.repository') . "\\$entityName";
+        $repositoryNamespace = config('repository.path.namespace.repositories');
+        $relativeRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
 
         if ($this->option('delete')) {
             unlink("$relativeRepositoryPath/$repository.php");

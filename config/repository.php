@@ -8,22 +8,22 @@ return [
         'namespace' => [
             'entities' => 'App\Models\Entities',
             'factories' => 'App\Models\Factories',
-            'resource' => 'App\Http\Resources\Admin',
-            'repository' => 'App\Models\Repositories',
+            'resources' => 'App\Http\Resources\Admin',
+            'repositories' => 'App\Models\Repositories',
         ],
 
-        'stubs' => [
-            'entity' => 'stubs/PHP'.config('repository.php_version').'/repository.entity.',
-            'factory' => 'stubs/PHP'.config('repository.php_version').'/repository.factory.',
-            'resource' => 'stubs/PHP'.config('repository.php_version').'/repository.resource.',
-            'repository' => 'stubs/PHP'.config('repository.php_version').'/repository.repository.',
+        'stub' => [
+            'entities' => 'stubs/repository.entity.',
+            'factories' => 'stubs/repository.factory.',
+            'resources' => 'stubs/repository.resource.',
+            'repositories' => 'stubs/repository.repository.',
         ],
 
         'relative' => [
             'entities' => 'app/Models/Entities/',
             'factories' => 'app/Models/Factories/',
-            'resource' => 'app/Http/Resources/Admin/',
-            'repository' => 'app/Models/Repositories/',
+            'resources' => 'app/Http/Resources/Admin/',
+            'repositories' => 'app/Models/Repositories/',
         ],
 
     ]
