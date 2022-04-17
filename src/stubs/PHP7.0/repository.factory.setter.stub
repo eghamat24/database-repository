@@ -1,1 +1,1 @@
-        ${{ EntityVariableName }}->set{{ SetterName }}($entity->{{ AttributeName }} ?? null);
+        ${{ EntityVariableName }}->set{{ SetterName }}($entity->{{ AttributeName }});

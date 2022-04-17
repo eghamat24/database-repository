@@ -26,6 +26,13 @@ class MakeFactory extends Command
 
     use CustomMySqlQueries;
 
+    public function writeSetter(string $setterStub, string $attributeName)
+    {
+        return str_replace(['{{ SetterName }}', '{{ AttributeName }}'],
+            [ucfirst($attributeName), $attributeName],
+            $setterStub);
+    }
+
     /**
      * Execute the console command.
      *
@@ -41,6 +48,7 @@ class MakeFactory extends Command
         $factoryNamespace = config('repository.path.namespace.factories');
         $relativeFactoriesPath = config('repository.path.relative.factories');
         $factoryStubsPath = config('repository.path.stub.factories');
+        $filenameWithPath = $relativeFactoriesPath.$factoryName.'.php';
 
         if ($this->option('delete')) {
             unlink("$relativeFactoriesPath/$factoryName.php");
@@ -65,26 +73,28 @@ class MakeFactory extends Command
             die;
         }
 
-        // Initialize Class
-        $factoryContent = "<?php\n\nnamespace $factoryNamespace;\n\n";
-        $factoryContent .= "use stdClass;";
-        $factoryContent .= "\nuse App\Models\Entities\\$entityName;";
-        $factoryContent .= "\nuse Nanvaie\DatabaseRepository\Models\Factory\Factory;\n\n";
-        $factoryContent .= "class $factoryName extends Factory\n{\n";
-
-        // Create "makeEntityFromStdClass" Function
-        $factoryContent .= "\t/**\n\t * @param stdClass \$entity\n\t * @return $entityName\n\t */\n";
-        $factoryContent .= "\tpublic function makeEntityFromStdClass(stdClass \$entity): $entityName\n\t{\n";
-        $factoryContent .= "\t\t\$$entityVariableName = new $entityName();\n";
         foreach ($columns as $_column) {
-            $factoryContent .= "\n\t\t\$" . $entityVariableName . "->set" . ucfirst(camel_case($_column->COLUMN_NAME)) . "(\$entity->" . snake_case($_column->COLUMN_NAME) . " ?? null);";
+            $_column->COLUMN_NAME = camel_case($_column->COLUMN_NAME);
         }
-        $factoryContent .= "\n\n\t\treturn \$$entityVariableName;\n\t}\n}";
 
-        file_put_contents("$relativeFactoriesPath/$factoryName.php", $factoryContent);
+        $baseContent = file_get_contents($factoryStubsPath.'class.stub');
+        $setterStub = file_get_contents($factoryStubsPath.'setter.stub');
+
+        // Initialize Class
+        foreach ($columns as $_column) {
+            $baseContent = substr_replace($baseContent,
+                $this->writeSetter($setterStub, $_column->COLUMN_NAME),
+                -53, 0);
+        }
+
+        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}'],
+            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName],
+            $baseContent);
+
+        file_put_contents($filenameWithPath, $baseContent);
 
         if ($this->option('add-to-git')) {
-            shell_exec("git add $relativeFactoriesPath/$factoryName.php");
+            shell_exec("git add $filenameWithPath");
         }
 
         $this->info("Factory \"$factoryName\" has been created.");
