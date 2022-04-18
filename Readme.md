@@ -7,13 +7,11 @@ composer require nanvaie/database-repository --dev
 ```
 
 ### Setup for Laravel
-Navigate to `AppServiceProvider.php` in `app/Providers` folder and add following code snippet (or it's equivalent) in 'register' function:
-```php
-// snip
-if ($this->app->environment('local', 'testing')) {
-    $this->app->register(Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class);
-}
-// snip
+Before publishing assets, add `REPOSITORY_PHP_VERSION` variable to `.env` and set it to your version of choosing. Supported values are: 8.0, 7.4 (Default is 8.0).
+
+Then run following command in console to publish necessary assets in your project directory. 
+```bash
+php artisan vendor:publish --provider=Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider
 ```
 
 ### Setup for Lumen
