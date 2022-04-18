@@ -1,0 +1,21 @@
+<?php
+
+namespace {{ MySqlRepositoryNamespace }};
+
+use {{ EntityNamespace }}\{{ EntityName }};
+use {{ FactoryNamespace }}\{{ FactoryName }};
+use {{ MySqlRepositoryNamespace }}\MySqlRepository;
+use Illuminate\Support\Collection;
+
+class {{ MySqlRepositoryName }} extends MySqlRepository implements {{ RepositoryInterfaceName }}
+{
+	public function __construct()
+	{
+		$this->table = '{{ TableName }}';
+		$this->primaryKey = 'id';
+		$this->softDelete = {{ HasSoftDelete }};
+		$this->factory = new {{ FactoryName }}();
+
+		parent::__construct();
+	}
+}

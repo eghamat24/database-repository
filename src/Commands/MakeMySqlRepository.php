@@ -27,40 +27,25 @@ class MakeMySqlRepository extends Command
 
     use CustomMySqlQueries;
 
-    /**
-     * @param string $functionName
-     * @param string $entityName
-     * @return string
-     */
-    private function createGetOneFunction(string $functionName, string $entityName): string
+    private function writeGetOneFunction(string $getOneStub, string $columnName,  string $attributeType): string
     {
-        $functionName = camel_case($functionName);
-        $entityVariableName = camel_case($entityName);
-
-        return "\n\t/**\n\t * @param int \$$functionName\n\t * @return $entityName|null\n\t */\n\t" .
-            "public function getOneBy" . ucfirst($functionName) . "(int \$$functionName): ?$entityName\n\t" .
-            "{\n\t\t\$$entityVariableName = \$this->newQuery()" .
-            "\n\t\t\t->where('" . snake_case($functionName) . "', \$$functionName)" .
-            "\n\t\t\t->first();" .
-            "\n\n\t\treturn \$$entityVariableName ? \$this->factory->makeEntityFromStdClass(\$$entityVariableName) : null;\n\t}\n";
+        return str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeName }}'],
+            [ucfirst(camel_case($columnName)), $columnName, $attributeType, camel_case($columnName)],
+            $getOneStub);
     }
 
-    /**
-     * @param string $functionName
-     * @param string $entityName
-     * @return string
-     */
-    private function createGetAllFunction(string $functionName, string $entityName): string
+    private function writeGetAllFunction(string $getOneStub, string $columnName,  string $attributeType): string
     {
-        $functionNamePlural = str_plural(camel_case($functionName));
-        $entityVariableNamePlural = str_plural(camel_case($entityName));
+        return str_replace(['{{ FunctionNamePlural }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeNamePlural }}'],
+            [ucfirst(str_plural(camel_case($columnName))), $columnName, $attributeType, str_plural(camel_case($columnName))],
+            $getOneStub);
+    }
 
-        return "\n\t/**\n\t * @param array \$$functionNamePlural\n\t * @return Collection\n\t */\n\t" .
-            "public function getAllBy" . ucfirst($functionNamePlural) . "(array \$$functionNamePlural): Collection\n\t" .
-            "{\n\t\t\$$entityVariableNamePlural = \$this->newQuery()" .
-            "\n\t\t\t->whereIn('$functionName', \$$functionNamePlural)" .
-            "\n\t\t\t->get();" .
-            "\n\n\t\treturn \$this->factory->makeCollectionOfEntities(\$$entityVariableNamePlural);\n\t}\n";
+    private function writeGetterFunction(string $getterStub, string $columnName): string
+    {
+        return str_replace(['{{ ColumnName }}', '{{ GetterName }}'],
+            [$columnName, ucfirst(camel_case($columnName))],
+            $getterStub);
     }
 
     /**
@@ -74,11 +59,15 @@ class MakeMySqlRepository extends Command
         $detectForeignKeys = $this->option('foreign-keys');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
-        $factoryName = $entityName . "Factory";
-        $interfaceName = "I$entityName" . "Repository";
-        $mysqlRepositoryName = "MySql$entityName" . "Repository";
+        $factoryName = $entityName.'Factory';
+        $interfaceName = 'I'.$entityName.'Repository';
+        $mysqlRepositoryName = 'MySql'.$entityName.'Repository';
+        $entityNamespace = config('repository.path.namespace.entities');
+        $factoryNamespace = config('repository.path.namespace.factories');
         $mysqlRepositoryNamespace = config('repository.path.namespace.repositories');
         $relativeMysqlRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
+        $mysqlRepositoryStubsPath = config('repository.path.stub.mysql-repositories');
+        $filenameWithPath = $relativeMysqlRepositoryPath.'\\'.$mysqlRepositoryName.'.php';
 
         if ($this->option('delete')) {
             unlink("$relativeMysqlRepositoryPath/$mysqlRepositoryName.php");
@@ -107,91 +96,76 @@ class MakeMySqlRepository extends Command
             $foreignKeys = $this->extractForeignKeys($tableName);
         }
 
+        $baseContent = file_get_contents($mysqlRepositoryStubsPath.'class.stub');
+        $getOneStub = file_get_contents($mysqlRepositoryStubsPath.'getOneBy.stub');
+        $getAllStub = file_get_contents($mysqlRepositoryStubsPath.'getAllBy.stub');
+        $createFunctionStub = file_get_contents($mysqlRepositoryStubsPath.'create.stub');
+        $updateFunctionStub = file_get_contents($mysqlRepositoryStubsPath.'update.stub');
+        $deleteAndUndeleteStub = file_get_contents($mysqlRepositoryStubsPath.'deleteAndUndelete.stub');
+        $getterStub = file_get_contents($mysqlRepositoryStubsPath.'getter.stub');
+        $timeFieldStub = file_get_contents($mysqlRepositoryStubsPath.'timeField.stub');
+
         // Initialize MySql Repository
-        $mysqlRepositoryContent = "<?php\n\nnamespace $mysqlRepositoryNamespace\\$entityName;\n\n";
-        $mysqlRepositoryContent .= "use App\Models\Entities\\$entityName;\n";
-        $mysqlRepositoryContent .= "use App\Models\Factories\\$factoryName;\n";
-        $mysqlRepositoryContent .= "use Nanvaie\DatabaseRepository\Models\Repository\MySqlRepository;\n";
-        $mysqlRepositoryContent .= "use Illuminate\Support\Collection;\n\n";
-        $mysqlRepositoryContent .= "class $mysqlRepositoryName extends MySqlRepository implements $interfaceName\n{";
-
-        // Define Constructor
-        $mysqlRepositoryContent .= "\n\t/**\n\t * $mysqlRepositoryName constructor.\n\t */";
-        $mysqlRepositoryContent .= "\n\tpublic function __construct()\n\t{";
-        $mysqlRepositoryContent .= "\n\t\t\$this->table = '$tableName';";
-        if (in_array('deleted_at', $columns->pluck('COLUMN_NAME')->toArray())) {
-            $mysqlRepositoryContent .= "\n\t\t\$this->softDelete = true;";
-        }
-        $mysqlRepositoryContent .= "\n\t\t\$this->factory = new $factoryName();";
-        $mysqlRepositoryContent .= "\n\n\t\tparent::__construct();\n\t}\n";
-
-        // Define getOneBy and getAllBy Functions
-        $mysqlRepositoryContent .= $this->createGetOneFunction('id', $entityName);
-        $mysqlRepositoryContent .= $this->createGetAllFunction('id', $entityName);
+        $baseContent = substr_replace($baseContent,
+            $this->writeGetOneFunction($getOneStub, 'id', 'int'),
+            -1, 0);
+        $baseContent = substr_replace($baseContent,
+            $this->writeGetAllFunction($getAllStub, 'id', 'int'),
+            -1, 0);
 
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $mysqlRepositoryContent .= $this->createGetOneFunction($_foreignKey->COLUMN_NAME, $entityName);
-                $mysqlRepositoryContent .= $this->createGetAllFunction($_foreignKey->COLUMN_NAME, $entityName);
+                $baseContent = substr_replace($baseContent,
+                    $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $entityName),
+                    -1, 0);
+                $baseContent = substr_replace($baseContent,
+                    $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $entityName),
+                    -1, 0);
             }
         }
 
-        // Create "create" Function
-        $mysqlRepositoryContent .= "\n\t/**\n\t * @param $entityName \$$entityVariableName\n\t * @return $entityName\n\t */";
-        $mysqlRepositoryContent .= "\n\tpublic function create($entityName \$$entityVariableName): $entityName\n\t{";
-        $mysqlRepositoryContent .= "\n\t\t\$id = \$this->newQuery()";
-        $mysqlRepositoryContent .= "\n\t\t\t->insertGetId([";
+        // Create "create" function
         foreach ($columns as $_column) {
-            if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => \$" . $entityVariableName . "->get" . ucfirst(camel_case($_column->COLUMN_NAME)) . "(),";
+            if ( ! in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
+                $createFunctionStub = substr_replace($createFunctionStub,
+                    $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
+                    -95, 0);
             } elseif ($_column->COLUMN_NAME === 'created_at') {
-                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => date('Y-m-d H:i:s'),";
+                $createFunctionStub = substr_replace($createFunctionStub,
+                    $this->writeGetterFunction($timeFieldStub, $_column->COLUMN_NAME),
+                    -95, 0);
             }
         }
-        $mysqlRepositoryContent .= "\n\t\t\t]);\n";
-        $mysqlRepositoryContent .= "\n\t\t\$" . $entityVariableName . "->setId(\$id);\n";
-        $mysqlRepositoryContent .= "\n\t\treturn \$$entityVariableName;\n\t}\n";
+        $baseContent = substr_replace($baseContent, $createFunctionStub, -1, 0);
 
-        // Create "update" Function
-        $mysqlRepositoryContent .= "\n\t/**\n\t * @param $entityName \$$entityVariableName\n\t * @return int\n\t */";
-        $mysqlRepositoryContent .= "\n\tpublic function update($entityName \$$entityVariableName): int\n\t{";
-        $mysqlRepositoryContent .= "\n\t\treturn \$this->newQuery()";
-        $mysqlRepositoryContent .= "\n\t\t\t->where(\$this->primaryKey, \$" . $entityVariableName . "->getPrimaryKey())";
-        $mysqlRepositoryContent .= "\n\t\t\t->update([";
+        // Create "update" function
         foreach ($columns as $_column) {
-            if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => \$" . $entityVariableName . "->get" . ucfirst(camel_case($_column->COLUMN_NAME)) . "(),";
+            if ( ! in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
+                $updateFunctionStub = substr_replace($updateFunctionStub,
+                    $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
+                    -12, 0);
             } elseif ($_column->COLUMN_NAME === 'updated_at') {
-                $mysqlRepositoryContent .= "\n\t\t\t\t'" . $_column->COLUMN_NAME . "' => date('Y-m-d H:i:s'),";
+                $updateFunctionStub = substr_replace($updateFunctionStub,
+                    $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
+                    -12, 0);
             }
         }
-        $mysqlRepositoryContent .= "\n\t\t\t]);\n\t}\n";
+        $baseContent = substr_replace($baseContent, $updateFunctionStub, -1, 0);
 
-        // Create "delete" and "undelete" Function
-        if (in_array('deleted_at', $columns->pluck('COLUMN_NAME')->toArray())) {
-            $mysqlRepositoryContent .= "\n\t/**\n\t * @param $entityName \$$entityVariableName\n\t * @return int\n\t */";
-            $mysqlRepositoryContent .= "\n\tpublic function delete($entityName \$$entityVariableName): int\n\t{";
-            $mysqlRepositoryContent .= "\n\t\treturn \$this->newQuery()";
-            $mysqlRepositoryContent .= "\n\t\t\t->where(\$this->primaryKey, \$" . $entityVariableName . "->getPrimaryKey())";
-            $mysqlRepositoryContent .= "\n\t\t\t->update([";
-            $mysqlRepositoryContent .= "\n\t\t\t\t'deleted_at' => date('Y-m-d H:i:s'),";
-            $mysqlRepositoryContent .= "\n\t\t\t]);\n\t}\n";
-
-            $mysqlRepositoryContent .= "\n\t/**\n\t * @param $entityName \$$entityVariableName\n\t * @return int\n\t */";
-            $mysqlRepositoryContent .= "\n\tpublic function undelete($entityName \$$entityVariableName): int\n\t{";
-            $mysqlRepositoryContent .= "\n\t\treturn \$this->newQuery()";
-            $mysqlRepositoryContent .= "\n\t\t\t->where(\$this->primaryKey, \$" . $entityVariableName . "->getPrimaryKey())";
-            $mysqlRepositoryContent .= "\n\t\t\t->update([";
-            $mysqlRepositoryContent .= "\n\t\t\t\t'deleted_at' => null,";
-            $mysqlRepositoryContent .= "\n\t\t\t]);\n\t}\n";
+        // Create "delete" and "undelete" functions if necessary
+        $hasSoftDelete = in_array('deleted_at', $columns->pluck('COLUMN_NAME')->toArray(), true);
+        if ($hasSoftDelete) {
+            $baseContent = substr_replace($baseContent,$deleteAndUndeleteStub, -1, 0);
         }
 
-        $mysqlRepositoryContent .= "}";
+        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ MySqlRepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}'],
+            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $mysqlRepositoryName, $mysqlRepositoryNamespace, $interfaceName, $tableName, $hasSoftDelete ? 'true' : 'false'],
+            $baseContent);
 
-        file_put_contents("$relativeMysqlRepositoryPath/$mysqlRepositoryName.php", $mysqlRepositoryContent);
+        file_put_contents($filenameWithPath, $baseContent);
 
         if ($this->option('add-to-git')) {
-            shell_exec("git add $relativeMysqlRepositoryPath/$mysqlRepositoryName.php");
+            shell_exec("git add $filenameWithPath");
         }
 
         $this->info("MySql Repository \"$mysqlRepositoryName\" has been created.");

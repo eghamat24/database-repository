@@ -6,7 +6,7 @@
 	public function getAllBy{{ FunctionNamePlural }}(array ${{ AttributeNamePlural }}): Collection
 	{
 		${{ EntityVariableName }} = $this->newQuery()
-			->whereIn('{{ AttributeName }}', ${{ AttributeNamePlural }})
+			->whereIn('{{ ColumnName }}', ${{ AttributeNamePlural }})
 			->get();
 
 		return $this->factory->makeCollectionOfEntities(${{ EntityVariableName }});

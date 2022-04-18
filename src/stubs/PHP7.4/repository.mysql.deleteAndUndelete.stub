@@ -1,0 +1,26 @@
+
+	/**
+	 * @param {{ EntityName }} ${{ EntityVariableName }}
+	 * @return int
+	 */
+	public function delete({{ EntityName }} ${{ EntityVariableName }}): int
+	{
+		return $this->newQuery()
+			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
+			->update([
+				'deleted_at' => date('Y-m-d H:i:s'),
+			]);
+	}
+
+	/**
+	 * @param {{ EntityName }} ${{ EntityVariableName }}
+	 * @return int
+	 */
+	public function undelete({{ EntityName }} ${{ EntityVariableName }}): int
+	{
+		return $this->newQuery()
+			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
+			->update([
+				'deleted_at' => null,
+			]);
+	}
