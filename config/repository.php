@@ -16,7 +16,10 @@ return [
             'entities' => 'stubs/repository.entity.',
             'factories' => 'stubs/repository.factory.',
             'resources' => 'stubs/repository.resource.',
-            'mysql-repositories' => 'stubs/repository.mysql.',
+            'repositories' => [
+                'mysql' => 'stubs/repository.mysql.',
+                'interface' => 'stubs/repository.interface.',
+            ]
         ],
 
         'relative' => [
