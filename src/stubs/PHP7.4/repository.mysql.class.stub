@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ MySqlRepositoryNamespace }};
+namespace {{ RepositoryNamespace }}\{{ EntityName }};
 
 use {{ EntityNamespace }}\{{ EntityName }};
 use {{ FactoryNamespace }}\{{ FactoryName }};
-use {{ MySqlRepositoryNamespace }}\MySqlRepository;
+use {{ RepositoryNamespace }}\MySqlRepository;
 use Illuminate\Support\Collection;
 
 class {{ MySqlRepositoryName }} extends MySqlRepository implements {{ RepositoryInterfaceName }}

@@ -1,0 +1,4 @@
+
+	public function delete({{ EntityName }} ${{ EntityVariableName }}): int;
+
+	public function undelete({{ EntityName }} ${{ EntityVariableName }}): int;

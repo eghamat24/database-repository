@@ -27,6 +27,20 @@ class MakeInterfaceRepository extends Command
 
     use CustomMySqlQueries;
 
+    private function writeGetOneFunction(string $getOneStub, string $columnName,  string $attributeType): string
+    {
+        return str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeName }}'],
+            [ucfirst(camel_case($columnName)), $columnName, $attributeType, camel_case($columnName)],
+            $getOneStub);
+    }
+
+    private function writeGetAllFunction(string $getOneStub, string $columnName,  string $attributeType): string
+    {
+        return str_replace(['{{ FunctionNamePlural }}', '{{ AttributeType }}', '{{ AttributeNamePlural }}'],
+            [ucfirst(str_plural(camel_case($columnName))), $attributeType, str_plural(camel_case($columnName))],
+            $getOneStub);
+    }
+
     /**
      * Execute the console command.
      *
@@ -39,8 +53,11 @@ class MakeInterfaceRepository extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $interfaceName = "I$entityName" . "Repository";
-        $interfaceNamespace = config('repository.path.namespace.repositories');
+        $entityNamespace = config('repository.path.namespace.entities');
+        $repositoryNamespace = config('repository.path.namespace.repositories');
         $relativeInterfacePath = config('repository.path.relative.repositories') . "\\$entityName";
+        $interfaceRepositoryStubsPath = config('repository.path.stub.repositories.interface');
+        $filenameWithPath = $relativeInterfacePath.'\\'.$interfaceName.'.php';
 
         if ($this->option('delete')) {
             unlink("$relativeInterfacePath/$interfaceName.php");
@@ -69,38 +86,53 @@ class MakeInterfaceRepository extends Command
             $foreignKeys = $this->extractForeignKeys($tableName);
         }
 
-        // Initialize Interface
-        $interfaceContent = "<?php\n\nnamespace $interfaceNamespace\\$entityName;\n\n";
-        $interfaceContent .= "use App\Models\Entities\\$entityName;\n";
-        $interfaceContent .= "use Illuminate\Support\Collection;\n\n";
-        $interfaceContent .= "interface $interfaceName\n{";
+        $baseContent = file_get_contents($interfaceRepositoryStubsPath.'class.stub');
+        $getOneStub = file_get_contents($interfaceRepositoryStubsPath.'getOneBy.stub');
+        $getAllStub = file_get_contents($interfaceRepositoryStubsPath.'getAllBy.stub');
+        $createFunctionStub = file_get_contents($interfaceRepositoryStubsPath.'create.stub');
+        $updateFunctionStub = file_get_contents($interfaceRepositoryStubsPath.'update.stub');
+        $deleteAndUndeleteStub = file_get_contents($interfaceRepositoryStubsPath.'deleteAndUndelete.stub');
 
-        // Declare functions
-        $interfaceContent .= "\n\tpublic function getOneById(int \$id): ?$entityName;\n";
-        $interfaceContent .= "\n\tpublic function getAllByIds(array \$ids): Collection;\n";
+        $baseContent = substr_replace($baseContent,
+            $this->writeGetOneFunction($getOneStub, 'id', 'int'),
+            -1, 0);
+        $baseContent = substr_replace($baseContent,
+            $this->writeGetAllFunction($getAllStub, 'id', 'int'),
+            -1, 0);
 
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $foreignKeyInCamelCase = camel_case($_foreignKey->COLUMN_NAME);
-                $interfaceContent .= "\n\tpublic function getOneBy" . ucfirst($foreignKeyInCamelCase) . "(int \$" . $foreignKeyInCamelCase . "): ?$entityName;\n";
-                $interfaceContent .= "\n\tpublic function getAllBy" . ucfirst(str_plural($foreignKeyInCamelCase)) . "(array \$" . str_plural($foreignKeyInCamelCase) . "): Collection;\n";
+                $baseContent = substr_replace($baseContent,
+                    $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $entityName),
+                    -1, 0);
+                $baseContent = substr_replace($baseContent,
+                    $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $entityName),
+                    -1, 0);
             }
         }
 
         $allColumns = $columns->pluck('COLUMN_NAME')->toArray();
 
-        $interfaceContent .= "\n\tpublic function create($entityName \$" . $entityVariableName . "): $entityName;\n";
-        $interfaceContent .= "\n\tpublic function update($entityName \$" . $entityVariableName . "): int;\n";
-        if (in_array('deleted_at', $allColumns)) {
-            $interfaceContent .= "\n\tpublic function delete($entityName \$" . $entityVariableName . "): int;\n";
-            $interfaceContent .= "\n\tpublic function undelete($entityName \$" . $entityVariableName . "): int;\n";
+        if (in_array('created_at', $allColumns, true)) {
+            $baseContent = substr_replace($baseContent, $createFunctionStub, -1, 0);
         }
-        $interfaceContent .= "}";
 
-        file_put_contents("$relativeInterfacePath/$interfaceName.php", $interfaceContent);
+        if (in_array('updated_at', $allColumns, true)) {
+            $baseContent = substr_replace($baseContent, $updateFunctionStub, -1, 0);
+        }
+
+        if (in_array('deleted_at', $allColumns, true)) {
+            $baseContent = substr_replace($baseContent, $deleteAndUndeleteStub, -1, 0);
+        }
+
+        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ InterfaceRepositoryName }}', '{{ RepositoryNamespace }}'],
+            [$entityName, $entityNamespace, $entityVariableName, $interfaceName, $repositoryNamespace],
+            $baseContent);
+
+        file_put_contents($filenameWithPath, $baseContent);
 
         if ($this->option('add-to-git')) {
-            shell_exec("git add $relativeInterfacePath/$interfaceName.php");
+            shell_exec("git add $filenameWithPath");
         }
 
         $this->info("Interface \"$interfaceName\" has been created.");

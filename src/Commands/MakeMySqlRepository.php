@@ -64,7 +64,7 @@ class MakeMySqlRepository extends Command
         $mysqlRepositoryName = 'MySql'.$entityName.'Repository';
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
-        $mysqlRepositoryNamespace = config('repository.path.namespace.repositories');
+        $repositoryNamespace = config('repository.path.namespace.repositories');
         $relativeMysqlRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
         $mysqlRepositoryStubsPath = config('repository.path.stub.repositories.mysql');
         $filenameWithPath = $relativeMysqlRepositoryPath.'\\'.$mysqlRepositoryName.'.php';
@@ -158,8 +158,8 @@ class MakeMySqlRepository extends Command
             $baseContent = substr_replace($baseContent,$deleteAndUndeleteStub, -1, 0);
         }
 
-        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ MySqlRepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}'],
-            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $mysqlRepositoryName, $mysqlRepositoryNamespace, $interfaceName, $tableName, $hasSoftDelete ? 'true' : 'false'],
+        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ RepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}'],
+            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $mysqlRepositoryName, $repositoryNamespace, $interfaceName, $tableName, $hasSoftDelete ? 'true' : 'false'],
             $baseContent);
 
         file_put_contents($filenameWithPath, $baseContent);
