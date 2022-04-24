@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Entity;
+namespace App\Models\Entities;
 
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;

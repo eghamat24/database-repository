@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Enums;
+namespace App\Models\Enums;
 
 use ReflectionClass;
 

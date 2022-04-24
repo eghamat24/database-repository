@@ -2,9 +2,9 @@
 
 namespace Nanvaie\DatabaseRepository\Models\Repository;
 
-use Nanvaie\DatabaseRepository\Models\Entity\Entity;
-use Nanvaie\DatabaseRepository\Models\Factory\IFactory;
-use Nanvaie\DatabaseRepository\Models\Enums\GriewFilterOperator;
+use App\Models\Entities\Entity;
+use App\Models\Factories\IFactory;
+use App\Models\Enums\GriewFilterOperator;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;

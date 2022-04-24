@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Resource;
+namespace App\Models\Resources;
 
 use Illuminate\Support\Collection;
 

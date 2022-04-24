@@ -1,8 +1,8 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Factory;
+namespace App\Models\Factories;
 
-use Nanvaie\DatabaseRepository\Models\Entity\Entity;
+use App\Models\Entities\Entity;
 use Illuminate\Support\Collection;
 use stdClass;
 

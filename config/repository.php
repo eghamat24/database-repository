@@ -8,7 +8,7 @@ return [
         'namespace' => [
             'entities' => 'App\Models\Entities',
             'factories' => 'App\Models\Factories',
-            'resources' => 'App\Http\Resources\Admin',
+            'resources' => 'App\Models\Resources',
             'repositories' => 'App\Models\Repositories',
         ],
 

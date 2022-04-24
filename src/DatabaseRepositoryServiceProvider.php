@@ -40,7 +40,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
             ], 'repository-config');
 
             $this->publishes([
-                __DIR__ . '/stubs/PHP'.env('REPOSITORY_PHP_VERSION', '8.0') => $this->app->basePath('stubs'),
+                __DIR__ . '/../stubs/PHP'.env('REPOSITORY_PHP_VERSION', '8.0') => $this->app->basePath('stubs'),
             ], 'repository-stubs');
         }
     }
