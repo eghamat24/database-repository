@@ -7,6 +7,12 @@ use Illuminate\Support\Collection;
 abstract class Resource implements IResource
 {
     /**
+     * @param Entity $entity
+     * @return array
+     */
+    abstract public function toArray(Entity $entity): array;
+
+    /**
      * @param Collection $entities
      * @return array
      */

@@ -6,5 +6,7 @@ use Illuminate\Support\Collection;
 
 interface IResource
 {
+    public function toArray(Entity $entity): array;
+
     public function collectionToArray(Collection $entities): array;
 }
