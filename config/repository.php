@@ -25,7 +25,7 @@ return [
         'relative' => [
             'entities' => 'app/Models/Entities/',
             'factories' => 'app/Models/Factories/',
-            'resources' => 'app/Http/Resources/Admin/',
+            'resources' => 'app/Models/Resources/',
             'repositories' => 'app/Models/Repositories/',
         ],
 

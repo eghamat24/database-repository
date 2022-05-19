@@ -2,8 +2,8 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
+use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 
 class MakeResource extends Command
 {
@@ -27,6 +27,20 @@ class MakeResource extends Command
 
     use CustomMySqlQueries;
 
+    public function writeGetter(string $getterStub, string $columnName, string $attributeName)
+    {
+        return str_replace(['{{ ColumnName }}', '{{ GetterName }}'],
+            [$columnName, ucfirst($attributeName)],
+            $getterStub);
+    }
+
+    public function writeForeignGetter(string $foreignGetterStub, string $columnName, string $attributeName)
+    {
+        return str_replace(['{{ AttributeName }}', '{{ GetterName }}', '{{ AttributeType }}'],
+            [$columnName, ucfirst($attributeName), ucfirst($attributeName)],
+            $foreignGetterStub);
+    }
+
     /**
      * Execute the console command.
      *
@@ -38,9 +52,12 @@ class MakeResource extends Command
         $detectForeignKeys = $this->option('foreign-keys');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
+        $entityNamespace = config('repository.path.namespace.entities');
         $resourceName = $entityName . "Resource";
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
+        $resourceStubsPath = config('repository.path.stub.resources');
+        $filenameWithPath = $relativeResourcesPath.$resourceName.'.php';
 
         if ($this->option('delete')) {
             unlink("$relativeResourcesPath/$resourceName.php");
@@ -69,38 +86,32 @@ class MakeResource extends Command
             $foreignKeys = $this->extractForeignKeys($tableName);
         }
 
-        // Initialize Class
-        $resourceContent = "<?php\n\nnamespace $resourceNamespace;\n\n";
-        $resourceContent .= "use App\Http\Resources\Resource;\n";
-        $resourceContent .= "use App\Models\Entities\\$entityName;\n\n";
-        $resourceContent .= "class $resourceName extends Resource\n{\n";
+        $baseContent = file_get_contents($resourceStubsPath.'class.stub');
+        $getterStub = file_get_contents($resourceStubsPath.'getter.default.stub');
+        $foreignGetterStub = file_get_contents($resourceStubsPath.'getter.foreign.stub');
 
-        // Create "toArray" Function
-        $resourceContent .= "\t/**\n\t * @param $entityName \$$entityVariableName\n\t * @return array\n\t */\n";
-        $resourceContent .= "\tpublic function toArray($entityName \$$entityVariableName): array\n\t{\n";
-        $resourceContent .= " \t\treturn [";
         foreach ($columns as $_column) {
-            $resourceContent .= "\n\t\t\t'$_column->COLUMN_NAME' => \$$entityVariableName" . "->get" . ucfirst(camel_case($_column->COLUMN_NAME)) . "(),";
+            $baseContent = substr_replace($baseContent,
+                $this->writeGetter($getterStub, $_column->COLUMN_NAME, camel_case($_column->COLUMN_NAME)),
+                -293, 0);
         }
 
-        // Add Additional Resources for Foreign Keys
         if ($detectForeignKeys) {
-            $resourceContent .= "\n";
             foreach ($foreignKeys as $_foreignKey) {
-                $resourceContent .= "\n\t\t\t'" . snake_case($_foreignKey->VARIABLE_NAME) .
-                    "' => \$$entityVariableName" . "->get" . ucfirst($_foreignKey->VARIABLE_NAME) . "()" .
-                    " ? (new " . $_foreignKey->ENTITY_DATA_TYPE . "Resource())->toArray(\$$entityVariableName" .
-                    "->get" . ucfirst($_foreignKey->VARIABLE_NAME) . "()) : null,";
+                $baseContent = substr_replace($baseContent,
+                    $this->writeForeignGetter($foreignGetterStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
+                    -19, 0);
             }
         }
-        $resourceContent .= "\n\t\t];\n\t}\n";
 
-        $resourceContent .= "}";
+        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ ResourceName }}', '{{ ResourceNamespace }}'],
+            [$entityName, $entityNamespace, $entityVariableName, $resourceName, $resourceNamespace],
+            $baseContent);
 
-        file_put_contents("$relativeResourcesPath/$resourceName.php", $resourceContent);
+        file_put_contents($filenameWithPath, $baseContent);
 
         if ($this->option('add-to-git')) {
-            shell_exec("git add $relativeResourcesPath/$resourceName.php");
+            shell_exec("git add $filenameWithPath");
         }
 
         $this->info("Resource \"$resourceName\" has been created.");
