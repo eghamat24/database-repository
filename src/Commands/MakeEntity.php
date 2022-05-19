@@ -80,7 +80,7 @@ class MakeEntity extends Command
             return 0;
         }
 
-        if (class_exists($entityNamespace.'\\'.$entityName) && ! $this->option('force')) {
+        if (class_exists($relativeEntitiesPath.'\\'.$entityName) && ! $this->option('force')) {
             $this->alert("Entity \"$entityName\" is already exist!");
             return 0;
         }
