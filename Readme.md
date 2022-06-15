@@ -1,4 +1,4 @@
-# Database Repository
+# Database Repository / PHP Repository / Laravel Repository
 
 ## Installation
 Use following command to add this package to composer development requirement.
