@@ -92,10 +92,6 @@ class MakeEntity extends Command
             die;
         }
 
-        if ($detectForeignKeys) {
-            $foreignKeys = $this->extractForeignKeys($tableName);
-        }
-
         foreach ($columns as $_column) {
             $_column->COLUMN_NAME = camel_case($_column->COLUMN_NAME);
         }
@@ -104,38 +100,43 @@ class MakeEntity extends Command
         $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
         $accessorsStub = file_get_contents($entityStubsPath.'accessors.stub');
 
-        // Initialize Class
-        $baseContent = str_replace(['{{ EntityNamespace }}', '{{ EntityName }}'], [$entityNamespace, $entityName], $baseContent);
-
         // Create Attributes
+        $attributes = '';
         foreach ($columns as $_column) {
-            $baseContent = substr_replace($baseContent,
+            $attributes = substr_replace($attributes,
                 $this->writeAttribute($attributeStub, $_column->COLUMN_NAME, $this->dataTypes[$_column->DATA_TYPE]),
                 -1, 0);
         }
-        // Create Additional Attributes from Foreign Keys
-        if ($detectForeignKeys) {
-            foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent,
-                    $this->writeAttribute($attributeStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
-                    -1, 0);
-            }
-        }
 
         // Create Setters and Getters
+        $settersAndGetters = '';
         foreach ($columns as $_column) {
-            $baseContent = substr_replace($baseContent,
+            $settersAndGetters = substr_replace($settersAndGetters,
                 $this->writeAccessors($accessorsStub, $_column->COLUMN_NAME, $this->dataTypes[$_column->DATA_TYPE]),
                 -1, 0);
         }
-        // Create Additional Setters and Getters from Foreign keys
+
         if ($detectForeignKeys) {
+            $foreignKeys = $this->extractForeignKeys($tableName);
+
+            // Create Additional Attributes from Foreign Keys
             foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent,
+                $attributes = substr_replace($attributes,
+                    $this->writeAttribute($attributeStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
+                    -1, 0);
+            }
+
+            // Create Additional Setters and Getters from Foreign keys
+            foreach ($foreignKeys as $_foreignKey) {
+                $settersAndGetters = substr_replace($settersAndGetters,
                     $this->writeAccessors($accessorsStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
                     -1, 0);
             }
         }
+
+        $baseContent = str_replace(['{{ EntityNamespace }}', '{{ EntityName }}', '{{ Attributes }}', '{{ SettersAndGetters }}'],
+            [$entityNamespace, $entityName, $attributes, $settersAndGetters],
+            $baseContent);
 
         file_put_contents($filenameWithPath, $baseContent);
 

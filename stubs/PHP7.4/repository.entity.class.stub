@@ -4,4 +4,5 @@ namespace {{ EntityNamespace }};
 
 class {{ EntityName }} extends Entity
 {
+{{ Attributes }}{{ SettersAndGetters }}
 }
