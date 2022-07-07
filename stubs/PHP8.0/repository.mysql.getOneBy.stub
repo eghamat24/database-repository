@@ -6,7 +6,7 @@
 	public function getOneBy{{ FunctionName }}({{ AttributeType }} ${{ AttributeName }}): ?{{ EntityName }}
 	{
 		${{ EntityVariableName }} = $this->newQuery()
-			->where('{{ AttributeName }}', ${{ AttributeName }})
+			->where('{{ ColumnName }}', ${{ AttributeName }})
 			->first();
 
 		return ${{ EntityVariableName }} ? $this->factory->makeEntityFromStdClass(${{ EntityVariableName }}) : null;

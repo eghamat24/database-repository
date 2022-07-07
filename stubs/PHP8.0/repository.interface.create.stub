@@ -1,0 +1,2 @@
+
+    public function create({{ EntityName }} ${{ EntityVariableName }}): {{ EntityName }};
