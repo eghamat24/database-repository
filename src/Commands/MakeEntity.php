@@ -104,7 +104,7 @@ class MakeEntity extends Command
         $attributes = '';
         foreach ($columns as $_column) {
             $attributes = substr_replace($attributes,
-                $this->writeAttribute($attributeStub, $_column->COLUMN_NAME, $this->dataTypes[$_column->DATA_TYPE]),
+                $this->writeAttribute($attributeStub, $_column->COLUMN_NAME, ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]),
                 -1, 0);
         }
 
@@ -112,7 +112,7 @@ class MakeEntity extends Command
         $settersAndGetters = '';
         foreach ($columns as $_column) {
             $settersAndGetters = substr_replace($settersAndGetters,
-                $this->writeAccessors($accessorsStub, $_column->COLUMN_NAME, $this->dataTypes[$_column->DATA_TYPE]),
+                $this->writeAccessors($accessorsStub, $_column->COLUMN_NAME, ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]),
                 -1, 0);
         }
 
