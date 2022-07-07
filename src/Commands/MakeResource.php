@@ -37,7 +37,7 @@ class MakeResource extends Command
     public function writeForeignGetter(string $foreignGetterStub, string $columnName, string $attributeName)
     {
         return str_replace(['{{ AttributeName }}', '{{ GetterName }}', '{{ AttributeType }}'],
-            [$columnName, ucfirst($attributeName), ucfirst($attributeName)],
+            [snake_case($columnName), ucfirst($columnName), ucfirst($attributeName)],
             $foreignGetterStub);
     }
 
@@ -100,7 +100,7 @@ class MakeResource extends Command
             foreach ($foreignKeys as $_foreignKey) {
                 $baseContent = substr_replace($baseContent,
                     $this->writeForeignGetter($foreignGetterStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
-                    -19, 0);
+                    -20, 0);
             }
         }
 
