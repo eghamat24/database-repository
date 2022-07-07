@@ -13,7 +13,7 @@ abstract class Entity implements JsonSerializable, Arrayable
     /**
      * @return int
      */
-    abstract public function getId();
+    abstract public function getId(): int;
 
     public function __construct()
     {
@@ -45,7 +45,7 @@ abstract class Entity implements JsonSerializable, Arrayable
      * Make all variables of the object as null
      * @return $this
      */
-    public function clearVariables()
+    public function clearVariables(): self
     {
         $attributes = get_object_vars($this);
         foreach ($attributes as $attributeName => $attributeValue) {
@@ -57,7 +57,7 @@ abstract class Entity implements JsonSerializable, Arrayable
     /**
      * @return int
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): int
     {
         return $this->getId();
     }
@@ -90,15 +90,13 @@ abstract class Entity implements JsonSerializable, Arrayable
      * get an Array of Changed Attributes
      * @return array
      */
-    public function changedAttributesName()
+    public function changedAttributesName(): array
     {
         $changedAttributes = [];
         $attributes = $this->toArray();
         foreach ($attributes as $key => $value) {
-            if (isset($this->originals[$key])) {
-                if ($value != $this->originals[$key] && !((is_array($this->originals[$key]) || is_object($this->originals[$key])))) {
-                    $changedAttributes[] = $key;
-                }
+            if (isset($this->originals[$key]) && $value !== $this->originals[$key] && ! ((is_array($this->originals[$key]) || is_object($this->originals[$key])))) {
+                $changedAttributes[] = $key;
             }
         }
         return $changedAttributes;
@@ -108,7 +106,7 @@ abstract class Entity implements JsonSerializable, Arrayable
      * get an Array of Changed Attributes with new values
      * @return array
      */
-    public function getDirty()
+    public function getDirty(): array
     {
         $dirty = [];
         $attributes = $this->toArray();
@@ -124,7 +122,7 @@ abstract class Entity implements JsonSerializable, Arrayable
      * get an Array of Changed Attributes with original values
      * @return array
      */
-    public function getChanges()
+    public function getChanges(): array
     {
         $changes = [];
 
@@ -139,11 +137,9 @@ abstract class Entity implements JsonSerializable, Arrayable
      * is any attribute changed?
      * @return bool
      */
-    public function isDirty()
+    public function isDirty(): bool
     {
-        if (count($this->changedAttributesName()) > 0) return true;
-
-        return false;
+        return count($this->changedAttributesName()) > 0;
     }
 
     public function jsonSerialize()
