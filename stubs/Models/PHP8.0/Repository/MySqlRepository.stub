@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Repository;
+namespace App\Models\Repositories;
 
 use App\Models\Entities\Entity;
 use App\Models\Factories\IFactory;

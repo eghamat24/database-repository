@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Repository;
+namespace App\Models\Repositories;
 
 use Illuminate\Cache\CacheManager;
 
