@@ -46,23 +46,23 @@ abstract class MySqlRepository
             $query = $this->alternativeDbConnection->table($this->table);
         }
 
-        if ($this->softDelete) {
-            if (!$this->withTrashed) {
-                $query = $query->whereNull('deleted_at');
-            } else {
-                $this->withTrashed = false;
-            }
-        }
+//        if ($this->softDelete) {
+//            if (!$this->withTrashed) {
+//                $query = $query->whereNull('deleted_at');
+//            } else {
+//                $this->withTrashed = false;
+//            }
+//        }
 
         return $query;
     }
 
-    public function withTrashed(): MySqlRepository
-    {
-        $this->withTrashed = true;
-
-        return $this;
-    }
+//    public function withTrashed(): MySqlRepository
+//    {
+//        $this->withTrashed = true;
+//
+//        return $this;
+//    }
 
     /**
      * @param int|null $total
