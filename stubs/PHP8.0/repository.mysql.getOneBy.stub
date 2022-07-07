@@ -3,7 +3,7 @@
 	 * @param {{ AttributeType }} ${{ AttributeName }}
 	 * @return {{ EntityName }}|null
 	 */
-	public function getOneBy{{ FunctionName }}({{ AttributeType }} ${{ AttributeName }}): ?{{ EntityName }}
+	public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): ?{{ EntityName }}
 	{
 		${{ EntityVariableName }} = $this->newQuery()
 			->where('{{ ColumnName }}', ${{ AttributeName }})
