@@ -2,6 +2,7 @@
 
 namespace App\Models\Resources;
 
+use App\Models\Entities\Entity;
 use Illuminate\Support\Collection;
 
 abstract class Resource implements IResource
