@@ -6,15 +6,15 @@ use Illuminate\Cache\CacheManager;
 
 abstract class  RedisRepository
 {
+    private CacheManager $cache;
+
     public function __construct()
     {
+        $this->cache = app('cache');
     }
 
-    /**
-     * @return CacheManager
-     */
-    public function newConnection()
+    protected function getCache(): CacheManager
     {
-        return app('cache');
+        return $this->cache;
     }
 }
