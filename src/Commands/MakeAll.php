@@ -50,7 +50,7 @@ class MakeAll extends Command
             $this->call('repository:make-interface-repository', $arguments);
             $this->call('repository:make-mysql-repository', $arguments);
             $this->call('repository:make-redis-repository', $arguments);
-            $this->call('repository:make-repository', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
+            $this->call('repository:make-repository', $arguments);
         }
     }
 }
