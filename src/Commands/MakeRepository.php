@@ -39,7 +39,7 @@ class MakeRepository extends Command
             $columnName = str_plural(camel_case($columnName));
         } elseif ($functionName === 'create') {
             $functionReturnType = $attributeType;
-        } elseif ($functionName === 'update') {
+        } elseif (in_array($functionName, ['update', 'remove', 'restore'])) {
             $functionReturnType = 'int';
         }
 
@@ -144,6 +144,15 @@ class MakeRepository extends Command
         $functions = substr_replace($functions,
             $this->writeFunction($functionStub, 'update', $entityVariableName, $entityName),
             -1, 0);
+
+        if (in_array('deleted_at', $columns->pluck('COLUMN_NAME')->toArray(), true)) {
+            $functions = substr_replace($functions,
+                $this->writeFunction($functionStub, 'remove', $entityVariableName, $entityName),
+                -1, 0);
+            $functions = substr_replace($functions,
+                $this->writeFunction($functionStub, 'restore', $entityVariableName, $entityName),
+                -1, 0);
+        }
 
         $baseContent = str_replace(['{{ Attributes }}', '{{ Setters }}', '{{ Functions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ RepositoryName }}', '{{ SqlRepositoryName }}', '{{ SqlRepositoryVariable }}', '{{ RepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}'],
             [$attributes, $setters, $functions, $entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $repositoryName, $sqlRepositoryName, $sqlRepositoryVariable, $repositoryNamespace, $interfaceName, $tableName],
