@@ -63,7 +63,7 @@ class MakeFactory extends Command
 
         if (class_exists("$relativeFactoriesPath\\$factoryName") && !$this->option('force')) {
             $this->alert("Factory $factoryName is already exist!");
-            die;
+            return 0;
         }
 
         $columns = $this->getAllColumnsInTable($tableName);

@@ -72,7 +72,7 @@ class MakeInterfaceRepository extends Command
 
         if (class_exists("$relativeInterfacePath\\$interfaceName") && !$this->option('force')) {
             $this->alert("Interface $interfaceName is already exist!");
-            die;
+            return 0;
         }
 
         $columns = $this->getAllColumnsInTable($tableName);

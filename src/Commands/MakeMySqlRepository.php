@@ -82,7 +82,7 @@ class MakeMySqlRepository extends Command
 
         if (class_exists("$relativeMysqlRepositoryPath\\$mysqlRepositoryName") && !$this->option('force')) {
             $this->alert("Repository $mysqlRepositoryName is already exist!");
-            die;
+            return 0;
         }
 
         $columns = $this->getAllColumnsInTable($tableName);

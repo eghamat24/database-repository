@@ -57,7 +57,7 @@ class MakeRedisRepository extends Command
 
         if (class_exists("$relativeRedisRepositoryPath\\$redisRepositoryName") && !$this->option('force')) {
             $this->alert("Repository $redisRepositoryName is already exist!");
-            die;
+            return 0;
         }
 
         $columns = $this->getAllColumnsInTable($tableName);
