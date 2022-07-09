@@ -17,6 +17,7 @@ return [
             'factories' => 'stubs/repository.factory.',
             'resources' => 'stubs/repository.resource.',
             'repositories' => [
+                'base' => 'stubs/repository.base.',
                 'mysql' => 'stubs/repository.mysql.',
                 'interface' => 'stubs/repository.interface.',
             ]

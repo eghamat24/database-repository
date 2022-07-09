@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ RepositoryNamespace }}\{{ EntityName }};
+
+use {{ EntityNamespace }}\{{ EntityName }};
+use Illuminate\Support\Collection;
+
+class {{ RepositoryName }} implements {{ RepositoryInterfaceName }}
+{
+{{ Attributes }}
+	public function __construct()
+	{
+{{ Setters }}
+	}
+{{ Functions }}
+}
