@@ -36,7 +36,7 @@ List of artisan commands:
 | `repository:make-factory`              | table_name  | -f, -d, -g     | Create new Factory                |
 | `repository:make-resource`             | table_name  | -f, -d, -k, -g | Create new Resource               |
 | `repository:make-interface-repository` | table_name  | -f, -d, -k, -g | Create new Repository Interface   |
-| `repository:make-repository`           | table_name  | -f, -d, -g     | Create new Base Repository        |
+| `repository:make-repository`           | table_name  | -f, -d, -k, -g | Create new Base Repository        |
 | `repository:make-mysql-repository`     | table_name  | -f, -d, -k, -g | Create new MySql Repository class |
 | `repository:make-redis-repository`     | table_name  | -f, -d, -k, -g | Create new Redis Repository class |
 | `repository:make-all`                  | table_names | -f, -d, -k, -g | Run all of the above commands     |
