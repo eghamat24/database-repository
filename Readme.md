@@ -49,10 +49,10 @@ List of artisan commands:
 
 Example 1. Create new Entity for a table named 'users'.
 ```bash
-php artisan command:make-entity users
+php artisan repository:make-entity users
 ```
 
 Example 2. Create all necessary classes for two tables named 'users' and 'customers' with enabled foreign key option.
 ```bash
-php artisan command:make-all-repository users customers -k
+php artisan repository:make-all users customers -k
 ```
