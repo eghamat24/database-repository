@@ -3,7 +3,7 @@
 	 * @param {{ EntityName }} ${{ EntityVariableName }}
 	 * @return int
 	 */
-	public function delete({{ EntityName }} ${{ EntityVariableName }}): int
+	public function remove({{ EntityName }} ${{ EntityVariableName }}): int
 	{
 		return $this->newQuery()
 			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
@@ -16,7 +16,7 @@
 	 * @param {{ EntityName }} ${{ EntityVariableName }}
 	 * @return int
 	 */
-	public function undelete({{ EntityName }} ${{ EntityVariableName }}): int
+	public function restore({{ EntityName }} ${{ EntityVariableName }}): int
 	{
 		return $this->newQuery()
 			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())

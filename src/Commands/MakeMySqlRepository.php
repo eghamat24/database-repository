@@ -155,7 +155,7 @@ class MakeMySqlRepository extends Command
         // Create "delete" and "undelete" functions if necessary
         $hasSoftDelete = in_array('deleted_at', $columns->pluck('COLUMN_NAME')->toArray(), true);
         if ($hasSoftDelete) {
-            $baseContent = substr_replace($baseContent,$deleteAndUndeleteStub, -1, 0);
+            $baseContent = substr_replace($baseContent, $deleteAndUndeleteStub, -1, 0);
         }
 
         $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ RepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}'],
