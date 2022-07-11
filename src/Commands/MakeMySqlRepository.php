@@ -27,14 +27,14 @@ class MakeMySqlRepository extends Command
 
     use CustomMySqlQueries;
 
-    private function writeGetOneFunction(string $getOneStub, string $columnName,  string $attributeType): string
+    private function writeGetOneFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeName }}'],
             [ucfirst(camel_case($columnName)), $columnName, $attributeType, camel_case($columnName)],
             $getOneStub);
     }
 
-    private function writeGetAllFunction(string $getOneStub, string $columnName,  string $attributeType): string
+    private function writeGetAllFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionNamePlural }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeNamePlural }}'],
             [ucfirst(str_plural(camel_case($columnName))), $columnName, $attributeType, str_plural(camel_case($columnName))],
@@ -65,7 +65,7 @@ class MakeMySqlRepository extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
+        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories')."\\$entityName";
         $mysqlRepositoryStubsPath = config('repository.path.stub.repositories.mysql');
         $filenameWithPath = $relativeMysqlRepositoryPath.'\\'.$mysqlRepositoryName.'.php';
 
@@ -80,7 +80,7 @@ class MakeMySqlRepository extends Command
             return 0;
         }
 
-        if (class_exists("$relativeMysqlRepositoryPath\\$mysqlRepositoryName") && !$this->option('force')) {
+        if (class_exists("$relativeMysqlRepositoryPath\\$mysqlRepositoryName") && ! $this->option('force')) {
             $this->alert("Repository $mysqlRepositoryName is already exist!");
             return 0;
         }
@@ -88,7 +88,7 @@ class MakeMySqlRepository extends Command
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
             die;
         }
 

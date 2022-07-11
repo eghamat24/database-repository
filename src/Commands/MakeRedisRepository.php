@@ -38,11 +38,11 @@ class MakeRedisRepository extends Command
         $detectForeignKeys = $this->option('foreign-keys');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
-        $factoryName = $entityName . "Factory";
-        $interfaceName = "I$entityName" . "Repository";
-        $redisRepositoryName = "Redis$entityName" . "Repository";
+        $factoryName = $entityName."Factory";
+        $interfaceName = "I$entityName"."Repository";
+        $redisRepositoryName = "Redis$entityName"."Repository";
         $redisRepositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
+        $relativeRedisRepositoryPath = config('repository.path.relative.repositories')."\\$entityName";
 
         if ($this->option('delete')) {
             unlink("$relativeRedisRepositoryPath/$redisRepositoryName.php");
@@ -55,7 +55,7 @@ class MakeRedisRepository extends Command
             return 0;
         }
 
-        if (class_exists("$relativeRedisRepositoryPath\\$redisRepositoryName") && !$this->option('force')) {
+        if (class_exists("$relativeRedisRepositoryPath\\$redisRepositoryName") && ! $this->option('force')) {
             $this->alert("Repository $redisRepositoryName is already exist!");
             return 0;
         }
@@ -63,7 +63,7 @@ class MakeRedisRepository extends Command
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
             die;
         }
 

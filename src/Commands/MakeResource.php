@@ -53,7 +53,7 @@ class MakeResource extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
         $entityNamespace = config('repository.path.namespace.entities');
-        $resourceName = $entityName . "Resource";
+        $resourceName = $entityName."Resource";
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
         $resourceStubsPath = config('repository.path.stub.resources');
@@ -70,7 +70,7 @@ class MakeResource extends Command
             return 0;
         }
 
-        if (class_exists("$relativeResourcesPath\\$resourceName") && !$this->option('force')) {
+        if (class_exists("$relativeResourcesPath\\$resourceName") && ! $this->option('force')) {
             $this->alert("Resource $resourceName is already exist!");
             return 0;
         }
@@ -78,7 +78,7 @@ class MakeResource extends Command
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
             die;
         }
 

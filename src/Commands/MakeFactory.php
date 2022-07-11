@@ -43,7 +43,7 @@ class MakeFactory extends Command
         $tableName = $this->argument('table_name');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
-        $factoryName = $entityName . "Factory";
+        $factoryName = $entityName.'Factory';
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $relativeFactoriesPath = config('repository.path.relative.factories');
@@ -61,7 +61,7 @@ class MakeFactory extends Command
             return 0;
         }
 
-        if (class_exists("$relativeFactoriesPath\\$factoryName") && !$this->option('force')) {
+        if (class_exists("$relativeFactoriesPath\\$factoryName") && ! $this->option('force')) {
             $this->alert("Factory $factoryName is already exist!");
             return 0;
         }
@@ -69,7 +69,7 @@ class MakeFactory extends Command
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
             die;
         }
 

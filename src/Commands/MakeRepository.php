@@ -74,7 +74,7 @@ class MakeRepository extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRepositoryPath = config('repository.path.relative.repositories') . "\\$entityName";
+        $relativeRepositoryPath = config('repository.path.relative.repositories')."\\$entityName";
         $repositoryStubsPath = config('repository.path.stub.repositories.base');
         $filenameWithPath = $relativeRepositoryPath.'\\'.$repositoryName.'.php';
 
@@ -89,7 +89,7 @@ class MakeRepository extends Command
             return 0;
         }
 
-        if (class_exists("$relativeRepositoryPath\\$repositoryName") && !$this->option('force')) {
+        if (class_exists("$relativeRepositoryPath\\$repositoryName") && ! $this->option('force')) {
             $this->alert("Repository $repositoryName is already exist!");
             return 0;
         }
@@ -97,7 +97,7 @@ class MakeRepository extends Command
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
             die;
         }
 

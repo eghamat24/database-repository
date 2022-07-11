@@ -27,14 +27,14 @@ class MakeInterfaceRepository extends Command
 
     use CustomMySqlQueries;
 
-    private function writeGetOneFunction(string $getOneStub, string $columnName,  string $attributeType): string
+    private function writeGetOneFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeName }}'],
             [ucfirst(camel_case($columnName)), $columnName, $attributeType, camel_case($columnName)],
             $getOneStub);
     }
 
-    private function writeGetAllFunction(string $getOneStub, string $columnName,  string $attributeType): string
+    private function writeGetAllFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionNamePlural }}', '{{ AttributeType }}', '{{ AttributeNamePlural }}'],
             [ucfirst(str_plural(camel_case($columnName))), $attributeType, str_plural(camel_case($columnName))],
@@ -52,10 +52,10 @@ class MakeInterfaceRepository extends Command
         $detectForeignKeys = $this->option('foreign-keys');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityVariableName = camel_case($entityName);
-        $interfaceName = "I$entityName" . "Repository";
+        $interfaceName = "I$entityName"."Repository";
         $entityNamespace = config('repository.path.namespace.entities');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeInterfacePath = config('repository.path.relative.repositories') . "\\$entityName";
+        $relativeInterfacePath = config('repository.path.relative.repositories')."\\$entityName";
         $interfaceRepositoryStubsPath = config('repository.path.stub.repositories.interface');
         $filenameWithPath = $relativeInterfacePath.'\\'.$interfaceName.'.php';
 
@@ -70,7 +70,7 @@ class MakeInterfaceRepository extends Command
             return 0;
         }
 
-        if (class_exists("$relativeInterfacePath\\$interfaceName") && !$this->option('force')) {
+        if (class_exists("$relativeInterfacePath\\$interfaceName") && ! $this->option('force')) {
             $this->alert("Interface $interfaceName is already exist!");
             return 0;
         }
@@ -78,7 +78,7 @@ class MakeInterfaceRepository extends Command
         $columns = $this->getAllColumnsInTable($tableName);
 
         if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table " . $tableName . "! Perhaps table's name is misspelled.");
+            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
             die;
         }
 
