@@ -1,6 +1,6 @@
 
     /**
-	 * @param {{ AttributeType }} ${{ AttributeName }}
+	 * @param int ${{ AttributeName }}
 	 * @return {{ EntityName }}|null
 	 */
 	public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): ?{{ EntityName }}
