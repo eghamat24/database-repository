@@ -26,10 +26,10 @@ class MakeFactory extends Command
 
     use CustomMySqlQueries;
 
-    public function writeSetter(string $setterStub, string $attributeName)
+    public function writeSetter(string $setterStub, string $columnName): string
     {
         return str_replace(['{{ SetterName }}', '{{ AttributeName }}'],
-            [ucfirst($attributeName), $attributeName],
+            [ucfirst($columnName), snake_case($columnName)],
             $setterStub);
     }
 
