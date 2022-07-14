@@ -130,7 +130,7 @@ class MakeMySqlRepository extends Command
                 $createFunctionStub = substr_replace($createFunctionStub,
                     $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
                     -95, 0);
-            } elseif ($_column->COLUMN_NAME === 'created_at') {
+            } elseif (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
                 $createFunctionStub = substr_replace($createFunctionStub,
                     $this->writeGetterFunction($timeFieldStub, $_column->COLUMN_NAME),
                     -95, 0);
