@@ -103,17 +103,21 @@ class MakeEntity extends Command
         // Create Attributes
         $attributes = '';
         foreach ($columns as $_column) {
-            $attributes = substr_replace($attributes,
-                $this->writeAttribute($attributeStub, $_column->COLUMN_NAME, ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]),
-                -1, 0);
+            $attributes .= $this->writeAttribute(
+                $attributeStub,
+                $_column->COLUMN_NAME,
+                ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]
+            );
         }
 
         // Create Setters and Getters
         $settersAndGetters = '';
         foreach ($columns as $_column) {
-            $settersAndGetters = substr_replace($settersAndGetters,
-                $this->writeAccessors($accessorsStub, $_column->COLUMN_NAME, ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]),
-                -1, 0);
+            $settersAndGetters .= $this->writeAccessors(
+                $accessorsStub,
+                $_column->COLUMN_NAME,
+                ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]
+            );
         }
 
         if ($detectForeignKeys) {
@@ -121,16 +125,20 @@ class MakeEntity extends Command
 
             // Create Additional Attributes from Foreign Keys
             foreach ($foreignKeys as $_foreignKey) {
-                $attributes = substr_replace($attributes,
-                    $this->writeAttribute($attributeStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
-                    -1, 0);
+                $attributes .= $this->writeAttribute(
+                    $attributeStub,
+                    $_foreignKey->VARIABLE_NAME,
+                    $_foreignKey->ENTITY_DATA_TYPE
+                );
             }
 
             // Create Additional Setters and Getters from Foreign keys
             foreach ($foreignKeys as $_foreignKey) {
-                $settersAndGetters = substr_replace($settersAndGetters,
-                    $this->writeAccessors($accessorsStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
-                    -1, 0);
+                $settersAndGetters .= $this->writeAccessors(
+                    $accessorsStub,
+                    $_foreignKey->VARIABLE_NAME,
+                    $_foreignKey->ENTITY_DATA_TYPE
+                );
             }
         }
 
