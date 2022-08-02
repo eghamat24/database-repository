@@ -81,14 +81,13 @@ class MakeFactory extends Command
         $setterStub = file_get_contents($factoryStubsPath.'setter.stub');
 
         // Initialize Class
+        $setterFunctions = '';
         foreach ($columns as $_column) {
-            $baseContent = substr_replace($baseContent,
-                $this->writeSetter($setterStub, $_column->COLUMN_NAME),
-                -53, 0);
+            $setterFunctions .= $this->writeSetter($setterStub, $_column->COLUMN_NAME);
         }
 
-        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}'],
-            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName],
+        $baseContent = str_replace(['{{ SetterFunctions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}'],
+            [$setterFunctions, $entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName],
             $baseContent);
 
         file_put_contents($filenameWithPath, $baseContent);

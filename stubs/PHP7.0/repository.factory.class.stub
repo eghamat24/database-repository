@@ -15,7 +15,7 @@ class {{ FactoryName }} extends Factory
     {
         ${{ EntityVariableName }} = new {{ EntityName }}();
 
-
+{{ SetterFunctions }}
         return ${{ EntityVariableName }};
     }
 }
