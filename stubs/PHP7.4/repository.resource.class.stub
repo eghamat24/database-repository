@@ -14,6 +14,7 @@ class {{ ResourceName }} extends Resource
     public function toArray(${{ EntityVariableName }}): array
     {
         return [
+{{ GetterFunctions }}
         ];
     }
 
@@ -24,6 +25,7 @@ class {{ ResourceName }} extends Resource
     public function toArrayWithForeignKeys(${{ EntityVariableName }}): array
     {
         return $this->toArray(${{ EntityVariableName }}) + [
+{{ ForeignGetterFunctions }}
         ];
     }
 }

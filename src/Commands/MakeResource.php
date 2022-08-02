@@ -90,22 +90,20 @@ class MakeResource extends Command
         $getterStub = file_get_contents($resourceStubsPath.'getter.default.stub');
         $foreignGetterStub = file_get_contents($resourceStubsPath.'getter.foreign.stub');
 
+        $getterFunctions = '';
         foreach ($columns as $_column) {
-            $baseContent = substr_replace($baseContent,
-                $this->writeGetter($getterStub, $_column->COLUMN_NAME, camel_case($_column->COLUMN_NAME)),
-                -293, 0);
+            $getterFunctions .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, camel_case($_column->COLUMN_NAME));
         }
 
+        $foreignGetterFunctions = '';
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent,
-                    $this->writeForeignGetter($foreignGetterStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE),
-                    -20, 0);
+                $foreignGetterFunctions .= $this->writeForeignGetter($foreignGetterStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE);
             }
         }
 
-        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ ResourceName }}', '{{ ResourceNamespace }}'],
-            [$entityName, $entityNamespace, $entityVariableName, $resourceName, $resourceNamespace],
+        $baseContent = str_replace(['{{ GetterFunctions }}', '{{ ForeignGetterFunctions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ ResourceName }}', '{{ ResourceNamespace }}'],
+            [substr($getterFunctions, 0, -1), substr($foreignGetterFunctions, 0, -1), $entityName, $entityNamespace, $entityVariableName, $resourceName, $resourceNamespace],
             $baseContent);
 
         file_put_contents($filenameWithPath, $baseContent);
