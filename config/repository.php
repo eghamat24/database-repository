@@ -7,6 +7,7 @@ return [
     'path' => [
         'namespace' => [
             'entities' => 'App\Models\Entities',
+            'enums' => 'App\Models\Enums',
             'factories' => 'App\Models\Factories',
             'resources' => 'App\Models\Resources',
             'repositories' => 'App\Models\Repositories',
@@ -25,6 +26,7 @@ return [
 
         'relative' => [
             'entities' => 'app/Models/Entities/',
+            'enums' => 'app/Models/Enums/',
             'factories' => 'app/Models/Factories/',
             'resources' => 'app/Models/Resources/',
             'repositories' => 'app/Models/Repositories/',
