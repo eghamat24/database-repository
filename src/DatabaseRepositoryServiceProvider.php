@@ -62,52 +62,62 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
 
     private function publishEnums(): void
     {
+        $publishPath = $this->app->basePath(config('repository.path.relative.enums', 'app/Models/Enums/'));
+
         $this->publishes([
-            $this->baseModelStubPath.'/Enums/Enum.stub' => $this->app->basePath('app/Models/Enums/Enum.php'),
+            $this->baseModelStubPath . '/Enums/Enum.stub' => $publishPath . 'Enum.php',
         ], ['repository-base-classes', 'repository-base-enum']);
 
         $this->publishes([
-            $this->baseModelStubPath.'/Enums/GriewFilterOperator.stub' => $this->app->basePath('app/Models/Enums/GriewFilterOperator.php'),
+            $this->baseModelStubPath . '/Enums/GriewFilterOperator.stub' => $publishPath . 'GriewFilterOperator.php',
         ], ['repository-base-classes', 'repository-griew-enums']);
     }
 
     private function publishEntities(): void
     {
+        $publishPath = $this->app->basePath(config('repository.path.relative.entities', 'app/Models/Entities/'));
+
         $this->publishes([
-            $this->baseModelStubPath.'/Entity/Entity.stub' => $this->app->basePath('app/Models/Entities/Entity.php'),
+            $this->baseModelStubPath . '/Entity/Entity.stub' => $publishPath . 'Entity.php',
         ], ['repository-base-classes', 'repository-base-entity']);
     }
 
     private function publishFactories(): void
     {
+        $publishPath = $this->app->basePath(config('repository.path.relative.factories', 'app/Models/Factories/'));
+
         $this->publishes([
-            $this->baseModelStubPath.'/Factory/Factory.stub' => $this->app->basePath('app/Models/Factories/Factory.php'),
+            $this->baseModelStubPath . '/Factory/Factory.stub' => $publishPath . 'Factory.php',
         ], ['repository-base-classes', 'repository-base-factory']);
 
         $this->publishes([
-            $this->baseModelStubPath.'/Factory/IFactory.stub' => $this->app->basePath('app/Models/Factories/IFactory.php'),
+            $this->baseModelStubPath . '/Factory/IFactory.stub' => $publishPath . 'IFactory.php',
         ], ['repository-base-classes', 'repository-base-factory']);
     }
 
     private function publishResources(): void
     {
+        $publishPath = $this->app->basePath(config('repository.path.relative.resources', 'app/Models/Resources/'));
+
         $this->publishes([
-            $this->baseModelStubPath.'/Resource/Resource.stub' => $this->app->basePath('app/Models/Resources/Resource.php'),
+            $this->baseModelStubPath . '/Resource/Resource.stub' => $publishPath . 'Resource.php',
         ], ['repository-base-classes', 'repository-base-resource']);
 
         $this->publishes([
-            $this->baseModelStubPath.'/Resource/IResource.stub' => $this->app->basePath('app/Models/Resources/IResource.php'),
+            $this->baseModelStubPath . '/Resource/IResource.stub' =>  $publishPath . 'IResource.php',
         ], ['repository-base-classes', 'repository-base-resource']);
     }
 
     private function publishRepositories(): void
     {
+        $publishPath = $this->app->basePath(config('repository.path.relative.repositories', 'app/Models/Repositories/'));
+
         $this->publishes([
-            $this->baseModelStubPath.'/Repository/MySqlRepository.stub' => $this->app->basePath('app/Models/Repositories/MySqlRepository.php'),
+            $this->baseModelStubPath . '/Repository/MySqlRepository.stub' => $publishPath . 'MySqlRepository.php',
         ], ['repository-base-classes', 'repository-base-mysql-repository']);
 
         $this->publishes([
-            $this->baseModelStubPath.'/Repository/RedisRepository.stub' => $this->app->basePath('app/Models/Repositories/RedisRepository.php'),
+            $this->baseModelStubPath . '/Repository/RedisRepository.stub' =>  $publishPath . 'RedisRepository.php',
         ], ['repository-base-classes', 'repository-base-redis-repository']);
     }
 
