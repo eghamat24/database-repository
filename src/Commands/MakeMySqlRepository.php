@@ -48,6 +48,13 @@ class MakeMySqlRepository extends Command
             $getterStub);
     }
 
+    private function writeSetterFunction(string $setterStub, string $columnName): string
+    {
+        return str_replace('{{ SetterName }}',
+            ucfirst(camel_case($columnName)),
+            $setterStub);
+    }
+
     /**
      * Execute the console command.
      *
@@ -65,9 +72,10 @@ class MakeMySqlRepository extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories')."\\$entityName";
-        $mysqlRepositoryStubsPath = config('repository.path.stub.repositories.mysql');
-        $filenameWithPath = $relativeMysqlRepositoryPath.'\\'.$mysqlRepositoryName.'.php';
+        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories')."$entityName";
+        $mysqlRepositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.mysql');
+        $phpVersion = config('repository.php_version');
+        $filenameWithPath = $relativeMysqlRepositoryPath . '/' . $mysqlRepositoryName.'.php';
 
         if ($this->option('delete')) {
             unlink("$relativeMysqlRepositoryPath/$mysqlRepositoryName.php");
@@ -75,7 +83,7 @@ class MakeMySqlRepository extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeMysqlRepositoryPath) && ! mkdir($relativeMysqlRepositoryPath) && ! is_dir($relativeMysqlRepositoryPath)) {
+        if ( ! file_exists($relativeMysqlRepositoryPath) && ! mkdir($relativeMysqlRepositoryPath, 0775, true) && ! is_dir($relativeMysqlRepositoryPath)) {
             $this->alert("Directory \"$relativeMysqlRepositoryPath\" was not created");
             return 0;
         }
@@ -103,60 +111,65 @@ class MakeMySqlRepository extends Command
         $updateFunctionStub = file_get_contents($mysqlRepositoryStubsPath.'update.stub');
         $deleteAndUndeleteStub = file_get_contents($mysqlRepositoryStubsPath.'deleteAndUndelete.stub');
         $getterStub = file_get_contents($mysqlRepositoryStubsPath.'getter.stub');
+        $setterStub = file_get_contents($mysqlRepositoryStubsPath.'setter.stub');
         $timeFieldStub = file_get_contents($mysqlRepositoryStubsPath.'timeField.stub');
+        $functions = '';
 
         // Initialize MySql Repository
-        $baseContent = substr_replace($baseContent,
-            $this->writeGetOneFunction($getOneStub, 'id', 'int'),
-            -1, 0);
-        $baseContent = substr_replace($baseContent,
-            $this->writeGetAllFunction($getAllStub, 'id', 'int'),
-            -1, 0);
+        $functions .= $this->writeGetOneFunction($getOneStub, 'id', 'int');
+        $functions .= $this->writeGetAllFunction($getAllStub, 'id', 'int');
 
         if ($detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent,
-                    $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $entityName),
-                    -1, 0);
-                $baseContent = substr_replace($baseContent,
-                    $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $entityName),
-                    -1, 0);
+                $functions .= $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $entityName);
+                $functions .= $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $entityName);
             }
         }
 
+        $getterFunctions = '';
+        $setterFunctions = '';
         // Create "create" function
         foreach ($columns as $_column) {
-            if ( ! in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                $createFunctionStub = substr_replace($createFunctionStub,
-                    $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
-                    -95, 0);
-            } elseif (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
-                $createFunctionStub = substr_replace($createFunctionStub,
-                    $this->writeGetterFunction($timeFieldStub, $_column->COLUMN_NAME),
-                    -95, 0);
+            if ( ! in_array($_column->COLUMN_NAME, ['id', 'deleted_at'])) {
+                    $getterFunctions .= $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME);
+            }
+            if (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
+                    $setterFunctions .= $this->writeSetterFunction($setterStub, $_column->COLUMN_NAME);
             }
         }
-        $baseContent = substr_replace($baseContent, $createFunctionStub, -1, 0);
+        $createFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ SetterFunctions }}"],
+            [substr($getterFunctions, 0, -1), substr($setterFunctions, 0, -1)],
+            $createFunctionStub
+        );
 
+        $functions .= $createFunctionStub;
+
+        $getterFunctions = '';
+        $setterFunctions = '';
         // Create "update" function
         foreach ($columns as $_column) {
-            if ( ! in_array($_column->COLUMN_NAME, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                $updateFunctionStub = substr_replace($updateFunctionStub,
-                    $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
-                    -12, 0);
-            } elseif ($_column->COLUMN_NAME === 'updated_at') {
-                $updateFunctionStub = substr_replace($updateFunctionStub,
-                    $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME),
-                    -12, 0);
+            if ( ! in_array($_column->COLUMN_NAME, ['id', 'created_at', 'deleted_at'])) {
+                    $getterFunctions .= $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME);
+            }
+            if ($_column->COLUMN_NAME === 'updated_at') {
+                    $setterFunctions .= $this->writeSetterFunction($setterStub, $_column->COLUMN_NAME);
             }
         }
-        $baseContent = substr_replace($baseContent, $updateFunctionStub, -1, 0);
+        $updateFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ UpdateFieldSetter }}"],
+            [substr($getterFunctions, 0, -1), substr($setterFunctions, 0, -1)],
+            $updateFunctionStub
+        );
+
+        $functions .= $updateFunctionStub;
 
         // Create "delete" and "undelete" functions if necessary
         $hasSoftDelete = in_array('deleted_at', $columns->pluck('COLUMN_NAME')->toArray(), true);
         if ($hasSoftDelete) {
-            $baseContent = substr_replace($baseContent, $deleteAndUndeleteStub, -1, 0);
+            $functions .= $deleteAndUndeleteStub;
         }
+
+        $baseContent = str_replace('{{ Functions }}',
+            $functions, $baseContent);
 
         $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ RepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}'],
             [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $mysqlRepositoryName, $repositoryNamespace, $interfaceName, $tableName, $hasSoftDelete ? 'true' : 'false'],

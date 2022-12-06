@@ -56,7 +56,7 @@ class MakeResource extends Command
         $resourceName = $entityName."Resource";
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
-        $resourceStubsPath = config('repository.path.stub.resources');
+        $resourceStubsPath = __DIR__ . '/../../' . config('repository.path.stub.resources');
         $filenameWithPath = $relativeResourcesPath.$resourceName.'.php';
 
         if ($this->option('delete')) {
@@ -65,7 +65,7 @@ class MakeResource extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeResourcesPath) && ! mkdir($relativeResourcesPath, 775, true) && ! is_dir($relativeResourcesPath)) {
+        if ( ! file_exists($relativeResourcesPath) && ! mkdir($relativeResourcesPath, 0775, true) && ! is_dir($relativeResourcesPath)) {
             $this->alert("Directory \"$relativeResourcesPath\" was not created");
             return 0;
         }

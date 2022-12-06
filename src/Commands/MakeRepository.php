@@ -74,9 +74,9 @@ class MakeRepository extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRepositoryPath = config('repository.path.relative.repositories')."\\$entityName";
-        $repositoryStubsPath = config('repository.path.stub.repositories.base');
-        $filenameWithPath = $relativeRepositoryPath.'\\'.$repositoryName.'.php';
+        $relativeRepositoryPath = config('repository.path.relative.repositories') . "$entityName";
+        $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
+        $filenameWithPath = $relativeRepositoryPath . DIRECTORY_SEPARATOR . $repositoryName . '.php';
 
         if ($this->option('delete')) {
             unlink("$relativeRepositoryPath/$repositoryName.php");
@@ -84,7 +84,7 @@ class MakeRepository extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeRepositoryPath) && ! mkdir($relativeRepositoryPath, 775, true) && ! is_dir($relativeRepositoryPath)) {
+        if ( ! file_exists($relativeRepositoryPath) && ! mkdir($relativeRepositoryPath, 0775, true) && ! is_dir($relativeRepositoryPath)) {
             $this->alert("Directory \"$relativeRepositoryPath\" was not created");
             return 0;
         }

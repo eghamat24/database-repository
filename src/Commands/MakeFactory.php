@@ -47,7 +47,8 @@ class MakeFactory extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $relativeFactoriesPath = config('repository.path.relative.factories');
-        $factoryStubsPath = config('repository.path.stub.factories');
+        $factoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.factories');
+        $phpVersion = config('repository.php_version');
         $filenameWithPath = $relativeFactoriesPath.$factoryName.'.php';
 
         if ($this->option('delete')) {
@@ -56,7 +57,7 @@ class MakeFactory extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeFactoriesPath) && ! mkdir($relativeFactoriesPath, 775, true) && ! is_dir($relativeFactoriesPath)) {
+        if ( ! file_exists($relativeFactoriesPath) && ! mkdir($relativeFactoriesPath, 0775, true) && ! is_dir($relativeFactoriesPath)) {
             $this->alert("Directory \"$relativeFactoriesPath\" was not created");
             return 0;
         }

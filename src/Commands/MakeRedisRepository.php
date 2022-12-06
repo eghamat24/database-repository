@@ -42,7 +42,7 @@ class MakeRedisRepository extends Command
         $interfaceName = "I$entityName"."Repository";
         $redisRepositoryName = "Redis$entityName"."Repository";
         $redisRepositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRedisRepositoryPath = config('repository.path.relative.repositories')."\\$entityName";
+        $relativeRedisRepositoryPath = config('repository.path.relative.repositories')."$entityName";
 
         if ($this->option('delete')) {
             unlink("$relativeRedisRepositoryPath/$redisRepositoryName.php");
@@ -50,7 +50,7 @@ class MakeRedisRepository extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeRedisRepositoryPath) && ! mkdir($relativeRedisRepositoryPath) && ! is_dir($relativeRedisRepositoryPath)) {
+        if ( ! file_exists($relativeRedisRepositoryPath) && ! mkdir($relativeRedisRepositoryPath, 0775, true) && ! is_dir($relativeRedisRepositoryPath)) {
             $this->alert("Directory \"$relativeRedisRepositoryPath\" was not created");
             return 0;
         }

@@ -66,7 +66,8 @@ class MakeEntity extends Command
         $entityName = str_singular(ucfirst(camel_case($tableName)));
         $entityNamespace = config('repository.path.namespace.entities');
         $relativeEntitiesPath = config('repository.path.relative.entities');
-        $entityStubsPath = config('repository.path.stub.entities');
+        $entityStubsPath = __DIR__ . '/../../' . config('repository.path.stub.entities');
+        $phpVersion = config('repository.php_version');
         $filenameWithPath = $relativeEntitiesPath.$entityName.'.php';
 
         if ($this->option('delete')) {
@@ -75,7 +76,7 @@ class MakeEntity extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeEntitiesPath) && ! mkdir($relativeEntitiesPath, 775, true) && ! is_dir($relativeEntitiesPath)) {
+        if ( ! file_exists($relativeEntitiesPath) && ! mkdir($relativeEntitiesPath, 0775, true) && ! is_dir($relativeEntitiesPath)) {
             $this->alert("Directory \"$relativeEntitiesPath\" was not created");
             return 0;
         }

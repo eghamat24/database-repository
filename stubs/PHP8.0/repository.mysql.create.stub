@@ -5,8 +5,11 @@
 	 */
 	public function create({{ EntityName }} ${{ EntityVariableName }}): {{ EntityName }}
 	{
+{{ SetterFunctions }}
+
 		$id = $this->newQuery()
 			->insertGetId([
+{{ GetterFunctions }}
 			]);
 
 		${{ EntityVariableName }}->setId($id);

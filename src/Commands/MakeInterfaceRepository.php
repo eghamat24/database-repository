@@ -55,9 +55,9 @@ class MakeInterfaceRepository extends Command
         $interfaceName = "I$entityName"."Repository";
         $entityNamespace = config('repository.path.namespace.entities');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeInterfacePath = config('repository.path.relative.repositories')."\\$entityName";
-        $interfaceRepositoryStubsPath = config('repository.path.stub.repositories.interface');
-        $filenameWithPath = $relativeInterfacePath.'\\'.$interfaceName.'.php';
+        $relativeInterfacePath = config('repository.path.relative.repositories') . "$entityName";
+        $interfaceRepositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.interface');
+        $filenameWithPath = $relativeInterfacePath . '/' . $interfaceName.'.php';
 
         if ($this->option('delete')) {
             unlink("$relativeInterfacePath/$interfaceName.php");
@@ -65,7 +65,7 @@ class MakeInterfaceRepository extends Command
             return 0;
         }
 
-        if ( ! file_exists($relativeInterfacePath) && ! mkdir($relativeInterfacePath, 775, true) && ! is_dir($relativeInterfacePath)) {
+        if ( ! file_exists($relativeInterfacePath) && ! mkdir($relativeInterfacePath, 0775, true) && ! is_dir($relativeInterfacePath)) {
             $this->alert("Directory \"$relativeInterfacePath\" was not created");
             return 0;
         }

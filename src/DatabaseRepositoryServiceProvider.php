@@ -25,7 +25,7 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
     {
         parent::__construct($app);
 
-        $this->baseModelStubPath = __DIR__ . '/../stubs/Models/PHP'.env('REPOSITORY_PHP_VERSION', '8.0');
+        $this->baseModelStubPath = __DIR__ . '/../stubs/Models/PHP' .env('REPOSITORY_PHP_VERSION', '8.0');
     }
 
     /**
@@ -47,10 +47,6 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/repository.php' => $this->app->configPath('repository.php'),
             ], 'repository-config');
-
-            $this->publishes([
-                __DIR__ . '/../stubs/PHP'.env('REPOSITORY_PHP_VERSION', '8.0') => $this->app->basePath('stubs'),
-            ], 'repository-stubs');
 
             $this->publishEnums();
             $this->publishEntities();
