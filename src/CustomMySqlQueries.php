@@ -49,6 +49,7 @@ trait CustomMySqlQueries
         return DB::table('INFORMATION_SCHEMA.COLUMNS')
             ->where('TABLE_SCHEMA', config('database.connections.mysql.database'))
             ->where('TABLE_NAME', $tableName)
+            ->orderBy('ORDINAL_POSITION')
             ->get();
     }
 
@@ -63,6 +64,7 @@ trait CustomMySqlQueries
             ->where('TABLE_SCHEMA', config('database.connections.mysql.database'))
             ->where('TABLE_NAME', $tableName)
             ->whereNotNull('REFERENCED_TABLE_NAME')
+            ->orderBy('ORDINAL_POSITION')
             ->get();
 
         $foreignKeys->each(function ($foreignKey) {
