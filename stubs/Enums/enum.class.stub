@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ EnumNamespace }};
+
+use Nanvaie\DatabaseRepository\Models\Enums\Enum;
+
+class {{ EnumName }} extends Enum
+{
+{{ Attributes }}
+}

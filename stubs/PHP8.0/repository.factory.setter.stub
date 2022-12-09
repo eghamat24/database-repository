@@ -1,1 +1,0 @@
-        ${{ EntityVariableName }}->set{{ SetterName }}($entity->{{ AttributeName }});

@@ -11,7 +11,7 @@ Before publishing assets, add `REPOSITORY_PHP_VERSION` variable to `.env` and se
 
 Then run following command in console to publish necessary assets in your project directory. 
 ```bash
-php artisan vendor:publish --provider=Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider
+php artisan vendor:publish vendor:publish --tag=database-repository-config
 ```
 
 ### Setup Lumen Repository

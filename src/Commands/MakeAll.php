@@ -45,6 +45,7 @@ class MakeAll extends Command
             ];
 
             $this->call('repository:make-entity', $arguments);
+            $this->call('repository:make-enum', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
             $this->call('repository:make-factory', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
             $this->call('repository:make-resource', $arguments);
             $this->call('repository:make-interface-repository', $arguments);

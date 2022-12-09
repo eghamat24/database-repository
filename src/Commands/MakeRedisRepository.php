@@ -37,15 +37,13 @@ class MakeRedisRepository extends Command
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
         $entityName = str_singular(ucfirst(camel_case($tableName)));
-        $entityVariableName = camel_case($entityName);
-        $factoryName = $entityName."Factory";
-        $interfaceName = "I$entityName"."Repository";
         $redisRepositoryName = "Redis$entityName"."Repository";
         $redisRepositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRedisRepositoryPath = config('repository.path.relative.repositories')."$entityName";
+        $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;
+        $filenameWithPath = $relativeRedisRepositoryPath . $redisRepositoryName . '.php';
 
-        if ($this->option('delete')) {
-            unlink("$relativeRedisRepositoryPath/$redisRepositoryName.php");
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
+            unlink($filenameWithPath);
             $this->info("Redis Repository \"$redisRepositoryName\" has been deleted.");
             return 0;
         }
@@ -73,7 +71,7 @@ class MakeRedisRepository extends Command
 
         // Initialize Redis Repository
         $redisRepositoryContent = "<?php\n\nnamespace $redisRepositoryNamespace\\$entityName;\n\n";
-        $redisRepositoryContent .= "use Nanvaie\DatabaseRepository\Models\Repository\RedisRepository;\n\n";
+        $redisRepositoryContent .= "use Nanvaie\DatabaseRepository\Models\Repositories\RedisRepository;\n\n";
         $redisRepositoryContent .= "class $redisRepositoryName extends RedisRepository\n{";
         $redisRepositoryContent .= "}";
 

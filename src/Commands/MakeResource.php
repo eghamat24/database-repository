@@ -57,10 +57,10 @@ class MakeResource extends Command
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
         $resourceStubsPath = __DIR__ . '/../../' . config('repository.path.stub.resources');
-        $filenameWithPath = $relativeResourcesPath.$resourceName.'.php';
+        $filenameWithPath = $relativeResourcesPath . $resourceName.'.php';
 
-        if ($this->option('delete')) {
-            unlink("$relativeResourcesPath/$resourceName.php");
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
+            unlink($filenameWithPath);
             $this->info("Resource \"$resourceName\" has been deleted.");
             return 0;
         }
@@ -102,8 +102,8 @@ class MakeResource extends Command
             }
         }
 
-        $baseContent = str_replace(['{{ GetterFunctions }}', '{{ ForeignGetterFunctions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ ResourceName }}', '{{ ResourceNamespace }}'],
-            [substr($getterFunctions, 0, -1), substr($foreignGetterFunctions, 0, -1), $entityName, $entityNamespace, $entityVariableName, $resourceName, $resourceNamespace],
+        $baseContent = str_replace(['{{ GetterFunctions }}', '{{ ForeignGetterFunctions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ ResourceName }}', '{{ ResourceNamespace }}',],
+            [substr($getterFunctions, 0, -1), substr($foreignGetterFunctions, 0, -1), $entityName, $entityNamespace, $entityVariableName, $resourceName, $resourceNamespace,],
             $baseContent);
 
         file_put_contents($filenameWithPath, $baseContent);

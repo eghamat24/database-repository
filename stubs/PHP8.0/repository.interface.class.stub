@@ -1,9 +1,0 @@
-<?php
-
-namespace {{ RepositoryNamespace }}\{{ EntityName }};
-
-use {{ EntityNamespace }}\{{ EntityName }};
-use Illuminate\Support\Collection;
-
-interface {{ InterfaceRepositoryName }}
-{}

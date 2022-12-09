@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ EntityNamespace }};
+
+use Nanvaie\DatabaseRepository\Models\Entity\Entity;
+
+class {{ EntityName }} extends Entity
+{
+{{ Attributes }}{{ SettersAndGetters }}
+}

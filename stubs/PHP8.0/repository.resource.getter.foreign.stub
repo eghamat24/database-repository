@@ -1,1 +1,0 @@
-            '{{ AttributeName }}' => ${{ EntityVariableName }}->get{{ GetterName }}() ? (new {{ AttributeType }}Resource())->toArray(${{ EntityVariableName }}->get{{ GetterName }}()) : null,

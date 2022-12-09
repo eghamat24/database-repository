@@ -55,12 +55,12 @@ class MakeInterfaceRepository extends Command
         $interfaceName = "I$entityName"."Repository";
         $entityNamespace = config('repository.path.namespace.entities');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeInterfacePath = config('repository.path.relative.repositories') . "$entityName";
+        $relativeInterfacePath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;
         $interfaceRepositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.interface');
-        $filenameWithPath = $relativeInterfacePath . '/' . $interfaceName.'.php';
+        $filenameWithPath = $relativeInterfacePath . $interfaceName.'.php';
 
-        if ($this->option('delete')) {
-            unlink("$relativeInterfacePath/$interfaceName.php");
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
+            unlink($filenameWithPath);
             $this->info("Interface \"$interfaceName\" has been deleted.");
             return 0;
         }

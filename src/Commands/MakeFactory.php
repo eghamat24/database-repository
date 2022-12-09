@@ -48,11 +48,10 @@ class MakeFactory extends Command
         $factoryNamespace = config('repository.path.namespace.factories');
         $relativeFactoriesPath = config('repository.path.relative.factories');
         $factoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.factories');
-        $phpVersion = config('repository.php_version');
-        $filenameWithPath = $relativeFactoriesPath.$factoryName.'.php';
+        $filenameWithPath = $relativeFactoriesPath . $factoryName.'.php';
 
-        if ($this->option('delete')) {
-            unlink("$relativeFactoriesPath/$factoryName.php");
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
+            unlink($filenameWithPath);
             $this->info("Factory \"$factoryName\" has been deleted.");
             return 0;
         }

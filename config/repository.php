@@ -14,13 +14,14 @@ return [
         ],
 
         'stub' => [
-            'entities' => 'stubs/PHP' . env('REPOSITORY_PHP_VERSION', '8.0') . '/repository.entity.',
-            'factories' => 'stubs/PHP' . env('REPOSITORY_PHP_VERSION', '8.0') . '/repository.factory.',
-            'resources' => 'stubs/PHP' . env('REPOSITORY_PHP_VERSION', '8.0') . '/repository.resource.',
+            'entities' => 'stubs/Entities/entity.',
+            'enums' => 'stubs/Enums/enum.',
+            'factories' => 'stubs/Factories/factory.',
+            'resources' => 'stubs/Resources/resource.',
             'repositories' => [
-                'base' => 'stubs/PHP' . env('REPOSITORY_PHP_VERSION', '8.0') . '/repository.base.',
-                'mysql' => 'stubs/PHP' . env('REPOSITORY_PHP_VERSION', '8.0') . '/repository.mysql.',
-                'interface' => 'stubs/PHP' . env('REPOSITORY_PHP_VERSION', '8.0') . '/repository.interface.',
+                'base' => 'stubs/Repositories/Base/base.',
+                'mysql' => 'stubs/Repositories/Mysql/mysql.',
+                'interface' => 'stubs/Repositories/Interface/interface.',
             ]
         ],
 

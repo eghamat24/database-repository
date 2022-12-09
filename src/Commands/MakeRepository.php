@@ -74,12 +74,12 @@ class MakeRepository extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRepositoryPath = config('repository.path.relative.repositories') . "$entityName";
+        $relativeRepositoryPath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;
         $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
-        $filenameWithPath = $relativeRepositoryPath . DIRECTORY_SEPARATOR . $repositoryName . '.php';
+        $filenameWithPath = $relativeRepositoryPath . $repositoryName . '.php';
 
-        if ($this->option('delete')) {
-            unlink("$relativeRepositoryPath/$repositoryName.php");
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
+            unlink($filenameWithPath);
             $this->info("Repository \"$repositoryName\" has been deleted.");
             return 0;
         }

@@ -1,2 +1,0 @@
-
-    public function getAllBy{{ FunctionNamePlural }}(array ${{ AttributeNamePlural }}): Collection;

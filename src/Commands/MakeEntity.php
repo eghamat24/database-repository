@@ -67,10 +67,9 @@ class MakeEntity extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $relativeEntitiesPath = config('repository.path.relative.entities');
         $entityStubsPath = __DIR__ . '/../../' . config('repository.path.stub.entities');
-        $phpVersion = config('repository.php_version');
-        $filenameWithPath = $relativeEntitiesPath.$entityName.'.php';
+        $filenameWithPath = $relativeEntitiesPath . $entityName.'.php';
 
-        if ($this->option('delete')) {
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
             unlink($filenameWithPath);
             $this->info("Entity \"$entityName\" has been deleted.");
             return 0;

@@ -72,13 +72,12 @@ class MakeMySqlRepository extends Command
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
         $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories')."$entityName";
+        $relativeMysqlRepositoryPath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;
         $mysqlRepositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.mysql');
-        $phpVersion = config('repository.php_version');
-        $filenameWithPath = $relativeMysqlRepositoryPath . '/' . $mysqlRepositoryName.'.php';
+        $filenameWithPath = $relativeMysqlRepositoryPath . $mysqlRepositoryName.'.php';
 
-        if ($this->option('delete')) {
-            unlink("$relativeMysqlRepositoryPath/$mysqlRepositoryName.php");
+        if (file_exists($filenameWithPath) && $this->option('delete')) {
+            unlink($filenameWithPath);
             $this->info("MySql Repository \"$mysqlRepositoryName\" has been deleted.");
             return 0;
         }
@@ -171,8 +170,8 @@ class MakeMySqlRepository extends Command
         $baseContent = str_replace('{{ Functions }}',
             $functions, $baseContent);
 
-        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ RepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}'],
-            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $mysqlRepositoryName, $repositoryNamespace, $interfaceName, $tableName, $hasSoftDelete ? 'true' : 'false'],
+        $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}', '{{ MySqlRepositoryName }}', '{{ RepositoryNamespace }}', '{{ RepositoryInterfaceName }}', '{{ TableName }}', '{{ HasSoftDelete }}',],
+            [$entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName, $mysqlRepositoryName, $repositoryNamespace, $interfaceName, $tableName, $hasSoftDelete ? 'true' : 'false',],
             $baseContent);
 
         file_put_contents($filenameWithPath, $baseContent);

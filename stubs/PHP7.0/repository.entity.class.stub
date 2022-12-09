@@ -1,7 +1,0 @@
-<?php
-
-namespace {{ EntityNamespace }};
-
-class {{ EntityName }} extends Entity
-{
-}
