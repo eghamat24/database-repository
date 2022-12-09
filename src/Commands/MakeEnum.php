@@ -62,7 +62,7 @@ class MakeEnum extends Command
         $enums = [];
         foreach ($columns as $_column) {
             if ($_column->DATA_TYPE == 'enum') {
-                $enumClassName = studly_case(substr_replace($_column->TABLE_NAME, '', -1) . '_' . $_column->COLUMN_NAME);
+                $enumClassName = studly_case(str_singular(ucfirst(camel_case($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME);
                 $enums[$enumClassName] = explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE));
 
                 $filenameWithPath = $relativeEntitiesPath . $enumClassName.'.php';
