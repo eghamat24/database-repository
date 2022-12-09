@@ -3,19 +3,25 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
+use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use phpDocumentor\Reflection\PseudoTypes\NonEmptyLowercaseString;
 
 class MakeAll extends Command
 {
+    use CustomMySqlQueries;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'repository:make-all {table_names*}
+    protected $signature = 'repository:make-all
+    {--table_names= : Table names, separate names with comma}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing classes}
-    {--g|add-to-git : Add created file to git repository}';
+    {--g|add-to-git : Add created file to git repository}
+    {--a|all-tables : Add created file to git repository}';
 
     /**
      * The console command description.
@@ -29,11 +35,19 @@ class MakeAll extends Command
      */
     public function handle()
     {
-        $tableNames = $this->argument('table_names');
         $force = $this->option('force');
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
         $addToGit = $this->option('add-to-git');
+
+        if ($this->option('all-tables')) {
+            $tableNames = $this->getAllTableNames()->pluck('TABLE_NAME');
+        } else if ($this->option('table_names')) {
+            $tableNames = explode(',', $this->option('table_names'));
+        } else {
+            $this->alert("Please choose one of two options '--all-tables' or '--table_names=' ");
+            die;
+        }
 
         foreach ($tableNames as $_tableName) {
             $arguments = [

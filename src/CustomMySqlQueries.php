@@ -54,6 +54,19 @@ trait CustomMySqlQueries
     }
 
     /**
+     * Extract all table names.
+     * @return Collection
+     */
+    public function getAllTableNames(): Collection
+    {
+        return DB::table('INFORMATION_SCHEMA.TABLES')
+            ->select('TABLE_NAME')
+            ->where('TABLE_SCHEMA', config('database.connections.mysql.database'))
+            ->where('TABLE_NAME', '<>', 'migrations')
+            ->get();
+    }
+
+    /**
      * Extract all foreign keys from a given table. Foreign key's relations must define in MySql!
      * @param string $tableName
      * @return Collection
