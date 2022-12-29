@@ -14,10 +14,10 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "laravel/helpers": "^1.5",
-        "illuminate/console": "^9.0",
-        "illuminate/support": "^9.0",
-        "illuminate/cache": "^9.0",
-        "illuminate/database": "^9.0"
+        "illuminate/console": "^6.0|^7.0|^8.0|^9.0",
+        "illuminate/support": "^6.0|^7.0|^8.0|^9.0",
+        "illuminate/cache": "^6.0|^7.0|^8.0|^9.0",
+        "illuminate/database": "^6.0|^7.0|^8.0|^9.0"
     },
     "autoload": {
         "psr-4": {
