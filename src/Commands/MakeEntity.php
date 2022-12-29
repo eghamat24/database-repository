@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
@@ -63,7 +64,7 @@ class MakeEntity extends Command
     {
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
         $entityNamespace = config('repository.path.namespace.entities');
         $relativeEntitiesPath = config('repository.path.relative.entities');
         $entityStubsPath = __DIR__ . '/../../' . config('repository.path.stub.entities');
@@ -93,7 +94,7 @@ class MakeEntity extends Command
         }
 
         foreach ($columns as $_column) {
-            $_column->COLUMN_NAME = camel_case($_column->COLUMN_NAME);
+            $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
         $baseContent = file_get_contents($entityStubsPath.'class.stub');

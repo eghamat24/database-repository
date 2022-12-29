@@ -3,6 +3,7 @@
 namespace Nanvaie\DatabaseRepository\Models\Entity;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 use JsonSerializable;
 
 abstract class Entity implements JsonSerializable, Arrayable
@@ -23,7 +24,7 @@ abstract class Entity implements JsonSerializable, Arrayable
     public function __set($name, $value)
     {
         if (property_exists($this, $name)) {
-            $function = camel_case('set_' . snake_case($name));
+            $function = Str::camel('set_' . Str::snake($name));
             $this->$function($value);
         }
     }
@@ -31,7 +32,7 @@ abstract class Entity implements JsonSerializable, Arrayable
     public function __get($name)
     {
         if (property_exists($this, $name)) {
-            $function = camel_case('get_' . snake_case($name));
+            $function = Str::camel('get_' . Str::snake($name));
             return $this->$function();
         }
     }

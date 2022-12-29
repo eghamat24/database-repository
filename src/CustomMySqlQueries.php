@@ -4,6 +4,7 @@ namespace Nanvaie\DatabaseRepository;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 trait CustomMySqlQueries
 {
@@ -37,6 +38,7 @@ trait CustomMySqlQueries
         'time' => 'string',
         'datetime' => 'string',
         'timestamp' => 'string',
+        'point' => 'string',
     ];
 
     /**
@@ -81,8 +83,8 @@ trait CustomMySqlQueries
             ->get();
 
         $foreignKeys->each(function ($foreignKey) {
-            $foreignKey->VARIABLE_NAME = camel_case(str_replace('_id', '', $foreignKey->COLUMN_NAME));
-            $foreignKey->ENTITY_DATA_TYPE = ucfirst(camel_case(str_singular($foreignKey->REFERENCED_TABLE_NAME)));
+            $foreignKey->VARIABLE_NAME = Str::camel(str_replace('_id', '', $foreignKey->COLUMN_NAME));
+            $foreignKey->ENTITY_DATA_TYPE = ucfirst(Str::camel(Str::singular($foreignKey->REFERENCED_TABLE_NAME)));
         });
 
         return $foreignKeys;

@@ -3,6 +3,7 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 
 class MakeResource extends Command
@@ -37,7 +38,7 @@ class MakeResource extends Command
     public function writeForeignGetter(string $foreignGetterStub, string $columnName, string $attributeName)
     {
         return str_replace(['{{ AttributeName }}', '{{ GetterName }}', '{{ AttributeType }}'],
-            [snake_case($columnName), ucfirst($columnName), ucfirst($attributeName)],
+            [Str::snake($columnName), ucfirst($columnName), ucfirst($attributeName)],
             $foreignGetterStub);
     }
 
@@ -50,8 +51,8 @@ class MakeResource extends Command
     {
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
-        $entityVariableName = camel_case($entityName);
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
+        $entityVariableName = Str::camel($entityName);
         $entityNamespace = config('repository.path.namespace.entities');
         $resourceName = $entityName."Resource";
         $resourceNamespace = config('repository.path.namespace.resources');
@@ -92,7 +93,7 @@ class MakeResource extends Command
 
         $getterFunctions = '';
         foreach ($columns as $_column) {
-            $getterFunctions .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, camel_case($_column->COLUMN_NAME));
+            $getterFunctions .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME));
         }
 
         $foreignGetterFunctions = '';

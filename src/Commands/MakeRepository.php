@@ -3,6 +3,7 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 
 class MakeRepository extends Command
@@ -31,12 +32,12 @@ class MakeRepository extends Command
     {
         if ($functionName === 'getOneBy') {
             $functionReturnType = '?{{ EntityName }}';
-            $functionName .= ucfirst(camel_case($columnName));
-            $columnName = camel_case($columnName);
+            $functionName .= ucfirst(Str::camel($columnName));
+            $columnName = Str::camel($columnName);
         } elseif ($functionName === 'getAllBy') {
             $functionReturnType = 'Collection';
-            $functionName .= ucfirst(str_plural(camel_case($columnName)));
-            $columnName = str_plural(camel_case($columnName));
+            $functionName .= ucfirst(Str::plural(Str::camel($columnName)));
+            $columnName = Str::plural(Str::camel($columnName));
         } elseif ($functionName === 'create') {
             $functionReturnType = $attributeType;
         } elseif (in_array($functionName, ['update', 'remove', 'restore'])) {
@@ -44,7 +45,7 @@ class MakeRepository extends Command
         }
 
         return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}'],
-            [$functionName, $attributeType, camel_case($columnName), $functionReturnType],
+            [$functionName, $attributeType, Str::camel($columnName), $functionReturnType],
             $functionStub);
     }
 
@@ -64,8 +65,8 @@ class MakeRepository extends Command
     {
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
-        $entityVariableName = camel_case($entityName);
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
+        $entityVariableName = Str::camel($entityName);
         $factoryName = $entityName.'Factory';
         $interfaceName = 'I'.$entityName.'Repository';
         $repositoryName = $entityName.'Repository';

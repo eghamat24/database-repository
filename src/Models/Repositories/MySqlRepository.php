@@ -207,7 +207,7 @@ abstract class MySqlRepository
     protected function processFilter(Builder $query, array $filters): Builder
     {
         foreach ($filters as $filter) {
-            switch (strtolower(snake_case($filter->operator))) {
+            switch (strtolower(Str::snake($filter->operator))) {
                 case GriewFilterOperator::IS_NULL:
                     $query->whereNull($filter->name);
                     break;

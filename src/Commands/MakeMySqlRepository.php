@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
@@ -30,28 +31,28 @@ class MakeMySqlRepository extends Command
     private function writeGetOneFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeName }}'],
-            [ucfirst(camel_case($columnName)), $columnName, $attributeType, camel_case($columnName)],
+            [ucfirst(Str::camel($columnName)), $columnName, $attributeType, Str::camel($columnName)],
             $getOneStub);
     }
 
     private function writeGetAllFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionNamePlural }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeNamePlural }}'],
-            [ucfirst(str_plural(camel_case($columnName))), $columnName, $attributeType, str_plural(camel_case($columnName))],
+            [ucfirst(Str::plural(Str::camel($columnName))), $columnName, $attributeType, Str::plural(Str::camel($columnName))],
             $getOneStub);
     }
 
     private function writeGetterFunction(string $getterStub, string $columnName): string
     {
         return str_replace(['{{ ColumnName }}', '{{ GetterName }}'],
-            [$columnName, ucfirst(camel_case($columnName))],
+            [$columnName, ucfirst(Str::camel($columnName))],
             $getterStub);
     }
 
     private function writeSetterFunction(string $setterStub, string $columnName): string
     {
         return str_replace('{{ SetterName }}',
-            ucfirst(camel_case($columnName)),
+            ucfirst(Str::camel($columnName)),
             $setterStub);
     }
 
@@ -64,8 +65,8 @@ class MakeMySqlRepository extends Command
     {
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
-        $entityVariableName = camel_case($entityName);
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
+        $entityVariableName = Str::camel($entityName);
         $factoryName = $entityName.'Factory';
         $interfaceName = 'I'.$entityName.'Repository';
         $mysqlRepositoryName = 'MySql'.$entityName.'Repository';

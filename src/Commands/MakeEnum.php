@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
@@ -62,7 +63,7 @@ class MakeEnum extends Command
         $enums = [];
         foreach ($columns as $_column) {
             if ($_column->DATA_TYPE == 'enum') {
-                $enumClassName = studly_case(str_singular(ucfirst(camel_case($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME);
+                $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME);
                 $enums[$enumClassName] = explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE));
 
                 $filenameWithPath = $relativeEntitiesPath . $enumClassName.'.php';

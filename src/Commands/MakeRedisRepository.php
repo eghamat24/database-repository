@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
@@ -36,7 +37,7 @@ class MakeRedisRepository extends Command
     {
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
         $redisRepositoryName = "Redis$entityName"."Repository";
         $redisRepositoryNamespace = config('repository.path.namespace.repositories');
         $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;

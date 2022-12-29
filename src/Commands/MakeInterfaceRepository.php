@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
@@ -30,14 +31,14 @@ class MakeInterfaceRepository extends Command
     private function writeGetOneFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ AttributeType }}', '{{ AttributeName }}'],
-            [ucfirst(camel_case($columnName)), $columnName, $attributeType, camel_case($columnName)],
+            [ucfirst(Str::camel($columnName)), $columnName, $attributeType, Str::camel($columnName)],
             $getOneStub);
     }
 
     private function writeGetAllFunction(string $getOneStub, string $columnName, string $attributeType): string
     {
         return str_replace(['{{ FunctionNamePlural }}', '{{ AttributeType }}', '{{ AttributeNamePlural }}'],
-            [ucfirst(str_plural(camel_case($columnName))), $attributeType, str_plural(camel_case($columnName))],
+            [ucfirst(Str::plural(Str::camel($columnName))), $attributeType, Str::plural(Str::camel($columnName))],
             $getOneStub);
     }
 
@@ -50,8 +51,8 @@ class MakeInterfaceRepository extends Command
     {
         $tableName = $this->argument('table_name');
         $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
-        $entityVariableName = camel_case($entityName);
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
+        $entityVariableName = Str::camel($entityName);
         $interfaceName = "I$entityName"."Repository";
         $entityNamespace = config('repository.path.namespace.entities');
         $repositoryNamespace = config('repository.path.namespace.repositories');

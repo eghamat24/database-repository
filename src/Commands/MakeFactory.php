@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
@@ -29,7 +30,7 @@ class MakeFactory extends Command
     public function writeSetter(string $setterStub, string $columnName): string
     {
         return str_replace(['{{ SetterName }}', '{{ AttributeName }}'],
-            [ucfirst($columnName), snake_case($columnName)],
+            [ucfirst($columnName), Str::snake($columnName)],
             $setterStub);
     }
 
@@ -41,8 +42,8 @@ class MakeFactory extends Command
     public function handle(): int
     {
         $tableName = $this->argument('table_name');
-        $entityName = str_singular(ucfirst(camel_case($tableName)));
-        $entityVariableName = camel_case($entityName);
+        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
+        $entityVariableName = Str::camel($entityName);
         $factoryName = $entityName.'Factory';
         $entityNamespace = config('repository.path.namespace.entities');
         $factoryNamespace = config('repository.path.namespace.factories');
@@ -74,7 +75,7 @@ class MakeFactory extends Command
         }
 
         foreach ($columns as $_column) {
-            $_column->COLUMN_NAME = camel_case($_column->COLUMN_NAME);
+            $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
         $baseContent = file_get_contents($factoryStubsPath.'class.stub');
