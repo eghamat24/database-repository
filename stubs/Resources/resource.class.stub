@@ -9,10 +9,6 @@ use Nanvaie\DatabaseRepository\Models\Resources\Resource;
 
 class {{ ResourceName }} extends Resource
 {
-    /**
-     * @param Entity|{{ EntityName }} ${{ EntityVariableName }}
-     * @return array
-     */
     public function toArray(${{ EntityVariableName }}): array
     {
         return [
@@ -20,10 +16,6 @@ class {{ ResourceName }} extends Resource
         ];
     }
 
-    /**
-     * @param Entity|{{ EntityName }} ${{ EntityVariableName }}
-     * @return array
-     */
     public function toArrayWithForeignKeys(${{ EntityVariableName }}): array
     {
         return $this->toArray(${{ EntityVariableName }}) + [

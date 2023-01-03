@@ -1,8 +1,4 @@
 
-    /**
-	 * @param int ${{ AttributeName }}
-	 * @return {{ EntityName }}|null
-	 */
 	public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): null|{{ EntityName }}
 	{
 		${{ EntityVariableName }} = $this->newQuery()

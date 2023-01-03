@@ -1,8 +1,4 @@
 
-	/**
-	 * @param {{ EntityName }} ${{ EntityVariableName }}
-	 * @return int
-	 */
 	public function remove({{ EntityName }} ${{ EntityVariableName }}): int
 	{
 		return $this->newQuery()
@@ -11,11 +7,7 @@
 				'deleted_at' => date('Y-m-d H:i:s'),
 			]);
 	}
-
-	/**
-	 * @param {{ EntityName }} ${{ EntityVariableName }}
-	 * @return int
-	 */
+	
 	public function restore({{ EntityName }} ${{ EntityVariableName }}): int
 	{
 		return $this->newQuery()
