@@ -31,7 +31,7 @@ class MakeRepository extends Command
     private function writeFunction(string $functionStub, string $functionName, string $columnName, string $attributeType): string
     {
         if ($functionName === 'getOneBy') {
-            $functionReturnType = '?{{ EntityName }}';
+            $functionReturnType = 'null|{{ EntityName }}';
             $functionName .= ucfirst(Str::camel($columnName));
             $columnName = Str::camel($columnName);
         } elseif ($functionName === 'getAllBy') {

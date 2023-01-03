@@ -107,7 +107,7 @@ class MakeEntity extends Command
             $attributes .= $this->writeAttribute(
                 $attributeStub,
                 $_column->COLUMN_NAME,
-                ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]
+                ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $this->dataTypes[$_column->DATA_TYPE] 
             );
         }
 
@@ -117,7 +117,7 @@ class MakeEntity extends Command
             $settersAndGetters .= $this->writeAccessors(
                 $accessorsStub,
                 $_column->COLUMN_NAME,
-                ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]
+                ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $this->dataTypes[$_column->DATA_TYPE]
             );
         }
 
