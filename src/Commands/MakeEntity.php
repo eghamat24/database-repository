@@ -104,9 +104,10 @@ class MakeEntity extends Command
         // Create Attributes
         $attributes = '';
         foreach ($columns as $_column) {
+            $defaultValue = ($_column->COLUMN_DEFAULT ?? 'null') ? ($_column->COLUMN_DEFAULT ?? 'null') : "''";
             $attributes .= $this->writeAttribute(
                 $attributeStub,
-                $_column->COLUMN_NAME,
+                $_column->COLUMN_NAME.($_column->IS_NULLABLE === 'YES' ? ' = '.$defaultValue : ''),
                 ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $this->dataTypes[$_column->DATA_TYPE] 
             );
         }
