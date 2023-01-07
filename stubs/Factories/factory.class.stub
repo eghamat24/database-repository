@@ -7,11 +7,7 @@ use Nanvaie\DatabaseRepository\Models\Factories\Factory;
 use stdClass;
 
 class {{ FactoryName }} extends Factory
-{
-    /**
-     * @param stdClass $entity
-     * @return {{ EntityName }}
-     */
+{    
     public function makeEntityFromStdClass(stdClass $entity): {{ EntityName }}
     {
         ${{ EntityVariableName }} = new {{ EntityName }}();

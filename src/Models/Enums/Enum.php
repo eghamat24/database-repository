@@ -11,7 +11,7 @@ abstract class Enum
         return (new ReflectionClass($this))->getConstants();
     }
 
-    public function getValue(int|string $key): ?string
+    public function getValue(int|string $key): null|string
     {
         $list = $this->getList();
         $keys = array_keys($list);

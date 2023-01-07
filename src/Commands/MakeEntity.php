@@ -3,11 +3,15 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
+use Nanvaie\DatabaseRepository\CreateEntity;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
-use Illuminate\Console\Command;
+use Nanvaie\DatabaseRepository\Creators\CreatorEntity;
+use Nanvaie\DatabaseRepository\Creators\BaseCreator;
+use Illuminate\Support\Collection;
 
-class MakeEntity extends Command
+class MakeEntity extends BaseCommand
 {
+    use CustomMySqlQueries;
     /**
      * The name and signature of the console command.
      *
@@ -26,39 +30,10 @@ class MakeEntity extends Command
      */
     protected $description = 'Create a new entity.';
 
-    use CustomMySqlQueries;
 
-    /**
-     * @param string $attributeStub
-     * @param string $attributeName
-     * @param string $attributeType
-     * @return string
-     */
-    private function writeAttribute(string $attributeStub, string $attributeName, string $attributeType): string
-    {
-        return str_replace(['{{ AttributeType }}', '{{ AttributeName }}'],
-            [$attributeType, $attributeName],
-            $attributeStub);
-    }
-
-    /**
-     * Generate getter and setter for given attribute.
-     * @param string $accessorStub
-     * @param string $attributeName
-     * @param string $attributeType
-     * @return string
-     */
-    private function writeAccessors(string $accessorStub, string $attributeName, string $attributeType): string
-    {
-        return str_replace(['{{ AttributeType }}', '{{ AttributeName }}', '{{ GetterName }}', '{{ SetterName }}'],
-            [$attributeType, $attributeName, ucfirst($attributeName), ucfirst($attributeName)],
-            $accessorStub);
-    }
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -70,28 +45,12 @@ class MakeEntity extends Command
         $entityStubsPath = __DIR__ . '/../../' . config('repository.path.stub.entities');
         $filenameWithPath = $relativeEntitiesPath . $entityName.'.php';
 
-        if (file_exists($filenameWithPath) && $this->option('delete')) {
-            unlink($filenameWithPath);
-            $this->info("Entity \"$entityName\" has been deleted.");
-            return 0;
-        }
-
-        if ( ! file_exists($relativeEntitiesPath) && ! mkdir($relativeEntitiesPath, 0775, true) && ! is_dir($relativeEntitiesPath)) {
-            $this->alert("Directory \"$relativeEntitiesPath\" was not created");
-            return 0;
-        }
-
-        if (class_exists($relativeEntitiesPath.'\\'.$entityName) && ! $this->option('force')) {
-            $this->alert("Entity \"$entityName\" is already exist!");
-            return 0;
-        }
+        $this->checkDelete($filenameWithPath,$entityName);
+        $this->checkDirectory($relativeEntitiesPath,$entityName);
+        $this->checkClassExist($relativeEntitiesPath,$entityName);
 
         $columns = $this->getAllColumnsInTable($tableName);
-
-        if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table \"$tableName\"! Perhaps table's name is misspelled.");
-            die;
-        }
+        $this->checkEmpty($columns,$tableName);
 
         foreach ($columns as $_column) {
             $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
@@ -101,60 +60,13 @@ class MakeEntity extends Command
         $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
         $accessorsStub = file_get_contents($entityStubsPath.'accessors.stub');
 
-        // Create Attributes
-        $attributes = '';
-        foreach ($columns as $_column) {
-            $attributes .= $this->writeAttribute(
-                $attributeStub,
-                $_column->COLUMN_NAME,
-                ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]
-            );
-        }
+        $entityCreator = new CreatorEntity($columns,$attributeStub, $detectForeignKeys,$tableName,$entityName,$entityNamespace,$accessorsStub,$baseContent);
+        $creator = new BaseCreator($entityCreator);
+        $baseContent = $creator->createClass();
 
-        // Create Setters and Getters
-        $settersAndGetters = '';
-        foreach ($columns as $_column) {
-            $settersAndGetters .= $this->writeAccessors(
-                $accessorsStub,
-                $_column->COLUMN_NAME,
-                ($_column->IS_NULLABLE === 'YES' ? '?' : '') . $this->dataTypes[$_column->DATA_TYPE]
-            );
-        }
-
-        if ($detectForeignKeys) {
-            $foreignKeys = $this->extractForeignKeys($tableName);
-
-            // Create Additional Attributes from Foreign Keys
-            foreach ($foreignKeys as $_foreignKey) {
-                $attributes .= $this->writeAttribute(
-                    $attributeStub,
-                    $_foreignKey->VARIABLE_NAME,
-                    $_foreignKey->ENTITY_DATA_TYPE
-                );
-            }
-
-            // Create Additional Setters and Getters from Foreign keys
-            foreach ($foreignKeys as $_foreignKey) {
-                $settersAndGetters .= $this->writeAccessors(
-                    $accessorsStub,
-                    $_foreignKey->VARIABLE_NAME,
-                    $_foreignKey->ENTITY_DATA_TYPE
-                );
-            }
-        }
-
-        $baseContent = str_replace(['{{ EntityNamespace }}', '{{ EntityName }}', '{{ Attributes }}', '{{ SettersAndGetters }}'],
-            [$entityNamespace, $entityName, $attributes, $settersAndGetters],
-            $baseContent);
-
-        file_put_contents($filenameWithPath, $baseContent);
-
-        if ($this->option('add-to-git')) {
-            shell_exec('git add '.$filenameWithPath);
-        }
-
-        $this->info("Entity \"$entityName\" has been created.");
-
+        $this->finalized($filenameWithPath, $entityName, $baseContent);
         return 0;
     }
+
+
 }

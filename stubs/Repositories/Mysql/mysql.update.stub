@@ -1,8 +1,4 @@
 
-	/**
-	 * @param {{ EntityName }} ${{ EntityVariableName }}
-	 * @return int
-	 */
 	public function update({{ EntityName }} ${{ EntityVariableName }}): int
 	{
 {{ UpdateFieldSetter }}

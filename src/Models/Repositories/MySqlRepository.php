@@ -12,7 +12,7 @@ use Nanvaie\DatabaseRepository\Models\Factories\IFactory;
 
 abstract class MySqlRepository
 {
-    private ?ConnectionInterface $alternativeDbConnection;
+    private null|ConnectionInterface $alternativeDbConnection;
 
     protected string $primaryKey = 'id';
 
@@ -72,7 +72,7 @@ abstract class MySqlRepository
      * @param array $filters
      * @return Collection
      */
-    public function getAllForGridView(?int &$total, int $offset = 0, int $count = 0, array $orders = [], array $filters = []): Collection
+    public function getAllForGridView(null|int &$total, int $offset = 0, int $count = 0, array $orders = [], array $filters = []): Collection
     {
         $query = $this->newQuery();
 
@@ -166,7 +166,7 @@ abstract class MySqlRepository
      * @param array $filters
      * @return Builder
      */
-    protected function processGridViewQuery(Builder $query, ?int &$total, int $offset = 0, int $count = 0, array $orders = [], array $filters = []): Builder
+    protected function processGridViewQuery(Builder $query, null|int &$total, int $offset = 0, int $count = 0, array $orders = [], array $filters = []): Builder
     {
         if ($orders) {
             $query = $this->processOrder($query, $orders);

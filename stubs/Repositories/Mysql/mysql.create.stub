@@ -1,8 +1,4 @@
 
-	/**
-	 * @param {{ EntityName }} ${{ EntityVariableName }}
-	 * @return {{ EntityName }}
-	 */
 	public function create({{ EntityName }} ${{ EntityVariableName }}): {{ EntityName }}
 	{
 {{ SetterFunctions }}

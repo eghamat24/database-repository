@@ -1,8 +1,4 @@
 
-	/**
-	 * @param array ${{ AttributeNamePlural }}
-	 * @return Collection
-	 */
 	public function getAllBy{{ FunctionNamePlural }}(array ${{ AttributeNamePlural }}): Collection
 	{
 		${{ EntityVariableName }} = $this->newQuery()
