@@ -1,1 +1,1 @@
-    private {{ SqlRepositoryName }} ${{ SqlRepositoryVariable }};
+private {{ SqlRepositoryName }} ${{ SqlRepositoryVariable }};

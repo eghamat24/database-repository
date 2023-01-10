@@ -3,10 +3,12 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
+use Nanvaie\DatabaseRepository\Creators\BaseCreator;
+use Nanvaie\DatabaseRepository\Creators\CreatorRedisRepository;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
-class MakeRedisRepository extends Command
+class MakeRedisRepository extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -33,57 +35,30 @@ class MakeRedisRepository extends Command
      *
      * @return int
      */
-    public function handle(): int
+    public function handle(): void
     {
-        $tableName = $this->argument('table_name');
-        $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
-        $redisRepositoryName = "Redis$entityName"."Repository";
+        $this->setArguments();
+        $redisRepositoryName = "Redis$this->entityName"."Repository";
         $redisRepositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;
+        $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
         $filenameWithPath = $relativeRedisRepositoryPath . $redisRepositoryName . '.php';
 
-        if (file_exists($filenameWithPath) && $this->option('delete')) {
-            unlink($filenameWithPath);
-            $this->info("Redis Repository \"$redisRepositoryName\" has been deleted.");
-            return 0;
+        $this->checkDelete($filenameWithPath,$redisRepositoryName,"Redis Repository");
+        $this->checkDirectory($relativeRedisRepositoryPath);
+        $this->checkClassExist($this->repositoryNamespace,$redisRepositoryName,"Redis Repository");
+
+        $columns = $this->getAllColumnsInTable($this->tableName);
+        $this->checkEmpty($columns,$this->tableName);
+
+        if ($this->detectForeignKeys) {
+            $foreignKeys = $this->extractForeignKeys($this->tableName);
         }
 
-        if ( ! file_exists($relativeRedisRepositoryPath) && ! mkdir($relativeRedisRepositoryPath, 0775, true) && ! is_dir($relativeRedisRepositoryPath)) {
-            $this->alert("Directory \"$relativeRedisRepositoryPath\" was not created");
-            return 0;
-        }
+        $mysqlRepoCreator = new CreatorRedisRepository($redisRepositoryName,$redisRepositoryNamespace, $this->entityName);
+        $creator = new BaseCreator($mysqlRepoCreator);
+        $baseContent = $creator->createClass($filenameWithPath,$this);
 
-        if (class_exists("$relativeRedisRepositoryPath\\$redisRepositoryName") && ! $this->option('force')) {
-            $this->alert("Repository $redisRepositoryName is already exist!");
-            return 0;
-        }
+        $this->finalized($filenameWithPath, $redisRepositoryName, $baseContent);
 
-        $columns = $this->getAllColumnsInTable($tableName);
-
-        if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
-            die;
-        }
-
-        if ($detectForeignKeys) {
-            $foreignKeys = $this->extractForeignKeys($tableName);
-        }
-
-        // Initialize Redis Repository
-        $redisRepositoryContent = "<?php\n\nnamespace $redisRepositoryNamespace\\$entityName;\n\n";
-        $redisRepositoryContent .= "use Nanvaie\DatabaseRepository\Models\Repositories\RedisRepository;\n\n";
-        $redisRepositoryContent .= "class $redisRepositoryName extends RedisRepository\n{";
-        $redisRepositoryContent .= "}";
-
-        file_put_contents("$relativeRedisRepositoryPath/$redisRepositoryName.php", $redisRepositoryContent);
-
-        if ($this->option('add-to-git')) {
-            shell_exec("git add $relativeRedisRepositoryPath/$redisRepositoryName.php");
-        }
-
-        $this->info("Redis Repository \"$redisRepositoryName\" has been created.");
-
-        return 0;
     }
 }

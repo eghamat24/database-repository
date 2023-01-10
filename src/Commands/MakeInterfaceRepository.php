@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
-class MakeInterfaceRepository extends Command
+class MakeInterfaceRepository extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -47,68 +47,36 @@ class MakeInterfaceRepository extends Command
      *
      * @return int
      */
-    public function handle(): int
+    public function handle(): void
     {
-        $tableName = $this->argument('table_name');
-        $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
-        $entityVariableName = Str::camel($entityName);
-        $interfaceName = "I$entityName"."Repository";
-        $entityNamespace = config('repository.path.namespace.entities');
-        $repositoryNamespace = config('repository.path.namespace.repositories');
-        $relativeInterfacePath = config('repository.path.relative.repositories') . "$entityName" . DIRECTORY_SEPARATOR;
-        $interfaceRepositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.interface');
-        $filenameWithPath = $relativeInterfacePath . $interfaceName.'.php';
+        $this->setArguments();
+        $filenameWithPath = $this->relativeInterfacePath . $this->interfaceName . '.php';
 
-        if (file_exists($filenameWithPath) && $this->option('delete')) {
-            unlink($filenameWithPath);
-            $this->info("Interface \"$interfaceName\" has been deleted.");
-            return 0;
+        $this->checkDelete($filenameWithPath, $this->interfaceName, "Interface");
+        $this->checkDirectory($this->relativeInterfacePath);
+        $this->checkClassExist($this->repositoryNamespace, $this->interfaceName, "Interface");
+
+        $columns = $this->getAllColumnsInTable($this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
+
+        if ($this->detectForeignKeys) {
+            $foreignKeys = $this->extractForeignKeys($this->tableName);
         }
 
-        if ( ! file_exists($relativeInterfacePath) && ! mkdir($relativeInterfacePath, 0775, true) && ! is_dir($relativeInterfacePath)) {
-            $this->alert("Directory \"$relativeInterfacePath\" was not created");
-            return 0;
-        }
+        $baseContent = file_get_contents($this->interfaceRepositoryStubsPath . 'class.stub');
+        $getOneStub = file_get_contents($this->interfaceRepositoryStubsPath . 'getOneBy.stub');
+        $getAllStub = file_get_contents($this->interfaceRepositoryStubsPath . 'getAllBy.stub');
+        $createFunctionStub = file_get_contents($this->interfaceRepositoryStubsPath . 'create.stub');
+        $updateFunctionStub = file_get_contents($this->interfaceRepositoryStubsPath . 'update.stub');
+        $deleteAndUndeleteStub = file_get_contents($this->interfaceRepositoryStubsPath . 'deleteAndUndelete.stub');
 
-        if (class_exists("$relativeInterfacePath\\$interfaceName") && ! $this->option('force')) {
-            $this->alert("Interface $interfaceName is already exist!");
-            return 0;
-        }
+        $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, 'id', 'int'), -1, 0);
+        $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, 'id', 'int'), -1, 0);
 
-        $columns = $this->getAllColumnsInTable($tableName);
-
-        if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
-            die;
-        }
-
-        if ($detectForeignKeys) {
-            $foreignKeys = $this->extractForeignKeys($tableName);
-        }
-
-        $baseContent = file_get_contents($interfaceRepositoryStubsPath.'class.stub');
-        $getOneStub = file_get_contents($interfaceRepositoryStubsPath.'getOneBy.stub');
-        $getAllStub = file_get_contents($interfaceRepositoryStubsPath.'getAllBy.stub');
-        $createFunctionStub = file_get_contents($interfaceRepositoryStubsPath.'create.stub');
-        $updateFunctionStub = file_get_contents($interfaceRepositoryStubsPath.'update.stub');
-        $deleteAndUndeleteStub = file_get_contents($interfaceRepositoryStubsPath.'deleteAndUndelete.stub');
-
-        $baseContent = substr_replace($baseContent,
-            $this->writeGetOneFunction($getOneStub, 'id', 'int'),
-            -1, 0);
-        $baseContent = substr_replace($baseContent,
-            $this->writeGetAllFunction($getAllStub, 'id', 'int'),
-            -1, 0);
-
-        if ($detectForeignKeys) {
+        if ($this->detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent,
-                    $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $entityName),
-                    -1, 0);
-                $baseContent = substr_replace($baseContent,
-                    $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $entityName),
-                    -1, 0);
+                $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $this->entityName), -1, 0);
+                $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $this->entityName), -1, 0);
             }
         }
 
@@ -127,17 +95,9 @@ class MakeInterfaceRepository extends Command
         }
 
         $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ InterfaceRepositoryName }}', '{{ RepositoryNamespace }}'],
-            [$entityName, $entityNamespace, $entityVariableName, $interfaceName, $repositoryNamespace],
+            [$this->entityName, $this->entityNamespace, $this->entityVariableName, $this->interfaceName, $this->repositoryNamespace],
             $baseContent);
 
-        file_put_contents($filenameWithPath, $baseContent);
-
-        if ($this->option('add-to-git')) {
-            shell_exec("git add $filenameWithPath");
-        }
-
-        $this->info("Interface \"$interfaceName\" has been created.");
-
-        return 0;
+        $this->finalized($filenameWithPath, $this->entityName, $baseContent);
     }
 }

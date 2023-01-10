@@ -4,9 +4,11 @@ namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Nanvaie\DatabaseRepository\Creators\BaseCreator;
+use Nanvaie\DatabaseRepository\Creators\CreatorResource;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 
-class MakeResource extends Command
+class MakeResource extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -28,93 +30,39 @@ class MakeResource extends Command
 
     use CustomMySqlQueries;
 
-    public function writeGetter(string $getterStub, string $columnName, string $attributeName)
-    {
-        return str_replace(['{{ ColumnName }}', '{{ GetterName }}'],
-            [$columnName, ucfirst($attributeName)],
-            $getterStub);
-    }
-
-    public function writeForeignGetter(string $foreignGetterStub, string $columnName, string $attributeName)
-    {
-        return str_replace(['{{ AttributeName }}', '{{ GetterName }}', '{{ AttributeType }}'],
-            [Str::snake($columnName), ucfirst($columnName), ucfirst($attributeName)],
-            $foreignGetterStub);
-    }
-
     /**
      * Execute the console command.
      *
      * @return int
      */
-    public function handle(): int
+    public function handle(): void
     {
-        $tableName = $this->argument('table_name');
-        $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
-        $entityVariableName = Str::camel($entityName);
-        $entityNamespace = config('repository.path.namespace.entities');
-        $resourceName = $entityName."Resource";
+        $this->setArguments();
+        $resourceName = $this->entityName."Resource";
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
         $resourceStubsPath = __DIR__ . '/../../' . config('repository.path.stub.resources');
         $filenameWithPath = $relativeResourcesPath . $resourceName.'.php';
 
-        if (file_exists($filenameWithPath) && $this->option('delete')) {
-            unlink($filenameWithPath);
-            $this->info("Resource \"$resourceName\" has been deleted.");
-            return 0;
-        }
+        $this->checkDelete($filenameWithPath,$resourceName,"Resource");
+        $this->checkDirectory($relativeResourcesPath);
+        $this->checkClassExist($resourceNamespace,$resourceName,"Resource");
 
-        if ( ! file_exists($relativeResourcesPath) && ! mkdir($relativeResourcesPath, 0775, true) && ! is_dir($relativeResourcesPath)) {
-            $this->alert("Directory \"$relativeResourcesPath\" was not created");
-            return 0;
-        }
+        $columns = $this->getAllColumnsInTable($this->tableName);
+        $this->checkEmpty($columns,$this->tableName);
 
-        if (class_exists("$relativeResourcesPath\\$resourceName") && ! $this->option('force')) {
-            $this->alert("Resource $resourceName is already exist!");
-            return 0;
-        }
+        $RepoCreator = new CreatorResource($columns,
+            $this->tableName,
+            $this->entityName,
+            $this->entityNamespace,
+            $resourceNamespace,
+            $resourceName,
+            $resourceStubsPath,
+            $this->detectForeignKeys,
+            $this->entityVariableName);
+        $creator = new BaseCreator($RepoCreator);
+        $baseContent = $creator->createClass($filenameWithPath,$this);
+        $this->finalized($filenameWithPath,$resourceName,$baseContent);
 
-        $columns = $this->getAllColumnsInTable($tableName);
-
-        if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
-            die;
-        }
-
-        if ($detectForeignKeys) {
-            $foreignKeys = $this->extractForeignKeys($tableName);
-        }
-
-        $baseContent = file_get_contents($resourceStubsPath.'class.stub');
-        $getterStub = file_get_contents($resourceStubsPath.'getter.default.stub');
-        $foreignGetterStub = file_get_contents($resourceStubsPath.'getter.foreign.stub');
-
-        $getterFunctions = '';
-        foreach ($columns as $_column) {
-            $getterFunctions .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME));
-        }
-
-        $foreignGetterFunctions = '';
-        if ($detectForeignKeys) {
-            foreach ($foreignKeys as $_foreignKey) {
-                $foreignGetterFunctions .= $this->writeForeignGetter($foreignGetterStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE);
-            }
-        }
-
-        $baseContent = str_replace(['{{ GetterFunctions }}', '{{ ForeignGetterFunctions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ ResourceName }}', '{{ ResourceNamespace }}',],
-            [substr($getterFunctions, 0, -1), substr($foreignGetterFunctions, 0, -1), $entityName, $entityNamespace, $entityVariableName, $resourceName, $resourceNamespace,],
-            $baseContent);
-
-        file_put_contents($filenameWithPath, $baseContent);
-
-        if ($this->option('add-to-git')) {
-            shell_exec("git add $filenameWithPath");
-        }
-
-        $this->info("Resource \"$resourceName\" has been created.");
-
-        return 0;
     }
 }

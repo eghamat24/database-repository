@@ -1,0 +1,5 @@
+
+    public function get{{ GetterName }}(): {{ AttributeType }}
+    {
+        return $this->{{ AttributeName }};
+    }

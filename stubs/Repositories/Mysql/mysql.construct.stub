@@ -1,0 +1,9 @@
+public function __construct()
+	{
+		$this->table = '{{ TableName }}';
+		$this->primaryKey = 'id';
+		$this->softDelete = {{ HasSoftDelete }};
+		$this->factory = new {{ FactoryName }}();
+
+		parent::__construct();
+	}

@@ -1,9 +1,4 @@
 
-    public function get{{ GetterName }}(): {{ AttributeType }}
-    {
-        return $this->{{ AttributeName }};
-    }
-
     public function set{{ SetterName }}({{ AttributeType }} ${{ AttributeName }}): void
     {
         $this->{{ AttributeName }} = ${{ AttributeName }};

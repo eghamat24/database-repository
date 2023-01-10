@@ -20,7 +20,6 @@ use Illuminate\Foundation\Application as LaravelApplication;
  */
 class DatabaseRepositoryServiceProvider extends ServiceProvider
 {
-
     public function __construct($app)
     {
         parent::__construct($app);
@@ -48,7 +47,6 @@ class DatabaseRepositoryServiceProvider extends ServiceProvider
 
         }
     }
-
 
     /**
      * Register custom commands.
