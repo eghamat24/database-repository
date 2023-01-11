@@ -69,7 +69,6 @@ class BaseCommand extends Command
         if (file_exists($filenameWithPath) && $this->option('delete')) {
             unlink($filenameWithPath);
             $this->info("$objectName '$entityName' has been deleted.");
-            exit;
         }
     }
 
@@ -97,7 +96,6 @@ class BaseCommand extends Command
         }
 
         $this->info("\"$entityName\" has been created.");
-        exit;
     }
 
     public function checkEmpty(Collection $columns, string $tableName): void
