@@ -81,13 +81,13 @@ class BaseCreator extends BaseCommand
                                 $this->setChoice($command->choice('Choose one version',self::ALL_OPTIONS,0));
                                 if(array_search($this->getChoice(),self::ALL_OPTIONS)%2==0 ){
                                     $newParamsArray[$attributMatches['name'][$i]]=trim($attributMatches[0][$i]).PHP_EOL;
-                                    $command->info("Current version selected for '". $attributMatches['name'][$i] ."', ");
+                                    $command->warn("Action: Current version selected for '". $attributMatches['name'][$i] ."', ");
                                 }
                             }elseif (array_search($this->getChoice(),self::ALL_OPTIONS)==2){
                                 $newParamsArray[$attributMatches['name'][$i]]=trim($attributMatches[0][$i]).PHP_EOL;
-                                $command->info("Current version selected for '". $attributMatches['name'][$i] ."', ");
+                                $command->warn("Action: Current version selected for '". $attributMatches['name'][$i] ."', ");
                             }else{
-                                $command->info("New version replaced for '". $attributMatches['name'][$i] ."', ");
+                                $command->warn("Action: New version replaced for '". $attributMatches['name'][$i] ."', ");
                             }
                         }
                     }

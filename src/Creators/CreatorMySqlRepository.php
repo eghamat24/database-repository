@@ -74,10 +74,18 @@ class CreatorMySqlRepository implements IClassCreator
         $functions['getOneById'] = $this->writeGetOneFunction($getOneStub, 'id', 'int');
         $functions['getAllByIds'] = $this->writeGetAllFunction($getAllStub, 'id', 'int');
 
+        $indexes = $this->extractIndexes($this->tableName);
+        foreach ($indexes as $index) {
+            $indx = 'getOneBy' . ucfirst(Str::camel($index->COLUMN_NAME));
+            $functions[$indx] = $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->entityName);
+            $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
+            $functions[$indx] = $this->writeGetAllFunction($getAllStub, $index->COLUMN_NAME, $this->entityName);
+        }
+
         if ($this->detectForeignKeys) {
             $foreignKeys = $this->extractForeignKeys($this->tableName);
             foreach ($foreignKeys as $_foreignKey) {
-                $indx = 'getAllBy' . ucfirst(Str::camel($_foreignKey->COLUMN_NAME));
+                $indx = 'getOneBy' . ucfirst(Str::camel($_foreignKey->COLUMN_NAME));
                 $functions[$indx] = $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $this->entityName);
                 $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($_foreignKey->COLUMN_NAME)));
                 $functions[$indx] = $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $this->entityName);

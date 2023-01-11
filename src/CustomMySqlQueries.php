@@ -89,4 +89,20 @@ trait CustomMySqlQueries
 
         return $foreignKeys;
     }
+
+    /**
+     * Extract all indexes from a given table!
+     */
+    public function extractIndexes(string $tableName): Collection
+    {
+        $indexes = DB::table('INFORMATION_SCHEMA.KEY_COLUMN_USAGE')
+            ->where('TABLE_SCHEMA', config('database.connections.mysql.database'))
+            ->where('TABLE_NAME', $tableName)
+            ->where('CONSTRAINT_NAME', '!=' ,'PRIMARY')
+            ->whereNull('REFERENCED_TABLE_NAME')
+            ->orderBy('ORDINAL_POSITION')
+            ->get();
+
+        return $indexes;
+    }
 }

@@ -30,34 +30,6 @@ class MakeRepository extends BaseCommand
 
     use CustomMySqlQueries;
 
-    private function writeFunction(string $functionStub, string $functionName, string $columnName, string $attributeType): string
-    {
-        if ($functionName === 'getOneBy') {
-            $functionReturnType = 'null|{{ EntityName }}';
-            $functionName .= ucfirst(Str::camel($columnName));
-            $columnName = Str::camel($columnName);
-        } elseif ($functionName === 'getAllBy') {
-            $functionReturnType = 'Collection';
-            $functionName .= ucfirst(Str::plural(Str::camel($columnName)));
-            $columnName = Str::plural(Str::camel($columnName));
-        } elseif ($functionName === 'create') {
-            $functionReturnType = $attributeType;
-        } elseif (in_array($functionName, ['update', 'remove', 'restore'])) {
-            $functionReturnType = 'int';
-        }
-
-        return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}'],
-            [$functionName, $attributeType, Str::camel($columnName), $functionReturnType],
-            $functionStub);
-    }
-
-    private function writeSqlAttribute(string $attributeStub, string $sqlRepositoryVariable): string
-    {
-        return str_replace(['{{ SqlRepositoryVariable }}'],
-            [$sqlRepositoryVariable],
-            $attributeStub);
-    }
-
     /**
      * Execute the console command.
      *
