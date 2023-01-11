@@ -11,9 +11,6 @@ abstract class Entity implements JsonSerializable, Arrayable
     // contain originals value of attributes
     private $originals = [];
 
-    /**
-     * @return int
-     */
     abstract public function getId(): int;
 
     public function __construct()
@@ -44,7 +41,6 @@ abstract class Entity implements JsonSerializable, Arrayable
 
     /**
      * Make all variables of the object as null
-     * @return $this
      */
     public function clearVariables(): self
     {
@@ -55,9 +51,6 @@ abstract class Entity implements JsonSerializable, Arrayable
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPrimaryKey(): int
     {
         return $this->getId();
@@ -101,7 +94,6 @@ abstract class Entity implements JsonSerializable, Arrayable
 
     /**
      * get an Array of Changed Attributes
-     * @return array
      */
     public function changedAttributesName(): array
     {
@@ -117,7 +109,6 @@ abstract class Entity implements JsonSerializable, Arrayable
 
     /**
      * get an Array of Changed Attributes with new values
-     * @return array
      */
     public function getDirty(): array
     {
@@ -133,7 +124,6 @@ abstract class Entity implements JsonSerializable, Arrayable
 
     /**
      * get an Array of Changed Attributes with original values
-     * @return array
      */
     public function getChanges(): array
     {
@@ -148,7 +138,6 @@ abstract class Entity implements JsonSerializable, Arrayable
 
     /**
      * is any attribute changed?
-     * @return bool
      */
     public function isDirty(): bool
     {

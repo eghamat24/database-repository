@@ -10,7 +10,6 @@ use function Nanvaie\DatabaseRepository\Commands\config;
 
 class BaseCreator extends BaseCommand
 {
-    use Utility;
     private $creator;
     private null|string $choice=null;
     const ALL_OPTIONS = ['Current','New','Always keep current','Always replace with new'];

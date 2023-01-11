@@ -122,9 +122,6 @@ class CreatorEntity implements IClassCreator
             $attributeStub);
     }
 
-    /**
-     * Generate getter and setter for given attribute.
-     */
     private function writeAccessors(string $entityStubsPath, string $attributeName, string $attributeType,string $type): string
     {
         $accessorStub = file_get_contents($entityStubsPath.$type.'.stub');

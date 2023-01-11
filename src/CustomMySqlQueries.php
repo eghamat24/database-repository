@@ -43,8 +43,6 @@ trait CustomMySqlQueries
 
     /**
      * Extract all columns from a given table.
-     * @param string $tableName
-     * @return Collection
      */
     public function getAllColumnsInTable(string $tableName): Collection
     {
@@ -57,7 +55,6 @@ trait CustomMySqlQueries
 
     /**
      * Extract all table names.
-     * @return Collection
      */
     public function getAllTableNames(): Collection
     {
@@ -70,8 +67,6 @@ trait CustomMySqlQueries
 
     /**
      * Extract all foreign keys from a given table. Foreign key's relations must define in MySql!
-     * @param string $tableName
-     * @return Collection
      */
     public function extractForeignKeys(string $tableName): Collection
     {
