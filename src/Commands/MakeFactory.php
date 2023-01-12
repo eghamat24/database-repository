@@ -3,10 +3,11 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
+use Nanvaie\DatabaseRepository\Creators\BaseCreator;
+use Nanvaie\DatabaseRepository\Creators\CreatorFactory;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
-use Illuminate\Console\Command;
 
-class MakeFactory extends Command
+class MakeFactory extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -39,66 +40,37 @@ class MakeFactory extends Command
      *
      * @return int
      */
-    public function handle(): int
+    public function handle(): void
     {
-        $tableName = $this->argument('table_name');
-        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
-        $entityVariableName = Str::camel($entityName);
-        $factoryName = $entityName.'Factory';
-        $entityNamespace = config('repository.path.namespace.entities');
-        $factoryNamespace = config('repository.path.namespace.factories');
-        $relativeFactoriesPath = config('repository.path.relative.factories');
-        $factoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.factories');
-        $filenameWithPath = $relativeFactoriesPath . $factoryName.'.php';
+        $this->setArguments();
 
-        if (file_exists($filenameWithPath) && $this->option('delete')) {
-            unlink($filenameWithPath);
-            $this->info("Factory \"$factoryName\" has been deleted.");
-            return 0;
-        }
+        $filenameWithPath = $this->relativeFactoriesPath . $this->factoryName.'.php';
 
-        if ( ! file_exists($relativeFactoriesPath) && ! mkdir($relativeFactoriesPath, 0775, true) && ! is_dir($relativeFactoriesPath)) {
-            $this->alert("Directory \"$relativeFactoriesPath\" was not created");
-            return 0;
-        }
+        $this->checkDelete($filenameWithPath,$this->entityName,"Factory");
+        $this->checkDirectory($this->relativeFactoriesPath);
+        $this->checkClassExist($this->factoryNamespace,$this->entityName,"Factory");
 
-        if (class_exists("$relativeFactoriesPath\\$factoryName") && ! $this->option('force')) {
-            $this->alert("Factory $factoryName is already exist!");
-            return 0;
-        }
-
-        $columns = $this->getAllColumnsInTable($tableName);
-
-        if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table ".$tableName."! Perhaps table's name is misspelled.");
-            die;
-        }
+        $columns = $this->getAllColumnsInTable($this->tableName);
+        $this->checkEmpty($columns,$this->tableName);
 
         foreach ($columns as $_column) {
             $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
-        $baseContent = file_get_contents($factoryStubsPath.'class.stub');
-        $setterStub = file_get_contents($factoryStubsPath.'setter.stub');
+        $baseContent = file_get_contents($this->factoryStubsPath.'class.stub');
 
-        // Initialize Class
-        $setterFunctions = '';
-        foreach ($columns as $_column) {
-            $setterFunctions .= $this->writeSetter($setterStub, $_column->COLUMN_NAME);
-        }
-
-        $baseContent = str_replace(['{{ SetterFunctions }}', '{{ EntityName }}', '{{ EntityNamespace }}', '{{ FactoryName }}', '{{ FactoryNamespace }}', '{{ EntityVariableName }}'],
-            [$setterFunctions, $entityName, $entityNamespace, $factoryName, $factoryNamespace, $entityVariableName],
+        $factoryCreator = new CreatorFactory(
+            $columns,
+            $this->entityName,
+            $this->entityNamespace,
+            $this->factoryStubsPath,
+            $this->factoryNamespace,
+            $this->entityVariableName,
+            $this->factoryName,
             $baseContent);
+        $creator = new BaseCreator($factoryCreator);
+        $baseContent = $creator->createClass($filenameWithPath,$this);
 
-        file_put_contents($filenameWithPath, $baseContent);
-
-        if ($this->option('add-to-git')) {
-            shell_exec("git add $filenameWithPath");
-        }
-
-        $this->info("Factory \"$factoryName\" has been created.");
-
-        return 0;
+        $this->finalized($filenameWithPath, $this->factoryName, $baseContent);
     }
 }

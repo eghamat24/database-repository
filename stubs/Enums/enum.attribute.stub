@@ -1,1 +1,1 @@
-    public const {{ AttributeName }} = '{{ AttributeString }}';
+public const {{ AttributeName }} = '{{ AttributeString }}';

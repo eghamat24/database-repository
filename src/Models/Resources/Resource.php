@@ -7,16 +7,9 @@ use Nanvaie\DatabaseRepository\Models\Entity\Entity;
 
 abstract class Resource implements IResource
 {
-    /**
-     * @param Entity $entity
-     * @return array
-     */
+
     abstract public function toArray(Entity $entity): array;
 
-    /**
-     * @param Collection $entities
-     * @return array
-     */
     public function collectionToArray(Collection $entities): array
     {
         $entityArray = [];

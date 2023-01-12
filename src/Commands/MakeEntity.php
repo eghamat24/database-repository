@@ -30,43 +30,36 @@ class MakeEntity extends BaseCommand
      */
     protected $description = 'Create a new entity.';
 
-
-
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(): void
     {
-        $tableName = $this->argument('table_name');
-        $detectForeignKeys = $this->option('foreign-keys');
-        $entityName = Str::singular(ucfirst(Str::camel($tableName)));
-        $entityNamespace = config('repository.path.namespace.entities');
-        $relativeEntitiesPath = config('repository.path.relative.entities');
-        $entityStubsPath = __DIR__ . '/../../' . config('repository.path.stub.entities');
-        $filenameWithPath = $relativeEntitiesPath . $entityName.'.php';
+        $this->setArguments();
+        $filenameWithPath = $this->relativeEntitiesPath . $this->entityName.'.php';
 
-        $this->checkDelete($filenameWithPath,$entityName);
-        $this->checkDirectory($relativeEntitiesPath,$entityName);
-        $this->checkClassExist($relativeEntitiesPath,$entityName);
+        $this->checkDelete($filenameWithPath,$this->entityName,"Entity");
+        $this->checkDirectory($this->relativeEntitiesPath);
+        $this->checkClassExist($this->entityNamespace,$this->entityName,"Entity");
 
-        $columns = $this->getAllColumnsInTable($tableName);
-        $this->checkEmpty($columns,$tableName);
+        $columns = $this->getAllColumnsInTable($this->tableName);
+        $this->checkEmpty($columns,$this->tableName);
 
         foreach ($columns as $_column) {
             $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
-        $baseContent = file_get_contents($entityStubsPath.'class.stub');
-        $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
-        $accessorsStub = file_get_contents($entityStubsPath.'accessors.stub');
-
-        $entityCreator = new CreatorEntity($columns,$attributeStub, $detectForeignKeys,$tableName,$entityName,$entityNamespace,$accessorsStub,$baseContent);
+        $entityCreator = new CreatorEntity($columns,
+            $this->detectForeignKeys,
+            $this->tableName,
+            $this->entityName,
+            $this->entityNamespace,
+            $this->entityStubsPath
+        );
         $creator = new BaseCreator($entityCreator);
-        $baseContent = $creator->createClass();
+        $baseContent = $creator->createClass($filenameWithPath,$this);
 
-        $this->finalized($filenameWithPath, $entityName, $baseContent);
-        return 0;
+        $this->finalized($filenameWithPath, $this->entityName, $baseContent);
+
     }
-
-
 }

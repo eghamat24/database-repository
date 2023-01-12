@@ -3,10 +3,12 @@
 namespace Nanvaie\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
+use Nanvaie\DatabaseRepository\Creators\BaseCreator;
+use Nanvaie\DatabaseRepository\Creators\CreatorEnum;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
-class MakeEnum extends Command
+class MakeEnum extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -27,38 +29,12 @@ class MakeEnum extends Command
 
     use CustomMySqlQueries;
 
-    /**
-     * @param string $attributeStub
-     * @param string $attributeName
-     * @param string $attributeType
-     * @return string
-     */
-    private function writeAttribute(string $attributeStub, string $attributeName, string $attributeString): string
+    public function handle(): void
     {
-        return str_replace(['{{ AttributeName }}', '{{ AttributeString }}'],
-            [$attributeName, $attributeString],
-            $attributeStub);
-    }
+        $this->setArguments();
+        $columns = $this->getAllColumnsInTable($this->tableName);
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle(): int
-    {
-        $tableName = $this->argument('table_name');
-        $enumNamespace = config('repository.path.namespace.enums');
-        $relativeEntitiesPath = config('repository.path.relative.enums');
-        $entityStubsPath = __DIR__ . '/../../' . config('repository.path.stub.enums');
-
-
-        $columns = $this->getAllColumnsInTable($tableName);
-
-        if ($columns->isEmpty()) {
-            $this->alert("Couldn't retrieve columns from table \"$tableName\"! Perhaps table's name is misspelled.");
-            die;
-        }
+        $this->checkEmpty($columns,$this->tableName);
 
         $enums = [];
         foreach ($columns as $_column) {
@@ -66,60 +42,24 @@ class MakeEnum extends Command
                 $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME);
                 $enums[$enumClassName] = explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE));
 
-                $filenameWithPath = $relativeEntitiesPath . $enumClassName.'.php';
-
-                if (file_exists($filenameWithPath) && $this->option('delete')) {
-                    unlink($filenameWithPath);
-                    $this->info("Enum \"$enumClassName\" has been deleted.");
-                    return 0;
-                }
+                $filenameWithPath = $this->relativeEnumsPath . $enumClassName.'.php';
+                $this->checkDelete($filenameWithPath,$enumClassName,"Enum");
             }
         }
 
-        // Create Attributes
-
-        $baseContentStub = file_get_contents($entityStubsPath.'class.stub');
-        $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
+        $attributeStub = file_get_contents($this->enumStubPath.'attribute.stub');
 
         foreach ($enums as $enumName => $enum) {
-            $filenameWithPath = $relativeEntitiesPath . $enumName.'.php';
+            $filenameWithPath = $this->relativeEnumsPath . $enumName.'.php';
 
+            $this->checkDirectory($this->enumNamespace);
+            $this->checkClassExist($this->relativeEnumsPath,$enumName,"Enum");
 
-            if ( ! file_exists($relativeEntitiesPath) && ! mkdir($relativeEntitiesPath, 0775, true) && ! is_dir($relativeEntitiesPath)) {
-                $this->alert("Directory \"$relativeEntitiesPath\" was not created");
-                return 0;
-            }
+            $enumCreator = new CreatorEnum($columns,$attributeStub,$enum,$enumName,$this->enumNamespace);
+            $creator = new BaseCreator($enumCreator);
+            $baseContent = $creator->createClass($filenameWithPath,$this);
 
-            if (class_exists($relativeEntitiesPath.'\\'.$enumName) && ! $this->option('force')) {
-                $this->alert("Enum \"$enumName\" is already exist!");
-                return 0;
-            }
-
-            $attributes = '';
-            foreach ($enum as $_enum) {
-                $attributes .= $this->writeAttribute(
-                    $attributeStub,
-                    strtoupper($_enum),
-                    $_enum
-                );
-            }
-
-
-            $baseContent = str_replace(['{{ EnumNamespace }}', '{{ EnumName }}', '{{ Attributes }}',],
-                [$enumNamespace, $enumName, $attributes,],
-                $baseContentStub);
-
-            file_put_contents($filenameWithPath, $baseContent);
-
-            if ($this->option('add-to-git')) {
-                shell_exec('git add '.$filenameWithPath);
-            }
-
-            $this->info("Enum \"$enumName\" has been created.");
+            $this->finalized($filenameWithPath, $enumName, $baseContent);
         }
-
-
-
-        return 0;
     }
 }

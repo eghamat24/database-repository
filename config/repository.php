@@ -4,6 +4,8 @@ return [
 
     'php_version' => env('REPOSITORY_PHP_VERSION', '8.0'),
 
+    'default_db' => 'MySql',# Options: ( Redis, MySql )
+
     'path' => [
         'namespace' => [
             'entities' => 'App\Models\Entities',

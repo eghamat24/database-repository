@@ -43,8 +43,6 @@ trait CustomMySqlQueries
 
     /**
      * Extract all columns from a given table.
-     * @param string $tableName
-     * @return Collection
      */
     public function getAllColumnsInTable(string $tableName): Collection
     {
@@ -57,7 +55,6 @@ trait CustomMySqlQueries
 
     /**
      * Extract all table names.
-     * @return Collection
      */
     public function getAllTableNames(): Collection
     {
@@ -70,8 +67,6 @@ trait CustomMySqlQueries
 
     /**
      * Extract all foreign keys from a given table. Foreign key's relations must define in MySql!
-     * @param string $tableName
-     * @return Collection
      */
     public function extractForeignKeys(string $tableName): Collection
     {
@@ -88,5 +83,21 @@ trait CustomMySqlQueries
         });
 
         return $foreignKeys;
+    }
+
+    /**
+     * Extract all indexes from a given table!
+     */
+    public function extractIndexes(string $tableName): Collection
+    {
+        $indexes = DB::table('INFORMATION_SCHEMA.KEY_COLUMN_USAGE')
+            ->where('TABLE_SCHEMA', config('database.connections.mysql.database'))
+            ->where('TABLE_NAME', $tableName)
+            ->where('CONSTRAINT_NAME', '!=' ,'PRIMARY')
+            ->whereNull('REFERENCED_TABLE_NAME')
+            ->orderBy('ORDINAL_POSITION')
+            ->get();
+
+        return $indexes;
     }
 }

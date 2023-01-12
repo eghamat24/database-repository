@@ -1,5 +1,5 @@
 
-	public function create({{ EntityName }} ${{ EntityVariableName }}): {{ EntityName }}
+    public function create({{ EntityName }} ${{ EntityVariableName }}): {{ EntityName }}
 	{
 {{ SetterFunctions }}
 

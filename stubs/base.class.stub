@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ Namespace }};
+
+{{ UseSection }}
+
+class {{ ClassName }} {{ ExtendSection }}
+{
+    {{ Parameters }}{{ Functions }}
+}

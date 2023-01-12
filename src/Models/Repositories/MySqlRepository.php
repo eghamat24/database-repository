@@ -31,7 +31,6 @@ abstract class MySqlRepository
 
     /**
      * Notice: this function cannot be used in async jobs because the connection is not serializable!
-     * @param ConnectionInterface $connection
      */
     public function changeDatabaseConnection($connection)
     {
@@ -64,14 +63,6 @@ abstract class MySqlRepository
 //        return $this;
 //    }
 
-    /**
-     * @param int|null $total
-     * @param int $offset
-     * @param int $count
-     * @param array $orders
-     * @param array $filters
-     * @return Collection
-     */
     public function getAllForGridView(null|int &$total, int $offset = 0, int $count = 0, array $orders = [], array $filters = []): Collection
     {
         $query = $this->newQuery();
@@ -99,10 +90,6 @@ abstract class MySqlRepository
 
     /**
      * this is for validation purpose look at AppServiceProvider
-     * @param $attribute
-     * @param $value
-     * @param null $ignoredPrimaryKey
-     * @return bool
      */
     public function valueExists($attribute, $value, $ignoredPrimaryKey = null)
     {
@@ -121,10 +108,7 @@ abstract class MySqlRepository
         return $query->exists();
     }
 
-    /**
-     * @param Entity $model
-     */
-    public function updateOrCreate($model)
+     public function updateOrCreate(Entity $model)
     {
         if ($this->exists($model->getPrimaryKey())) {
             $this->update($model);
@@ -136,7 +120,7 @@ abstract class MySqlRepository
     /**
      * @param Entity $model
      */
-    public function createIfNotExists($model)
+    public function createIfNotExists(Entity $model)
     {
         if (!$this->exists($model->getPrimaryKey())) {
             $this->create($model);
@@ -157,15 +141,6 @@ abstract class MySqlRepository
         }
     }
 
-    /**
-     * @param Builder $query
-     * @param int $offset
-     * @param int $count
-     * @param int|null $total
-     * @param array $orders
-     * @param array $filters
-     * @return Builder
-     */
     protected function processGridViewQuery(Builder $query, null|int &$total, int $offset = 0, int $count = 0, array $orders = [], array $filters = []): Builder
     {
         if ($orders) {

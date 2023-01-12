@@ -6,7 +6,6 @@ use {{ EntityNamespace }}\{{ EntityName }};
 use Nanvaie\DatabaseRepository\Models\Entity\Entity;
 use Nanvaie\DatabaseRepository\Models\Resources\Resource;
 
-
 class {{ ResourceName }} extends Resource
 {
     public function toArray(${{ EntityVariableName }}): array

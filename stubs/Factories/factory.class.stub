@@ -1,18 +1,7 @@
-<?php
-
-namespace {{ FactoryNamespace }};
-
-use {{ EntityNamespace }}\{{ EntityName }};
-use Nanvaie\DatabaseRepository\Models\Factories\Factory;
-use stdClass;
-
-class {{ FactoryName }} extends Factory
-{    
-    public function makeEntityFromStdClass(stdClass $entity): {{ EntityName }}
+public function makeEntityFromStdClass(stdClass $entity): {{ EntityName }}
     {
         ${{ EntityVariableName }} = new {{ EntityName }}();
 
 {{ SetterFunctions }}
         return ${{ EntityVariableName }};
     }
-}
