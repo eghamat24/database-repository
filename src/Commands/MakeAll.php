@@ -16,6 +16,7 @@ class MakeAll extends Command
      * @var string
      */
     protected $signature = 'repository:make-all
+    {--selected_db= : Main database}
     {--table_names= : Table names, separate names with comma}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
@@ -35,6 +36,7 @@ class MakeAll extends Command
      */
     public function handle()
     {
+        $this->selectedDb = $this->hasOption('selected_db') && $this->option('selected_db') ? $this->option('selected_db') : config('repository.default_db');
         $force = $this->option('force');
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
@@ -65,7 +67,7 @@ class MakeAll extends Command
             $this->call('repository:make-interface-repository', $arguments);
             $this->call('repository:make-mysql-repository', $arguments);
             $this->call('repository:make-redis-repository', $arguments);
-            $this->call('repository:make-repository', $arguments);
+            $this->call('repository:make-repository', [...$arguments,'selected_db'=>$this->selectedDb]);
         }
     }
 }

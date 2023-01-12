@@ -1,7 +1,4 @@
 
-    /**
-    * This action has been created because '{{ FunctionName }}' exists in foreign keys or indexes
-    */
 	public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): null|{{ EntityName }}
 	{
 		${{ EntityVariableName }} = $this->newQuery()

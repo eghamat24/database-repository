@@ -1,7 +1,4 @@
 
-    /**
-    * This action has been created because '{{ FunctionName }}' exists in foreign keys or indexes
-    */
 	public function getAllBy{{ FunctionNamePlural }}(array ${{ AttributeNamePlural }}): Collection
 	{
 		${{ EntityVariableName }} = $this->newQuery()

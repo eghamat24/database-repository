@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Creators;
 
+use App\Models\Repositories\User\IUserRepository;
 use Illuminate\Support\Collection;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Support\Str;
@@ -20,7 +21,8 @@ class CreatorRepository implements IClassCreator
         public string     $entityNamespace,
         public string     $repositoryName,
         public string     $interfaceName,
-        public string     $repositoryNamespace
+        public string     $repositoryNamespace,
+        public string     $selectedDb
     )
     {
     }
@@ -82,7 +84,7 @@ class CreatorRepository implements IClassCreator
     {
         $attributeSqlStub = file_get_contents($this->repositoryStubsPath . 'attribute.sql.stub');
         $attributes = [];
-        $attributes[$this->sqlRepositoryVariable] = $this->writeSqlAttribute($attributeSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName);
+        $attributes['repository'] = 'private IUserRepository $repository;';
         return $attributes;
     }
 
@@ -133,8 +135,6 @@ class CreatorRepository implements IClassCreator
 
     public function getConstruct(string $setterSqlStub, string $constructStub)
     {
-        $setters = '';
-        $setters = substr_replace($setters,$this->writeSqlAttribute($setterSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName),-1, 0);
-        return str_replace("{{ Setters }}", $setters, $constructStub);
+        return str_replace("{{ Setters }}", $this->writeSqlAttribute($setterSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName), $constructStub);
     }
 }

@@ -15,7 +15,7 @@ class MakeRepository extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'repository:make-repository {table_name}
+    protected $signature = 'repository:make-repository {table_name} {selected_db?}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing repository class}
@@ -38,9 +38,11 @@ class MakeRepository extends BaseCommand
     public function handle(): void
     {
         $this->setArguments();
+//        dd($this->selectedDb);
         $repositoryName = $this->entityName.'Repository';
-        $sqlRepositoryName = 'MySql'.$this->entityName.'Repository';
-        $sqlRepositoryVariable = 'mysqlRepository';
+//        $sqlRepositoryName = 'MySql'.$this->entityName.'Repository';
+        $sqlRepositoryName = ucwords($this->selectedDb).$this->entityName.'Repository';
+        $sqlRepositoryVariable = 'repository';
         $relativeRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
         $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
         $filenameWithPath = $relativeRepositoryPath . $repositoryName . '.php';
@@ -64,7 +66,8 @@ class MakeRepository extends BaseCommand
             $this->entityNamespace,
             $repositoryName,
             $this->interfaceName,
-            $this->repositoryNamespace
+            $this->repositoryNamespace,
+            $this->selectedDb
         );
         $creator = new BaseCreator($RepoCreator);
         $baseContent = $creator->createClass($filenameWithPath,$this);

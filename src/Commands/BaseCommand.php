@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class BaseCommand extends Command
 {
 //    use CustomMySqlQueries;
+    public string $selectedDb;
     public string $tableName;
     public string $detectForeignKeys;
     public string $entityName;
@@ -36,6 +37,7 @@ class BaseCommand extends Command
 
     public function setArguments()
     {
+        $this->selectedDb = $this->hasArgument('selected_db') && $this->argument('selected_db') ? $this->argument('selected_db') : config('repository.default_db');
         $this->tableName = $this->argument('table_name');
         if ($this->hasOption('foreign-keys')) $this->detectForeignKeys = $this->option('foreign-keys');
         $this->entityName = Str::singular(ucfirst(Str::camel($this->tableName)));

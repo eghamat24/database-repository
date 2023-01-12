@@ -26,7 +26,7 @@ class CreatorRedisRepository implements IClassCreator
     }
     public function getExtendSection(): string
     {
-        return "extends RedisRepository";
+        return "extends RedisRepository implements IUserRepository";
     }
     public function createAttributs(): array
     {
