@@ -9,7 +9,7 @@ composer require nanvaie/database-repository --dev
 ### Setup Laravel Repository
 Then run following command in console to publish necessary assets in your project directory. 
 ```bash
-php artisan vendor:publish vendor:publish --tag=database-repository-config
+php artisan vendor:publish --tag=database-repository-config
 ```
 
 ### Setup Lumen Repository
