@@ -84,7 +84,7 @@ class CreatorRepository implements IClassCreator
     {
         $attributeSqlStub = file_get_contents($this->repositoryStubsPath . 'attribute.sql.stub');
         $attributes = [];
-        $attributes['repository'] = 'private IUserRepository $repository;';
+        $attributes['repository'] = 'private '.$this->interfaceName.' $repository;';
         return $attributes;
     }
 
