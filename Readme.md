@@ -3,7 +3,7 @@
 ## Installation
 Use following command to add this package to composer development requirement.
 ```bash
-composer require nanvaie/database-repository --dev
+composer require nanvaie/database-repository --dev 
 ```
 
 ### Setup Laravel Repository
