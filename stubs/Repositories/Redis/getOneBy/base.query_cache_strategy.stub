@@ -1,0 +1,10 @@
+$cacheKey = $this->redisRepository->makeKey([
+            'function_name' => 'getOneById',
+            'id' => $id,
+        ]);
+
+        $entity = $this->redisRepository->get($cacheKey);
+        if (is_null($entity)) {
+            $entity = $this->repository->getOneById($id);
+            $this->redisRepository->put($cacheKey, $entity);
+        }

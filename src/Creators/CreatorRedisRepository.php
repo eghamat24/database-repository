@@ -2,12 +2,17 @@
 
 namespace Nanvaie\DatabaseRepository\Creators;
 
+use Illuminate\Support\Str;
+use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+
 class CreatorRedisRepository implements IClassCreator
 {
     public function __construct(
         public string $redisRepositoryName,
         public string $redisRepositoryNamespace,
-        public string $entityName
+        public string $entityName,
+        public string $strategyName,
+        public string $repositoryStubsPath,
     )
     {
 
@@ -18,7 +23,10 @@ class CreatorRedisRepository implements IClassCreator
     }
     public function createUses(): array
     {
-        return ["use Nanvaie\DatabaseRepository\Models\Repositories\RedisRepository;"];
+        return [
+            "use Nanvaie\DatabaseRepository\Models\Repositories\RedisRepository;",
+            "use App\Models\Repositories\Redis"."\\".$this->strategyName.";"
+        ];
     }
     public function getClassName(): string
     {
@@ -26,7 +34,7 @@ class CreatorRedisRepository implements IClassCreator
     }
     public function getExtendSection(): string
     {
-        return "extends RedisRepository implements IUserRepository";
+        return "extends RedisRepository";
     }
     public function createAttributs(): array
     {
@@ -34,6 +42,14 @@ class CreatorRedisRepository implements IClassCreator
     }
     public function createFunctions(): array
     {
-        return [];
+        $constructStub = file_get_contents($this->repositoryStubsPath . 'construct_redis.stub');
+        $functions = [];
+        $functions['__construct'] = $this->getConstructRedis($constructStub);
+        return $functions ;
     }
+    public function getConstructRedis(string $constructStub)
+    {
+        return str_replace("{{Strategy}}",$this->strategyName,$constructStub);
+    }
+
 }
