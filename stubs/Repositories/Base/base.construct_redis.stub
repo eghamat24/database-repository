@@ -1,0 +1,6 @@
+  use {{Strategy}};
+  public function __construct()
+	{
+	       $this->cacheTag = '';
+           parent::__construct();
+	}

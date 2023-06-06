@@ -1,1 +1,2 @@
 private {{ SqlRepositoryName }} ${{ SqlRepositoryVariable }};
+private {{ RedisRepositoryVariable }} ${{ RedisRepositoryName }};

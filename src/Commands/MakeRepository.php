@@ -15,7 +15,7 @@ class MakeRepository extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'repository:make-repository {table_name} {selected_db?}
+    protected $signature = 'repository:make-repository {table_name} {strategy} {selected_db?}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing repository class}
@@ -37,23 +37,24 @@ class MakeRepository extends BaseCommand
      */
     public function handle(): void
     {
+        $this->checkDatabasesExist();
+        $this->checkStrategyName();
+
         $this->setArguments();
-//        dd($this->selectedDb);
         $repositoryName = $this->entityName.'Repository';
 //        $sqlRepositoryName = 'MySql'.$this->entityName.'Repository';
         $sqlRepositoryName = ucwords($this->selectedDb).$this->entityName.'Repository';
         $sqlRepositoryVariable = 'repository';
+        $redisRepositoryVariable ='redisRepository';
+        $redisRepositoryName = 'Redis'.$this->entityName.'Repository';
         $relativeRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
         $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
         $filenameWithPath = $relativeRepositoryPath . $repositoryName . '.php';
-
         $this->checkDelete($filenameWithPath,$repositoryName,"Repository");
         $this->checkDirectory($relativeRepositoryPath);
         $this->checkClassExist($this->repositoryNamespace,$repositoryName,"Repository");
-
         $columns = $this->getAllColumnsInTable($this->tableName);
         $this->checkEmpty($columns,$this->tableName);
-
         $RepoCreator = new CreatorRepository(
             $columns,
             $sqlRepositoryVariable,
@@ -67,11 +68,13 @@ class MakeRepository extends BaseCommand
             $repositoryName,
             $this->interfaceName,
             $this->repositoryNamespace,
-            $this->selectedDb
+            $this->selectedDb,
+            $redisRepositoryVariable,
+            $redisRepositoryName,
+            $this->strategyName
         );
         $creator = new BaseCreator($RepoCreator);
         $baseContent = $creator->createClass($filenameWithPath,$this);
-
         $this->finalized($filenameWithPath, $repositoryName, $baseContent);
     }
 }

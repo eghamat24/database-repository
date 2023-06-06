@@ -1,0 +1,5 @@
+$cacheKey = $this->redisRepository->makeKey([
+     'function_name' => 'update',
+      'id' => $id,
+]);
+  $this->redisRepository->clear($cacheKey);

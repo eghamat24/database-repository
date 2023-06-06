@@ -1,0 +1,6 @@
+
+        $entity = $this->redisRepository->get();
+        if (is_null($entity)) {
+            $entity = $this->repository->getOneById($id);
+            $this->redisRepository->put($entity);
+        }

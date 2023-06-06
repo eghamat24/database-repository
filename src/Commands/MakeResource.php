@@ -65,4 +65,5 @@ class MakeResource extends BaseCommand
         $this->finalized($filenameWithPath,$resourceName,$baseContent);
 
     }
+
 }

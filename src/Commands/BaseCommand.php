@@ -2,6 +2,7 @@
 
 namespace Nanvaie\DatabaseRepository\Commands;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
 use Nanvaie\DatabaseRepository\CustomMySqlQueries;
@@ -35,6 +36,8 @@ class BaseCommand extends Command
     public string $relativeMysqlRepositoryPath;
     public string $mysqlRepositoryStubsPath;
 
+    public string $strategyName;
+
     public function setArguments()
     {
         $this->selectedDb = $this->hasArgument('selected_db') && $this->argument('selected_db') ? $this->argument('selected_db') : config('repository.default_db');
@@ -63,7 +66,9 @@ class BaseCommand extends Command
         $this->mysqlRepositoryName = 'MySql' . $this->entityName . 'Repository';
         $this->relativeMysqlRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
         $this->mysqlRepositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.mysql');
-
+        if ($this->hasArgument('strategy')) {
+            $this->strategyName = $this->argument('strategy');
+        }
     }
 
     public function checkDelete(string $filenameWithPath, string $entityName, string $objectName): void
@@ -99,7 +104,6 @@ class BaseCommand extends Command
 
         $this->info("\"$entityName\" has been created.");
     }
-
     public function checkEmpty(Collection $columns, string $tableName): void
     {
         if ($columns->isEmpty()) {
@@ -107,7 +111,6 @@ class BaseCommand extends Command
             exit;
         }
     }
-
     public function setChoice($choice): void
     {
         \config(['replacement.choice' => $choice]);
@@ -117,4 +120,24 @@ class BaseCommand extends Command
     {
         return \config('replacement.choice');
     }
+
+    public function checkStrategyName()
+    {
+        $strategyNames = array("ClearableTemporaryCacheStrategy", "QueryCacheStrategy", "SingleKeyCacheStrategy", "TemporaryCacheStrategy");
+        if (!in_array($this->argument('strategy'), $strategyNames)) {
+            $this->alert("This pattern strategy does not exist !!! ");
+            exit;
+        }
+    }
+    public function checkDatabasesExist()
+    {
+        $entityName=Str::singular(ucfirst(Str::camel($this->argument('table_name'))));
+        $mysql ="App\Models\Repositories". "\\". $entityName. "\\"."MySql".$entityName."Repository.php";
+        $redis ="App\Models\Repositories". "\\". $entityName. "\\"."Redis".$entityName."Repository.php";
+        if(!file_exists($mysql) && !file_exists($redis)) {
+            $this->alert("First create the class databases!!!");
+            exit;
+        }
+    }
+
 }

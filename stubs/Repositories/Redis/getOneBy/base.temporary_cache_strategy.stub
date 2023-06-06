@@ -1,0 +1,11 @@
+$cacheKey = $this->redisRepository->makeKey([
+     'function_name' => 'getOneById',
+      'id' => $id,
+]);
+
+ $data= $this->redisRepository->get($cacheKey);
+ if (is_null($data)) {
+      $data = $this->repository
+       ->getOneById($id);
+        $this->redisRepository->put($cacheKey, $data, Time::HALF_HOUR_BY_SECOND);
+  }
