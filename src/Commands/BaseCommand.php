@@ -104,6 +104,7 @@ class BaseCommand extends Command
 
         $this->info("\"$entityName\" has been created.");
     }
+
     public function checkEmpty(Collection $columns, string $tableName): void
     {
         if ($columns->isEmpty()) {
@@ -111,6 +112,7 @@ class BaseCommand extends Command
             exit;
         }
     }
+
     public function setChoice($choice): void
     {
         \config(['replacement.choice' => $choice]);
@@ -129,12 +131,14 @@ class BaseCommand extends Command
             exit;
         }
     }
+
     public function checkDatabasesExist()
     {
-        $entityName=Str::singular(ucfirst(Str::camel($this->argument('table_name'))));
-        $mysql ="App\Models\Repositories". "\\". $entityName. "\\"."MySql".$entityName."Repository.php";
-        $redis ="App\Models\Repositories". "\\". $entityName. "\\"."Redis".$entityName."Repository.php";
-        if(!file_exists($mysql) && !file_exists($redis)) {
+
+        $entityName = Str::singular(ucfirst(Str::camel($this->argument('table_name'))));
+        $mysql = config('repository.path.namespace.repositories') . "\\" . $entityName . "\\" . "MySql" . $entityName . "Repository.php";
+        $redis = config('repository.path.namespace.repositories') . "\\" . $entityName . "\\" . "Redis" . $entityName . "Repository.php";
+        if (!(file_exists($mysql) && file_exists($redis))) {
             $this->alert("First create the class databases!!!");
             exit;
         }

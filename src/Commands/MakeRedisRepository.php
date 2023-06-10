@@ -37,7 +37,6 @@ class MakeRedisRepository extends BaseCommand
      */
     public function handle()
     {
-
         $this->checkStrategyName();
         $this->setArguments();
 
