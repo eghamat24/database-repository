@@ -18,6 +18,7 @@ class MakeAll extends Command
     protected $signature = 'repository:make-all
     {--selected_db= : Main database}
     {--table_names= : Table names, separate names with comma}
+    {--strategy_name= : strategy name}
     {--k|foreign-keys : Detect foreign keys}
     {--d|delete : Delete resource}
     {--f|force : Override/Delete existing classes}
@@ -36,12 +37,20 @@ class MakeAll extends Command
      */
     public function handle()
     {
+
+
+        $strategyNames = array("ClearableTemporaryCacheStrategy", "QueryCacheStrategy", "SingleKeyCacheStrategy", "TemporaryCacheStrategy");
+        if (!in_array($this->option('strategy_name'), $strategyNames)) {
+            $this->alert("This pattern strategy does not exist !!! ");
+            exit;
+        }
+
         $this->selectedDb = $this->hasOption('selected_db') && $this->option('selected_db') ? $this->option('selected_db') : config('repository.default_db');
         $force = $this->option('force');
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
         $addToGit = $this->option('add-to-git');
-
+        $strategy=$this->option('strategy_name');
         if ($this->option('all-tables')) {
             $tableNames = $this->getAllTableNames()->pluck('TABLE_NAME');
         } else if ($this->option('table_names')) {
@@ -59,15 +68,14 @@ class MakeAll extends Command
                 '--force' => $force,
                 '--add-to-git' => $addToGit
             ];
-
             $this->call('repository:make-entity', $arguments);
             $this->call('repository:make-enum', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
             $this->call('repository:make-factory', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
             $this->call('repository:make-resource', $arguments);
             $this->call('repository:make-interface-repository', $arguments);
             $this->call('repository:make-mysql-repository', $arguments);
-            $this->call('repository:make-redis-repository', $arguments);
-            $this->call('repository:make-repository', [...$arguments,'selected_db'=>$this->selectedDb]);
+            $this->call('repository:make-redis-repository',[...$arguments,'strategy'=>$strategy]);
+            $this->call('repository:make-repository', [...$arguments,'strategy'=>$strategy,'selected_db'=>$this->selectedDb]);
         }
     }
 }
