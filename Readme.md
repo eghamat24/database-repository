@@ -66,10 +66,16 @@ Example 3. Create all necessary classes for all tables with enabled foreign key 
 php artisan repository:make-all -a -k
 ```
 
-## Strategy
-List of strategies for redis repository
+## Cache Strategy
+We created some strategies for caching data, based on the number of records and change frequency
+### SingleKeyCacheStrategy
+SingleKeyCacheStrategy is a good choice for tables with very few rows, such as less than 50 records. This strategy creates one cache key and stores all the data on it. Then, when the app queries data, it loops through the data and returns the result.
+### QueryCacheStrategy
 
-`ClearableTemporaryCacheStrategy` `QueryCacheStrategy` `SingleKeyCacheStrategy` `TemporaryCacheStrategy`
+### TemporaryCacheStrategy
+
+### ClearableTemporaryCacheStrategy
+
 
 ```bash
 php artisan repository:make-all --table_names=users --strategy_name=QueryCacheStrategy
