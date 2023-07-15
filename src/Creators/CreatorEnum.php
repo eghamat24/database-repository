@@ -38,12 +38,12 @@ class CreatorEnum implements IClassCreator
 
     public function createUses(): array
     {
-        return ['use Nanvaie\DatabaseRepository\Models\Enums\Enum;'];
+        return [];
     }
 
     public function getExtendSection(): string
     {
-        return 'extends Enum';
+        return '';
     }
 
     public function getNameSpace(): string

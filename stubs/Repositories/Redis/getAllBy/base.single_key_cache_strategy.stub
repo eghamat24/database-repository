@@ -1,6 +1,6 @@
 
         $entity = $this->redisRepository->get();
         if (is_null($entity)) {
-            $entity = $this->repository->getOneByIds($id);
+            $entity = $this->repository->getAllByIds($id);
             $this->redisRepository->put($entity);
         }
