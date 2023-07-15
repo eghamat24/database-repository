@@ -1,19 +1,19 @@
 # Database Repository / PHP Repository / Laravel Repository
 
 ## Installation
-Use following command to add this package to composer development requirement.
+Use the following command to add this package to the composer development requirement.
 ```bash
 composer require nanvaie/database-repository --dev 
 ```
 
 ### Setup Laravel Repository
-Then run following command in console to publish necessary assets in your project directory. 
+Then run the following command in the console to publish the necessary assets in your project directory. 
 ```bash
 php artisan vendor:publish --tag=database-repository-config
 ```
 
 ### Setup Lumen Repository
-Navigate to `app.php` in `bootstrap` folder and add following line after service providers registrations:
+Navigate to `app.php` in `bootstrap` folder and add the following line after service providers registrations:
 ```php
 // snip
 if ($app->environment('local', 'testing')) {
@@ -21,11 +21,15 @@ if ($app->environment('local', 'testing')) {
 }
 // snip
 ```
-Copy [repository.php](config/repository.php) to project config folder located at project root.
+Copy [repository.php](config/repository.php) to the project config folder located at the project root.
 
 Note: Make sure to run `composer dump-autoload` after these changes.
 
 ## Usage
+To use this package easily, you can run the following command. It will create all the required components such as Entity, IRepository, Repository, MySqlRepository, RedisRepository, Resource, and Factory for the users table.
+```bash
+php artisan repository:make-all --table_names=users --strategy_name=QueryCacheStrategy
+```
 List of artisan commands:
 
 | Command                                | Inputs                                                                    | Options            | Description                       |
@@ -44,24 +48,24 @@ List of artisan commands:
 ### Options Explanation
 - `-f|--force`: Force commands to override existing files.
 - `-d|--delete`: Delete already created files.
-- `-k|--foreign-keys`: Try to detect foreign keys of table.
-- `-g|--add-to-git`: Add created files to git repository.
+- `-k|--foreign-keys`: Try to detect foreign keys of a table.
+- `-g|--add-to-git`: Add created files to the git repository.
 - `-a|--all-tables`: Use all existing tables.
 - `--table_names=`: Add table names, separate names with comma.
 - `--selected_db=` : Use between `Mysql`,`Redis`, If it does not send, the value will return from `config/repository.php`
-- `--strategy_name=` : add a trait to your redis repository based on the strategy you choose
+- `--strategy_name=` : add a trait to your Redis repository based on the strategy you choose
 
-Example 1. Create new Entity for a table named 'users'.
+Example 1. Create a new Entity for a table named 'users'.
 ```bash
 php artisan repository:make-entity users
 ```
 
-Example 2. Create all necessary classes for two tables named 'users' and 'customers' with enabled foreign key option.
+Example 2. Create all necessary classes for two tables named 'users' and 'customers' with an enabled foreign key option.
 ```bash
 php artisan repository:make-all --table_names=users,customers -k
 ```
 
-Example 3. Create all necessary classes for all tables with enabled foreign key option(this may be used for new projects).
+Example 3. Create all necessary classes for all tables with an enabled foreign key option(this may be used for new projects).
 ```bash
 php artisan repository:make-all -a -k
 ```
