@@ -68,9 +68,16 @@ php artisan repository:make-all -a -k
 
 ## Cache Strategy
 We created some strategies for caching data, based on the number of records and change frequency
+
 ### SingleKeyCacheStrategy
 SingleKeyCacheStrategy is a good choice for tables with very few rows, such as less than 50 records. This strategy creates one cache key and stores all the data on it. Then, when the app queries data, it loops through the data and returns the result.
+
+This strategy has one cache key and clears all the cached data whenever there is a change. This ensures that the data is always updated and valid.
+
 ### QueryCacheStrategy
+QueryCacheStrategy is suitable for tables that have low change frequency and not too many records. For example, if the table has less than 10,000 rows or if it has more than that but the queries are not very unique and there are similar queries, this strategy works well.
+
+This strategy assigns a tag to each cache of the repository and clears all the cached data whenever there is a change. This ensures that the data is always updated and valid.
 
 ### TemporaryCacheStrategy
 
