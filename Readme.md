@@ -80,6 +80,7 @@ QueryCacheStrategy is suitable for tables that have low change frequency and not
 This strategy assigns a tag to each cache of the repository and clears all the cached data whenever there is a change. This ensures that the data is always updated and valid.
 
 ### TemporaryCacheStrategy
+TemporaryCacheStrategy is useful when we have a large or diverse amount of data and the data user can tolerate some delay in the updates. We cache every request and delay the changes that are not critical to be reflected in real time. For example, if we have a post and we edit its content, we can cache the old version until the cache expires. We set the cache expiration time for each data item based on the maximum delay that the user can accept. This way, we use this strategy to cache data temporarily.
 
 ### ClearableTemporaryCacheStrategy
 
