@@ -10,9 +10,12 @@ use function Nanvaie\DatabaseRepository\Commands\config;
 
 class BaseCreator extends BaseCommand
 {
+    const ENUM_TYPE = 'enum';
+    const CLASS_TYPE = 'class';
+    const ALL_OPTIONS = ['Current','New','Always keep current','Always replace with new'];
+
     private $creator;
     private null|string $choice=null;
-    const ALL_OPTIONS = ['Current','New','Always keep current','Always replace with new'];
 
     public function __construct(IClassCreator $creator)
     {
@@ -31,11 +34,13 @@ class BaseCreator extends BaseCommand
         $specificPattern = '/(public|protected|private) [^\s]* \$*(?<name>[^\s;\=]*)\s*[^;]*;/is';
         $attributesArray = $this->checkDiffrence($filenameWithPath,$attributesArray,$command,$specificPattern,$generalPattern);
 
-        $attributes = implode('    ',$attributesArray);
+        $attributes = trim(implode("\n\t",$attributesArray));
+        $attributes = (!empty($functionsArray)) ? $attributes."\n" : $attributes;
         $functions = implode('    ',$functionsArray);
         $uses = implode(PHP_EOL,$usesArray);
 
-        $basePath = __DIR__ . '/../../stubs/base.class.stub' ;
+        $type = (isset($this->creator->enum)) ? self::ENUM_TYPE : self::CLASS_TYPE;
+        $basePath = __DIR__ . "/../../stubs/base.$type.stub" ;
         $this->creator->baseContent = str_replace(['{{ Namespace }}', '{{ UseSection }}', '{{ ClassName }}', '{{ ExtendSection }}', '{{ Parameters }}', '{{ Functions }}'],
             [
                 $this->creator->getNameSpace(),

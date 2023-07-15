@@ -41,6 +41,10 @@ trait CustomMySqlQueries
         'point' => 'string',
     ];
 
+    protected $columnTypes = [
+        'tinyint(1)' => 'bool'
+    ];
+
     /**
      * Extract all columns from a given table.
      */
@@ -99,5 +103,14 @@ trait CustomMySqlQueries
             ->get();
 
         return $indexes;
+    }
+
+    public function getDataType(string $columnType, string $dataType): string
+    {
+        if(array_key_exists($columnType, $this->columnTypes)) {
+            return $this->columnTypes[$columnType];
+        }
+
+        return $this->dataTypes[$dataType];
     }
 }

@@ -1,5 +1,5 @@
 $cacheKey = $this->redisRepository->makeKey([
-            'function_name' => 'getOneByIds',
+            'function_name' => 'getAllByIds',
             'id' => $ids,
         ]);
 
@@ -9,7 +9,7 @@ $cacheKey = $this->redisRepository->makeKey([
 
 
         if (is_null($entity)) {
-            $entity = $this->repository->getOneByIds($ids);
+            $entity = $this->repository->getAllByIds($ids);
             $this->redisRepository->put($cacheKey, $entity);
         }
 

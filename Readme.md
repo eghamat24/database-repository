@@ -49,6 +49,7 @@ List of artisan commands:
 - `-a|--all-tables`: Use all existing tables.
 - `--table_names=`: Add table names, separate names with comma.
 - `--selected_db=` : Use between `Mysql`,`Redis`, If it does not send, the value will return from `config/repository.php`
+- `--strategy_name=` : add a trait to your redis repository based on the strategy you choose
 
 Example 1. Create new Entity for a table named 'users'.
 ```bash
@@ -63,4 +64,13 @@ php artisan repository:make-all --table_names=users,customers -k
 Example 3. Create all necessary classes for all tables with enabled foreign key option(this may be used for new projects).
 ```bash
 php artisan repository:make-all -a -k
+```
+
+## Strategy
+List of strategies for redis repository
+
+`ClearableTemporaryCacheStrategy` `QueryCacheStrategy` `SingleKeyCacheStrategy` `TemporaryCacheStrategy`
+
+```bash
+php artisan repository:make-all --table_names=users --strategy_name=QueryCacheStrategy
 ```

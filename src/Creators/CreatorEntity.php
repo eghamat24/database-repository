@@ -8,7 +8,10 @@ use Nanvaie\DatabaseRepository\CustomMySqlQueries;
 class CreatorEntity implements IClassCreator
 {
     use CustomMySqlQueries;
+
     protected const PARENT_NAME = 'Entity';
+
+    private const BOOL_TYPE = 'bool';
 
     public function __construct(
         public Collection $columns,
@@ -32,13 +35,19 @@ class CreatorEntity implements IClassCreator
         $detectForeignKeys = $this->detectForeignKeys;
         $tableName = $this->tableName;
         $attributes = [];
+
         foreach ($columns as $_column) {
+            $dataType = $this->getDataType($_column->COLUMN_TYPE, $_column->DATA_TYPE);
             $defaultValue = ($_column->COLUMN_DEFAULT ?? 'null') ? ($_column->COLUMN_DEFAULT ?? 'null') : "''";
+
+            $defaultValue = ($dataType == self::BOOL_TYPE) ? ((in_array($defaultValue, [0, '', "''"])) ? 'false' :
+                ((in_array($defaultValue, [1, '1'])) ? 'true' : $defaultValue)) : $defaultValue;
+
             $attributes[$_column->COLUMN_NAME] =
                 $this->writeAttribute(
                     $entityStubsPath,
-                    $_column->COLUMN_NAME.($_column->IS_NULLABLE === 'YES' ? ' = '.$defaultValue : ''),
-                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $this->dataTypes[$_column->DATA_TYPE]
+                    $_column->COLUMN_NAME.(!in_array($_column->COLUMN_DEFAULT, [null, 'NULL']) ? ' = '.$defaultValue : ''),
+                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType
                 );
         }
 
@@ -73,18 +82,20 @@ class CreatorEntity implements IClassCreator
         $tableName = $this->tableName;
         $settersAndGetters = [];
         foreach ($columns as $_column) {
+            $dataType = $this->getDataType($_column->COLUMN_TYPE, $_column->DATA_TYPE);
+
             $settersAndGetters['get'.ucwords($_column->COLUMN_NAME)] =
                 $this->writeAccessors(
                     $entityStubsPath,
                     $_column->COLUMN_NAME,
-                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $this->dataTypes[$_column->DATA_TYPE],
+                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType,
                     'getter'
                 );
             $settersAndGetters['set'.ucwords($_column->COLUMN_NAME)] =
                 $this->writeAccessors(
                     $entityStubsPath,
                     $_column->COLUMN_NAME,
-                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $this->dataTypes[$_column->DATA_TYPE],
+                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType,
                     'setter'
                 );
 
@@ -94,14 +105,14 @@ class CreatorEntity implements IClassCreator
 
             // Create Additional Setters and Getters from Foreign keys
             foreach ($foreignKeys as $_foreignKey) {
-                $settersAndGetters['get'.ucwords($_column->COLUMN_NAME)] =
+                $settersAndGetters['get'.ucwords($_foreignKey->COLUMN_NAME)] =
                     $this->writeAccessors(
                         $entityStubsPath,
                         $_foreignKey->VARIABLE_NAME,
                         $_foreignKey->ENTITY_DATA_TYPE,
                         'getter'
                     );
-                $settersAndGetters['set'.ucwords($_column->COLUMN_NAME)] =
+                $settersAndGetters['set'.ucwords($_foreignKey->COLUMN_NAME)] =
                         $this->writeAccessors(
                             $entityStubsPath,
                             $_foreignKey->VARIABLE_NAME,
@@ -115,7 +126,6 @@ class CreatorEntity implements IClassCreator
 
     private function writeAttribute(string $entityStubsPath, string $attributeName, string $attributeType): string
     {
-
         $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
         return str_replace(['{{ AttributeType }}', '{{ AttributeName }}'],
             [$attributeType, $attributeName],
