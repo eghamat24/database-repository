@@ -1,11 +1,11 @@
 $cacheKey = $this->redisRepository->makeKey([
-     'function_name' => 'getAllByIds',
-      'id' => $ids,
-]);
+             'function_name' => 'getAllByIds',
+              'id' => $ids,
+        ]);
 
- $data= $this->redisRepository->get($cacheKey);
- if (is_null($data)) {
-      $data = $this->repository
-       ->getAllByIds($ids);
-        $this->redisRepository->put($cacheKey, $data, Time::HALF_HOUR_BY_SECOND);
-  }
+        $data = $this->redisRepository->get($cacheKey);
+
+        if (is_null($data)) {
+             $data = $this->repository->getAllByIds($ids);
+             $this->redisRepository->put($cacheKey, $data, Time::HALF_HOUR_BY_SECOND);
+        }

@@ -6,5 +6,5 @@ namespace {{ Namespace }};
 
 class {{ ClassName }} {{ ExtendSection }}
 {
-    {{ Parameters }}{{ Functions }}
+    {{ Parameters }} {{ Functions }}
 }

@@ -1,18 +1,17 @@
+    public function remove({{ EntityName }} ${{ EntityVariableName }}): int
+    {
+        return $this->newQuery()
+            ->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
+            ->update([
+                'deleted_at' => date('Y-m-d H:i:s'),
+            ]);
+    }
 
-	public function remove({{ EntityName }} ${{ EntityVariableName }}): int
-	{
-		return $this->newQuery()
-			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
-			->update([
-				'deleted_at' => date('Y-m-d H:i:s'),
-			]);
-	}
-	
-	public function restore({{ EntityName }} ${{ EntityVariableName }}): int
-	{
-		return $this->newQuery()
-			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
-			->update([
-				'deleted_at' => null,
-			]);
-	}
+    public function restore({{ EntityName }} ${{ EntityVariableName }}): int
+    {
+        return $this->newQuery()
+            ->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
+            ->update([
+                'deleted_at' => null,
+            ]);
+    }

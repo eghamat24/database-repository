@@ -5,13 +5,7 @@ $cacheKey = $this->redisRepository->makeKey([
 
         $entity = $this->redisRepository->get($cacheKey);
 
-
-
-
         if (is_null($entity)) {
             $entity = $this->repository->getAllByIds($ids);
             $this->redisRepository->put($cacheKey, $entity);
         }
-
-
-

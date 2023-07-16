@@ -1,5 +1,6 @@
-$cacheKey = $this->redisRepository->makeKey([
-     'function_name' => 'create',
-      'id' => $id,
-]);
-  $this->redisRepository->clear($cacheKey);
+    $cacheKey = $this->redisRepository->makeKey([
+             'function_name' => 'create',
+             'id' => $id,
+        ]);
+
+    $this->redisRepository->clear($cacheKey);

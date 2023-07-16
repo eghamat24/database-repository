@@ -1,4 +1,4 @@
 
-	public function remove({{ EntityName }} ${{ EntityVariableName }}): int;
+    public function remove({{ EntityName }} ${{ EntityVariableName }}): int;
 
-	public function restore({{ EntityName }} ${{ EntityVariableName }}): int;
+    public function restore({{ EntityName }} ${{ EntityVariableName }}): int;

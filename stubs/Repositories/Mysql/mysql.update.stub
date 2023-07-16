@@ -1,11 +1,10 @@
+    public function update({{ EntityName }} ${{ EntityVariableName }}): int
+    {
+    	{{ UpdateFieldSetter }}
 
-	public function update({{ EntityName }} ${{ EntityVariableName }}): int
-	{
-{{ UpdateFieldSetter }}
-
-		return $this->newQuery()
-			->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
-			->update([
-{{ GetterFunctions }}
-			]);
-	}
+        return $this->newQuery()
+           ->where($this->primaryKey, ${{ EntityVariableName }}->getPrimaryKey())
+            ->update([
+                {{ GetterFunctions }}
+            ]);
+    }

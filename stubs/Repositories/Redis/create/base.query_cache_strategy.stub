@@ -1,1 +1,1 @@
-  $this->redisRepository->clear();
+$this->redisRepository->clear();
