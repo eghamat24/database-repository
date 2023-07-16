@@ -1,14 +1,13 @@
-
     public function create({{ EntityName }} ${{ EntityVariableName }}): {{ EntityName }}
-	{
-{{ SetterFunctions }}
+    {
+    	{{ SetterFunctions }}
 
-		$id = $this->newQuery()
-			->insertGetId([
-{{ GetterFunctions }}
-			]);
+        $id = $this->newQuery()
+            ->insertGetId([
+                {{ GetterFunctions }}
+            ]);
 
-		${{ EntityVariableName }}->setId($id);
+        ${{ EntityVariableName }}->setId($id);
 
-		return ${{ EntityVariableName }};
-	}
+        return ${{ EntityVariableName }};
+    }

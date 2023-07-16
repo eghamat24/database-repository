@@ -11,14 +11,14 @@ class {{ ResourceName }} extends Resource
     public function toArray(${{ EntityVariableName }}): array
     {
         return [
-{{ GetterFunctions }}
+			{{ GetterFunctions }}
         ];
     }
 
     public function toArrayWithForeignKeys(${{ EntityVariableName }}): array
     {
         return $this->toArray(${{ EntityVariableName }}) + [
-{{ ForeignGetterFunctions }}
+			{{ ForeignGetterFunctions }}
         ];
     }
 }

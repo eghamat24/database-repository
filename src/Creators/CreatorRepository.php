@@ -152,11 +152,11 @@ class CreatorRepository implements IClassCreator
     }
     public function getConstruct(string $setterSqlStub, string $constructStub)
     {
-        return str_replace("{{ Setters }}", $this->writeSqlAttribute($setterSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName,$this->redisRepositoryVariable,$this->redisRepositoryName), $constructStub);
+        return str_replace("{{ Setters }}", trim($this->writeSqlAttribute($setterSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName,$this->redisRepositoryVariable,$this->redisRepositoryName)), $constructStub);
     }
     public function getConstructRedis(string $setterSqlStub, string $constructStub)
     {
-        return str_replace("{{ Setters }}", $this->writeRedisAttribute($setterSqlStub,$this->redisRepositoryVariable,$this->redisRepositoryName), $constructStub);
+        return str_replace("{{ Setters }}", trim($this->writeRedisAttribute($setterSqlStub,$this->redisRepositoryVariable,$this->redisRepositoryName)), $constructStub);
     }
     private function getRedisCashFunctionGetOneBy($strategyName)
     {
@@ -165,7 +165,7 @@ class CreatorRepository implements IClassCreator
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
             'ClearableTemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'clearable_temporary_cache_strategy.stub'),
-            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'base.temporary_cache_strategy.stub'),
+            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
          };
     }
     private function getRedisCashFunctionGetAllBy($strategyName)
@@ -175,7 +175,7 @@ class CreatorRepository implements IClassCreator
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
             'ClearableTemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'clearable_temporary_cache_strategy.stub'),
-            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'base.temporary_cache_strategy.stub'),
+            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
         };
     }
     private function getRedisCashFunctionCreate($strategyName)
@@ -185,7 +185,7 @@ class CreatorRepository implements IClassCreator
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
             'ClearableTemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'clearable_temporary_cache_strategy.stub'),
-            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'base.temporary_cache_strategy.stub'),
+            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
         };
     }
     private function getRedisCashFunctionUpdate($strategyName)
@@ -195,7 +195,7 @@ class CreatorRepository implements IClassCreator
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
             'ClearableTemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'clearable_temporary_cache_strategy.stub'),
-            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'base.temporary_cache_strategy.stub'),
+            'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
         };
     }
 }

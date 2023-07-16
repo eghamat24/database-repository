@@ -1,5 +1,4 @@
-
-    public function set{{ SetterName }}({{ AttributeType }} ${{ AttributeName }}): void
+	public function set{{ SetterName }}({{ AttributeType }} ${{ AttributeName }}): void
     {
         $this->{{ AttributeName }} = ${{ AttributeName }};
     }

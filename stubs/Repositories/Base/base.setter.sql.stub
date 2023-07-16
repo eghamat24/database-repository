@@ -1,2 +1,2 @@
-         $this->{{ SqlRepositoryVariable }} = new {{ SqlRepositoryName }}();
-         $this->{{ RedisRepositoryVariable }} = new {{ RedisRepositoryName }}();
+$this->{{ SqlRepositoryVariable }} = new {{ SqlRepositoryName }}();
+		$this->{{ RedisRepositoryVariable }} = new {{ RedisRepositoryName }}();

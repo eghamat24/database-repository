@@ -1,6 +1,7 @@
-  use {{Strategy}};
-  public function __construct()
-	{
-	       $this->cacheTag = '';
-           parent::__construct();
-	}
+use {{Strategy}};
+
+    public function __construct()
+    {
+        $this->cacheTag = {{ CacheTag }};
+        parent::__construct();
+    }

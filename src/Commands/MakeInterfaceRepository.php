@@ -70,28 +70,28 @@ class MakeInterfaceRepository extends BaseCommand
         $updateFunctionStub = file_get_contents($this->interfaceRepositoryStubsPath . 'update.stub');
         $deleteAndUndeleteStub = file_get_contents($this->interfaceRepositoryStubsPath . 'deleteAndUndelete.stub');
 
-        $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, 'id', 'int'), -1, 0);
-        $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, 'id', 'int'), -1, 0);
+        $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, 'id', 'int'), -2, 0);
+        $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, 'id', 'int'), -2, 0);
 
         if ($this->detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
-                $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $this->entityName), -1, 0);
-                $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $this->entityName), -1, 0);
+                $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $this->entityName), -2, 0);
+                $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $this->entityName), -2, 0);
             }
         }
 
         $allColumns = $columns->pluck('COLUMN_NAME')->toArray();
 
         if (in_array('created_at', $allColumns, true)) {
-            $baseContent = substr_replace($baseContent, $createFunctionStub, -1, 0);
+            $baseContent = substr_replace($baseContent, $createFunctionStub, -2, 0);
         }
 
         if (in_array('updated_at', $allColumns, true)) {
-            $baseContent = substr_replace($baseContent, $updateFunctionStub, -1, 0);
+            $baseContent = substr_replace($baseContent, $updateFunctionStub, -2, 0);
         }
 
         if (in_array('deleted_at', $allColumns, true)) {
-            $baseContent = substr_replace($baseContent, $deleteAndUndeleteStub, -1, 0);
+            $baseContent = substr_replace($baseContent, $deleteAndUndeleteStub, -2, 0);
         }
 
         $baseContent = str_replace(['{{ EntityName }}', '{{ EntityNamespace }}', '{{ EntityVariableName }}', '{{ InterfaceRepositoryName }}', '{{ RepositoryNamespace }}'],

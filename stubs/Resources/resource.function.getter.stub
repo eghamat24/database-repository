@@ -1,6 +1,6 @@
 public function toArray(${{ EntityVariableName }}): array
-    {
-        return [
-{{ Getters }}
-        ];
-    }
+{
+    return [
+        {{ Getters }}
+    ];
+}

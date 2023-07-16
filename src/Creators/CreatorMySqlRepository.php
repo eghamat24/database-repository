@@ -97,14 +97,14 @@ class CreatorMySqlRepository implements IClassCreator
         // Create "create" function
         foreach ($this->columns as $_column) {
             if (!in_array($_column->COLUMN_NAME, ['id', 'deleted_at'])) {
-                $getterFunctions .= $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME);
+                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME))."\n\t\t\t\t";
             }
             if (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
-                $setterFunctions .= $this->writeSetterFunction($setterStub, $_column->COLUMN_NAME);
+                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME))."\n\t\t";
             }
         }
         $createFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ SetterFunctions }}"],
-            [substr($getterFunctions, 0, -1), substr($setterFunctions, 0, -1)],
+            [trim(substr($getterFunctions, 0, -1)), trim(substr($setterFunctions, 0, -1))],
             $createFunctionStub
         );
 
@@ -115,14 +115,14 @@ class CreatorMySqlRepository implements IClassCreator
         // Create "update" function
         foreach ($this->columns as $_column) {
             if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'deleted_at'])) {
-                $getterFunctions .= $this->writeGetterFunction($getterStub, $_column->COLUMN_NAME);
+                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME))."\n\t\t\t\t";
             }
             if ($_column->COLUMN_NAME === 'updated_at') {
-                $setterFunctions .= $this->writeSetterFunction($setterStub, $_column->COLUMN_NAME);
+                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME))."\n\t\t";
             }
         }
         $updateFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ UpdateFieldSetter }}"],
-            [substr($getterFunctions, 0, -1), substr($setterFunctions, 0, -1)],
+            [trim(substr($getterFunctions, 0, -1)), trim(substr($setterFunctions, 0, -1))],
             $updateFunctionStub
         );
 
@@ -133,6 +133,7 @@ class CreatorMySqlRepository implements IClassCreator
             $functions['remove'] = $deleteStub;
             $functions['restore'] = $undeleteStub;
         }
+
         foreach ($functions as &$func) {
             $func = str_replace(["{{ EntityName }}", "{{ EntityVariableName }}"],
                 [$this->entityName, $this->entityVariableName],

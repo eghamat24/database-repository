@@ -1,6 +1,5 @@
-
-	public function {{ FunctionName }}({{ AttributeType }} ${{ AttributeName }}): {{ FunctionReturnType }}
-	{
+    public function {{ FunctionName }}({{ AttributeType }} ${{ AttributeName }}): {{ FunctionReturnType }}
+    {
         {{redisFunction}}
-		return $this->{{ SqlRepositoryVariable }}->{{ FunctionName }}(${{ AttributeName }});
-	}
+        return $this->{{ SqlRepositoryVariable }}->{{ FunctionName }}(${{ AttributeName }});
+    }

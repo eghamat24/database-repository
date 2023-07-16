@@ -1,9 +1,8 @@
+    public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): null|{{ EntityName }}
+    {
+        ${{ EntityVariableName }} = $this->newQuery()
+            ->where('{{ ColumnName }}', ${{ AttributeName }})
+            ->first();
 
-	public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): null|{{ EntityName }}
-	{
-		${{ EntityVariableName }} = $this->newQuery()
-			->where('{{ ColumnName }}', ${{ AttributeName }})
-			->first();
-
-		return ${{ EntityVariableName }} ? $this->factory->makeEntityFromStdClass(${{ EntityVariableName }}) : null;
-	}
+        return ${{ EntityVariableName }} ? $this->factory->makeEntityFromStdClass(${{ EntityVariableName }}) : null;
+    }

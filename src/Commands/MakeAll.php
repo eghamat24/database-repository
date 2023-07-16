@@ -37,8 +37,6 @@ class MakeAll extends Command
      */
     public function handle()
     {
-
-
         $strategyNames = array("ClearableTemporaryCacheStrategy", "QueryCacheStrategy", "SingleKeyCacheStrategy", "TemporaryCacheStrategy");
         if (!in_array($this->option('strategy_name'), $strategyNames)) {
             $this->alert("This pattern strategy does not exist !!! ");

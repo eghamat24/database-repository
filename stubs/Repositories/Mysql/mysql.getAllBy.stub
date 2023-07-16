@@ -1,9 +1,8 @@
+    public function getAllBy{{ FunctionNamePlural }}(array ${{ AttributeNamePlural }}): Collection
+    {
+        ${{ EntityVariableName }} = $this->newQuery()
+            ->whereIn('{{ ColumnName }}', ${{ AttributeNamePlural }})
+            ->get();
 
-	public function getAllBy{{ FunctionNamePlural }}(array ${{ AttributeNamePlural }}): Collection
-	{
-		${{ EntityVariableName }} = $this->newQuery()
-			->whereIn('{{ ColumnName }}', ${{ AttributeNamePlural }})
-			->get();
-
-		return $this->factory->makeCollectionOfEntities(${{ EntityVariableName }});
-	}
+        return $this->factory->makeCollectionOfEntities(${{ EntityVariableName }});
+    }

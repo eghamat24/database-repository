@@ -1,6 +1,6 @@
 public function toArrayWithForeignKeys(${{ EntityVariableName }}): array
-    {
-        return $this->toArray(${{ EntityVariableName }}) + [
-{{ ForeignGetterFunctions }}
-        ];
-    }
+{
+    return $this->toArray(${{ EntityVariableName }}) + [
+		{{ ForeignGetterFunctions }}
+    ];
+}

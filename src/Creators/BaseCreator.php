@@ -13,6 +13,8 @@ class BaseCreator extends BaseCommand
     const ENUM_TYPE = 'enum';
     const CLASS_TYPE = 'class';
     const ALL_OPTIONS = ['Current','New','Always keep current','Always replace with new'];
+    const QUERY_CACHE_STRATEGY = 'QueryCacheStrategy';
+    const SINGLE_KEY_CACHE_STRATEGY = 'SingleKeyCacheStrategy';
 
     private $creator;
     private null|string $choice=null;
@@ -35,20 +37,22 @@ class BaseCreator extends BaseCommand
         $attributesArray = $this->checkDiffrence($filenameWithPath,$attributesArray,$command,$specificPattern,$generalPattern);
 
         $attributes = trim(implode("\n\t",$attributesArray));
-        $attributes = (!empty($functionsArray)) ? $attributes."\n" : $attributes;
-        $functions = implode('    ',$functionsArray);
+        $functions = trim(implode("\n",$functionsArray));
+        $functions = (!empty($attributes)) ? "\n\n\t".$functions : $functions;
         $uses = implode(PHP_EOL,$usesArray);
 
         $type = (isset($this->creator->enum)) ? self::ENUM_TYPE : self::CLASS_TYPE;
         $basePath = __DIR__ . "/../../stubs/base.$type.stub" ;
-        $this->creator->baseContent = str_replace(['{{ Namespace }}', '{{ UseSection }}', '{{ ClassName }}', '{{ ExtendSection }}', '{{ Parameters }}', '{{ Functions }}'],
+
+        $this->creator->baseContent = str_replace(['{{ Namespace }}', '{{ UseSection }}', '{{ ClassName }}', '{{ ExtendSection }}', '{{ Parameters }}', '{{ Functions }}', '{{ CacheTag }}'],
             [
                 $this->creator->getNameSpace(),
                 $uses,
                 $this->creator->getClassName(),
                 $this->creator->getExtendSection(),
                 $attributes,
-                $functions
+                $functions,
+                $this->setCachetag($command)
             ],
             file_get_contents($basePath));
 
@@ -99,5 +103,10 @@ class BaseCreator extends BaseCommand
             }
         }
         return $newParamsArray;
+    }
+
+    private function setCacheTag(BaseCommand $command)
+    {
+    	return (isset($command->strategyName) && in_array($command->strategyName, [self::QUERY_CACHE_STRATEGY, self::SINGLE_KEY_CACHE_STRATEGY])) ? "'$command->tableName'" : "''";
     }
 }
