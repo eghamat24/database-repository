@@ -73,13 +73,18 @@ class CreatorMySqlRepository implements IClassCreator
         $functions['__construct'] = $this->getConstruct($this->tableName, $this->factoryName, $hasSoftDelete, $constructContent);
         $functions['getOneById'] = $this->writeGetOneFunction($getOneStub, 'id', 'int');
         $functions['getAllByIds'] = $this->writeGetAllFunction($getAllStub, 'id', 'int');
+        $columnsInfo = $this->getAllColumnsInTable($this->tableName);
 
         $indexes = $this->extractIndexes($this->tableName);
         foreach ($indexes as $index) {
+            $columnInfo = collect($columnsInfo)->where('COLUMN_NAME', $index->COLUMN_NAME)->first();
             $indx = 'getOneBy' . ucfirst(Str::camel($index->COLUMN_NAME));
-            $functions[$indx] = $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->entityName);
-            $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
-            $functions[$indx] = $this->writeGetAllFunction($getAllStub, $index->COLUMN_NAME, $this->entityName);
+            $functions[$indx] = $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE));
+
+            if($index->Non_unique == 1) {
+                $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
+                $functions[$indx] = $this->writeGetAllFunction($getAllStub, $index->COLUMN_NAME, $this->entityName);
+            }
         }
 
         if ($this->detectForeignKeys) {

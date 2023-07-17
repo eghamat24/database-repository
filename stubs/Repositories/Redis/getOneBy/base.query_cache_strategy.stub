@@ -1,11 +1,11 @@
 $cacheKey = $this->redisRepository->makeKey([
-            'function_name' => 'getOneById',
-            'id' => $id,
+            'function_name' => '{{ FunctionName }}',
+            '{{ ColumnName }}' => ${{ ColumnName }},
         ]);
 
         $entity = $this->redisRepository->get($cacheKey);
 
         if (is_null($entity)) {
-            $entity = $this->repository->getOneById($id);
+            $entity = $this->repository->{{ FunctionName }}(${{ ColumnName }});
             $this->redisRepository->put($cacheKey, $entity);
         }

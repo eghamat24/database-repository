@@ -1,2 +1,2 @@
 
-    public function getOneBy{{ FunctionName }}(int ${{ AttributeName }}): null|{{ EntityName }};
+    public function getOneBy{{ FunctionName }}({{ AttributeType }} ${{ AttributeName }}): null|{{ EntityName }};

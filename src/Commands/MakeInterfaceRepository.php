@@ -72,6 +72,17 @@ class MakeInterfaceRepository extends BaseCommand
 
         $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, 'id', 'int'), -2, 0);
         $baseContent = substr_replace($baseContent, $this->writeGetAllFunction($getAllStub, 'id', 'int'), -2, 0);
+        $columnsInfo = $this->getAllColumnsInTable($this->tableName);
+
+        $indexes = $this->extractIndexes($this->tableName);
+        foreach ($indexes as $index) {
+            $columnInfo = collect($columnsInfo)->where('COLUMN_NAME', $index->COLUMN_NAME)->first();
+            $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE)), -2, 0);
+
+            if($index->Non_unique == 1) {
+                $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getAllStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE)), -2, 0);
+            }
+        }
 
         if ($this->detectForeignKeys) {
             foreach ($foreignKeys as $_foreignKey) {
