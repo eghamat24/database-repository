@@ -102,6 +102,14 @@ trait CustomMySqlQueries
             ->orderBy('ORDINAL_POSITION')
             ->get();
 
+        $indexesData = DB::select("SHOW INDEX FROM $tableName WHERE Key_name != 'PRIMARY'");
+        
+        collect($indexes)->each(function ($index) use ($indexesData) {
+            $indexesData = collect($indexesData)->where('Column_name', $index->COLUMN_NAME)->first();
+            $index->Non_unique = $indexesData->Non_unique;
+            $index->Index_type = $indexesData->Index_type;
+        });
+        
         return $indexes;
     }
 

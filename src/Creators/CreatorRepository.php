@@ -37,31 +37,30 @@ class CreatorRepository implements IClassCreator
 
     private function writeFunction(string $functionStub, string $functionName, string $columnName, string $attributeType): string
     {
+        $columnNameSingle = Str::camel($columnName);
+        
         if ($functionName === 'getOneBy') {
             $functionReturnType = 'null|{{ EntityName }}';
             $functionName .= ucfirst(Str::camel($columnName));
             $columnName = Str::camel($columnName);
             $redisCashFunction = $this->getRedisCashFunctionGetOneBy($this->strategyName);
-
-
         } elseif ($functionName === 'getAllBy') {
             $functionReturnType = 'Collection';
             $functionName .= ucfirst(Str::plural(Str::camel($columnName)));
             $columnName = Str::plural(Str::camel($columnName));
             $redisCashFunction = $this->getRedisCashFunctionGetAllBy($this->strategyName);
-
-
         } elseif ($functionName === 'create') {
             $functionReturnType = $attributeType;
             $redisCashFunction = $this->getRedisCashFunctionCreate($this->strategyName);
-
         } elseif (in_array($functionName, ['update', 'remove', 'restore'])) {
             $functionReturnType = 'int';
             $redisCashFunction = $this->getRedisCashFunctionUpdate($this->strategyName);
-
         }
+
+        $redisCashFunction = str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ ColumnNameSingle }}'], [$functionName, $columnName, $columnNameSingle], $redisCashFunction);
+
         return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}','{{redisFunction}}'],
-            [$functionName, $attributeType, Str::camel($columnName), $functionReturnType,$redisCashFunction],
+            [$functionName, $attributeType, Str::camel($columnName), $functionReturnType, $redisCashFunction],
             $functionStub);
     }
     private function writeSqlAttribute(string $attributeStub, string $sqlRepositoryVariable, string $sqlRepositoryName): string
@@ -119,12 +118,18 @@ class CreatorRepository implements IClassCreator
         $functions['__construct'] = $this->getConstructRedis($setterSqlStub, $constructStub);
         $functions['getOneById'] = $this->writeFunction($functionStub, 'getOneBy', 'id', 'int');
         $functions['getAllByIds'] = $this->writeFunction($functionStub, 'getAllBy', 'id', 'array');
+        $columnsInfo = $this->getAllColumnsInTable($this->tableName);
+
         $indexes = $this->extractIndexes($this->tableName);
         foreach ($indexes as $index) {
-            $fun_name = ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
-            $functions['getAllBy' . $fun_name] = $this->writeFunction($functionStub, 'getAllBy', $index->COLUMN_NAME, 'array');
+            $columnInfo = collect($columnsInfo)->where('COLUMN_NAME', $index->COLUMN_NAME)->first();
             $fun_name = ucfirst(Str::camel($index->COLUMN_NAME));
-            $functions['getOneBy' . $fun_name] = $this->writeFunction($functionStub, 'getOneBy', $index->COLUMN_NAME, 'int');
+            $functions['getOneBy' . $fun_name] = $this->writeFunction($functionStub, 'getOneBy', $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE));
+
+            if($index->Non_unique == 1) {
+                $fun_name = ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
+                $functions['getAllBy' . $fun_name] = $this->writeFunction($functionStub, 'getAllBy', $index->COLUMN_NAME, 'array');
+            }
         }
         if ($this->detectForeignKeys) {
             $foreignKeys = $this->extractForeignKeys($this->tableName);
