@@ -136,8 +136,8 @@ class BaseCommand extends Command
     {
 
         $entityName = Str::singular(ucfirst(Str::camel($this->argument('table_name'))));
-        $mysql = config('repository.path.namespace.repositories') . "\\" . $entityName . "\\" . "MySql" . $entityName . "Repository.php";
-        $redis = config('repository.path.namespace.repositories') . "\\" . $entityName . "\\" . "Redis" . $entityName . "Repository.php";
+        $mysql = config('repository.path.relative.repositories') . DIRECTORY_SEPARATOR . $entityName . DIRECTORY_SEPARATOR . "MySql" . $entityName . "Repository.php";
+        $redis = config('repository.path.relative.repositories') . DIRECTORY_SEPARATOR . $entityName . DIRECTORY_SEPARATOR . "Redis" . $entityName . "Repository.php";
         if (!(file_exists($mysql) && file_exists($redis))) {
             $this->alert("First create the class databases!!!");
             exit;
