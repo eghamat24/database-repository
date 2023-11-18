@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Enums;
+namespace Eghamat24\DatabaseRepository\Models\Enums;
 
 class GriewFilterOperator extends Enum
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Repositories;
+namespace Eghamat24\DatabaseRepository\Models\Repositories;
 
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\Models\Entity\Entity;
-use Nanvaie\DatabaseRepository\Models\Enums\GriewFilterOperator;
-use Nanvaie\DatabaseRepository\Models\Factories\IFactory;
+use Eghamat24\DatabaseRepository\Models\Entity\Entity;
+use Eghamat24\DatabaseRepository\Models\Enums\GriewFilterOperator;
+use Eghamat24\DatabaseRepository\Models\Factories\IFactory;
 
 abstract class MySqlRepository
 {

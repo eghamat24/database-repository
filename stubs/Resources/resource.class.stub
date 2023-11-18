@@ -3,8 +3,8 @@
 namespace {{ ResourceNamespace }};
 
 use {{ EntityNamespace }}\{{ EntityName }};
-use Nanvaie\DatabaseRepository\Models\Entity\Entity;
-use Nanvaie\DatabaseRepository\Models\Resources\Resource;
+use Eghamat24\DatabaseRepository\Models\Entity\Entity;
+use Eghamat24\DatabaseRepository\Models\Resources\Resource;
 
 class {{ ResourceName }} extends Resource
 {

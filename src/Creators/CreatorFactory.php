@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -50,7 +50,7 @@ class CreatorFactory implements IClassCreator
     {
         return [
             "use $this->entityNamespace\\$this->entityName;",
-            "use Nanvaie\DatabaseRepository\Models\Factories\Factory;",
+            "use Eghamat24\DatabaseRepository\Models\Factories\Factory;",
             "use stdClass;"
         ];
 

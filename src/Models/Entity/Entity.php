@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Entity;
+namespace Eghamat24\DatabaseRepository\Models\Entity;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository;
+namespace Eghamat24\DatabaseRepository;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

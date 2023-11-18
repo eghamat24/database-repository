@@ -1,10 +1,10 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 
 class CreatorMySqlRepository implements IClassCreator
 {
@@ -37,7 +37,7 @@ class CreatorMySqlRepository implements IClassCreator
             "use $this->entityNamespace\\$this->entityName;",
             "use $this->factoryNamespace\\$this->factoryName;",
             "use Illuminate\Support\Collection;",
-            "use Nanvaie\DatabaseRepository\Models\Repositories\MySqlRepository;"
+            "use Eghamat24\DatabaseRepository\Models\Repositories\MySqlRepository;"
         ];
     }
     public function getClassName(): string

@@ -1,11 +1,11 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Support\Str;
 
 class BaseCommand extends Command

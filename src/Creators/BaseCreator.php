@@ -1,12 +1,12 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use Nanvaie\DatabaseRepository\Commands\BaseCommand;
-use Nanvaie\DatabaseRepository\Utility;
-use function Nanvaie\DatabaseRepository\Commands\config;
+use Eghamat24\DatabaseRepository\Commands\BaseCommand;
+use Eghamat24\DatabaseRepository\Utility;
+use function Eghamat24\DatabaseRepository\Commands\config;
 
 class BaseCreator extends BaseCommand
 {

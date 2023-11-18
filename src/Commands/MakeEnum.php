@@ -1,11 +1,11 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\Creators\BaseCreator;
-use Nanvaie\DatabaseRepository\Creators\CreatorEnum;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\Creators\BaseCreator;
+use Eghamat24\DatabaseRepository\Creators\CreatorEnum;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
 class MakeEnum extends BaseCommand

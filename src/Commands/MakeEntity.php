@@ -1,12 +1,12 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\CreateEntity;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
-use Nanvaie\DatabaseRepository\Creators\CreatorEntity;
-use Nanvaie\DatabaseRepository\Creators\BaseCreator;
+use Eghamat24\DatabaseRepository\CreateEntity;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\Creators\CreatorEntity;
+use Eghamat24\DatabaseRepository\Creators\BaseCreator;
 use Illuminate\Support\Collection;
 
 class MakeEntity extends BaseCommand

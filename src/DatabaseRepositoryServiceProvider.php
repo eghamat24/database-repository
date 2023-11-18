@@ -1,17 +1,17 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository;
+namespace Eghamat24\DatabaseRepository;
 
-use Nanvaie\DatabaseRepository\Commands\MakeAll;
-use Nanvaie\DatabaseRepository\Commands\MakeEntity;
-use Nanvaie\DatabaseRepository\Commands\MakeEnum;
-use Nanvaie\DatabaseRepository\Commands\MakeFactory;
-use Nanvaie\DatabaseRepository\Commands\MakeInterfaceRepository;
-use Nanvaie\DatabaseRepository\Commands\MakeMySqlRepository;
-use Nanvaie\DatabaseRepository\Commands\MakeRedisRepository;
-use Nanvaie\DatabaseRepository\Commands\MakeRepository;
-use Nanvaie\DatabaseRepository\Commands\MakeResource;
-use Nanvaie\DatabaseRepository\Commands\MakeRedis;
+use Eghamat24\DatabaseRepository\Commands\MakeAll;
+use Eghamat24\DatabaseRepository\Commands\MakeEntity;
+use Eghamat24\DatabaseRepository\Commands\MakeEnum;
+use Eghamat24\DatabaseRepository\Commands\MakeFactory;
+use Eghamat24\DatabaseRepository\Commands\MakeInterfaceRepository;
+use Eghamat24\DatabaseRepository\Commands\MakeMySqlRepository;
+use Eghamat24\DatabaseRepository\Commands\MakeRedisRepository;
+use Eghamat24\DatabaseRepository\Commands\MakeRepository;
+use Eghamat24\DatabaseRepository\Commands\MakeResource;
+use Eghamat24\DatabaseRepository\Commands\MakeRedis;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
 use Illuminate\Foundation\Application as LaravelApplication;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Collection;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 
 interface IClassCreator
 {

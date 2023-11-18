@@ -1,12 +1,12 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\Creators\BaseCreator;
-use Nanvaie\DatabaseRepository\Creators\CreatorResource;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\Creators\BaseCreator;
+use Eghamat24\DatabaseRepository\Creators\CreatorResource;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 
 class MakeResource extends BaseCommand
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Collection;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Support\Str;
 
 class CreatorResource implements IClassCreator
@@ -32,8 +32,8 @@ class CreatorResource implements IClassCreator
     public function createUses(): array
     {
         return ["use $this->entityNamespace\\$this->entityName;",
-            "use Nanvaie\DatabaseRepository\Models\Entity\Entity;",
-            "use Nanvaie\DatabaseRepository\Models\Resources\Resource;"];
+            "use Eghamat24\DatabaseRepository\Models\Entity\Entity;",
+            "use Eghamat24\DatabaseRepository\Models\Resources\Resource;"];
     }
 
     public function getClassName(): string

@@ -5,7 +5,7 @@ namespace {{ RepositoryNamespace }}\{{ EntityName }};
 use {{ EntityNamespace }}\{{ EntityName }};
 use {{ FactoryNamespace }}\{{ FactoryName }};
 use Illuminate\Support\Collection;
-use Nanvaie\DatabaseRepository\Models\Repositories\MySqlRepository;
+use Eghamat24\DatabaseRepository\Models\Repositories\MySqlRepository;
 
 class {{ MySqlRepositoryName }} extends MySqlRepository implements {{ RepositoryInterfaceName }}
 {

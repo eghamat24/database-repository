@@ -3,7 +3,7 @@
 ## Installation
 Use the following command to add this package to the composer development requirement.
 ```bash
-composer require nanvaie/database-repository --dev 
+composer require eghamat24/database-repository --dev 
 ```
 
 ### Setup Laravel Repository
@@ -17,7 +17,7 @@ Navigate to `app.php` in `bootstrap` folder and add the following line after ser
 ```php
 // snip
 if ($app->environment('local', 'testing')) {
-    $app->register(Nanvaie\DatabaseRepository\DatabaseRepositoryServiceProvider::class);
+    $app->register(Eghamat24\DatabaseRepository\DatabaseRepositoryServiceProvider::class);
 }
 // snip
 ```

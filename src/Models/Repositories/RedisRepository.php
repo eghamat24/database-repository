@@ -1,6 +1,6 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Repositories;
+namespace Eghamat24\DatabaseRepository\Models\Repositories;
 
 use Illuminate\Cache\CacheManager;
 

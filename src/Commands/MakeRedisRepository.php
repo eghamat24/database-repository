@@ -1,11 +1,11 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\Creators\BaseCreator;
-use Nanvaie\DatabaseRepository\Creators\CreatorRedisRepository;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\Creators\BaseCreator;
+use Eghamat24\DatabaseRepository\Creators\CreatorRedisRepository;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
 class MakeRedisRepository extends BaseCommand

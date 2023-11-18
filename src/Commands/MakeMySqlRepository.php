@@ -1,12 +1,12 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\Creators\BaseCreator;
-use Nanvaie\DatabaseRepository\Creators\CreatorEntity;
-use Nanvaie\DatabaseRepository\Creators\CreatorMySqlRepository;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\Creators\BaseCreator;
+use Eghamat24\DatabaseRepository\Creators\CreatorEntity;
+use Eghamat24\DatabaseRepository\Creators\CreatorMySqlRepository;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
 class MakeMySqlRepository extends BaseCommand

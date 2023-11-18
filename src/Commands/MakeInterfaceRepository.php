@@ -1,9 +1,9 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Commands;
+namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Support\Str;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Console\Command;
 
 class MakeInterfaceRepository extends BaseCommand

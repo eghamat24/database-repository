@@ -1,9 +1,9 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Collection;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 
 class CreatorEntity implements IClassCreator
 {
@@ -70,7 +70,7 @@ class CreatorEntity implements IClassCreator
 
     public function createUses(): array
     {
-        return ["use Nanvaie\DatabaseRepository\Models\Entity\Entity;"];
+        return ["use Eghamat24\DatabaseRepository\Models\Entity\Entity;"];
     }
 
     public function createFunctions():array

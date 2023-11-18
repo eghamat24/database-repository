@@ -1,12 +1,12 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Creators;
+namespace Eghamat24\DatabaseRepository\Creators;
 
 use App\Models\Repositories\User\IUserRepository;
 use Illuminate\Support\Collection;
-use Nanvaie\DatabaseRepository\CustomMySqlQueries;
-use Nanvaie\DatabaseRepository\Commands;
-use Nanvaie\DatabaseRepository\Commands\MakeRedisRepository;
+use Eghamat24\DatabaseRepository\CustomMySqlQueries;
+use Eghamat24\DatabaseRepository\Commands;
+use Eghamat24\DatabaseRepository\Commands\MakeRedisRepository;
 use Illuminate\Support\Str;
 
 

@@ -1,5 +1,5 @@
 {
-    "name": "nanvaie/database-repository",
+    "name": "eghamat24/database-repository",
     "description": "Repository Pattern",
     "type": "library",
     "license": "MIT",
@@ -20,13 +20,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Nanvaie\\DatabaseRepository\\": "src/"
+            "Eghamat24\\DatabaseRepository\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Nanvaie\\DatabaseRepository\\DatabaseRepositoryServiceProvider"
+                "Eghamat24\\DatabaseRepository\\DatabaseRepositoryServiceProvider"
             ]
         }
     }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Nanvaie\DatabaseRepository\Models\Resources;
+namespace Eghamat24\DatabaseRepository\Models\Resources;
 
 use Illuminate\Support\Collection;
-use Nanvaie\DatabaseRepository\Models\Entity\Entity;
+use Eghamat24\DatabaseRepository\Models\Entity\Entity;
 
 interface IResource
 {
