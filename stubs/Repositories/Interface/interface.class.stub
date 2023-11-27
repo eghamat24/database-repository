@@ -6,4 +6,5 @@ use {{ EntityNamespace }}\{{ EntityName }};
 use Illuminate\Support\Collection;
 
 interface {{ InterfaceRepositoryName }}
-{}
+{
+}
