@@ -53,7 +53,6 @@ class CreatorResource implements IClassCreator
 
     public function createFunctions(): array
     {
-
         $getterStub = file_get_contents($this->resourceStubsPath . 'getter.default.stub');
         $foreignGetterStub = file_get_contents($this->resourceStubsPath . 'getter.foreign.stub');
         $foreignFunStub = file_get_contents($this->resourceStubsPath . 'function.foreign.stub');
@@ -61,7 +60,7 @@ class CreatorResource implements IClassCreator
 
         $getters = '';
         foreach ($this->columns as $_column) {
-            $getters .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME));
+            $getters .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME)) . "\t\t\t";
         }
 
         $foreignGetterFunctions = '';
