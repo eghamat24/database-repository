@@ -29,7 +29,7 @@ class CreatorEntity implements IClassCreator
         return 'extends '.self::PARENT_NAME;
     }
 
-    public function createAttributs():array{
+    public function createAttributes():array{
         $columns = $this->columns;
         $entityStubsPath = $this->entityStubsPath;
         $detectForeignKeys = $this->detectForeignKeys;
@@ -75,7 +75,6 @@ class CreatorEntity implements IClassCreator
 
     public function createFunctions():array
     {
-
         $columns = $this->columns;
         $entityStubsPath = $this->entityStubsPath;
         $detectForeignKeys = $this->detectForeignKeys;

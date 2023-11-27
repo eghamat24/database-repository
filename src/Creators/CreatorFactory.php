@@ -26,7 +26,7 @@ class CreatorFactory implements IClassCreator
         return $this->factoryNamespace;
     }
 
-    public function createAttributs(): array
+    public function createAttributes(): array
     {
         // TODO: Implement createAttributs() method.
         return [];

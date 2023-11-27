@@ -41,7 +41,7 @@ class CreatorRedisRepository implements IClassCreator
         return "extends RedisRepository";
     }
 
-    public function createAttributs(): array
+    public function createAttributes(): array
     {
         return [];
     }

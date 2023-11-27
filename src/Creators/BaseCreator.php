@@ -26,7 +26,7 @@ class BaseCreator extends BaseCommand
 
     public function createClass(string $filenameWithPath,BaseCommand $command):string
     {
-        $attributesArray = $this->creator->createAttributs();
+        $attributesArray = $this->creator->createAttributes();
         $functionsArray = $this->creator->createFunctions();
         $usesArray = $this->creator->createUses();
 

@@ -18,7 +18,7 @@ class CreatorEnum implements IClassCreator
 
     }
 
-    public function createAttributs(): array
+    public function createAttributes(): array
     {
             $attributes = [];
             foreach ($this->enum as $_enum) {

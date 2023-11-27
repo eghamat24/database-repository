@@ -99,7 +99,7 @@ class CreatorRepository implements IClassCreator
         return 'implements ' . $this->interfaceName;
     }
 
-    public function createAttributs(): array
+    public function createAttributes(): array
     {
         $attributeSqlStub = file_get_contents($this->repositoryStubsPath . 'attribute.sql.stub');
         $attributes = [];

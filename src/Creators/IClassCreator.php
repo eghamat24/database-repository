@@ -11,7 +11,7 @@ interface IClassCreator
     public function createUses(): array;
     public function getClassName(): string;
     public function getExtendSection(): string;
-    public function createAttributs(): array;
+    public function createAttributes(): array;
     public function createFunctions(): array;
 
 }

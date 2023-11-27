@@ -46,7 +46,7 @@ class CreatorResource implements IClassCreator
         return 'extends Resource';
     }
 
-    public function createAttributs(): array
+    public function createAttributes(): array
     {
         return [];
     }

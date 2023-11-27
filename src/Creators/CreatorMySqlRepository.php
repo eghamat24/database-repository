@@ -48,7 +48,7 @@ class CreatorMySqlRepository implements IClassCreator
     {
         return "extends MySqlRepository implements " . $this->interfaceName;
     }
-    public function createAttributs(): array
+    public function createAttributes(): array
     {
         return [];
     }
