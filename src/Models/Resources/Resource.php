@@ -7,7 +7,6 @@ use Eghamat24\DatabaseRepository\Models\Entity\Entity;
 
 abstract class Resource implements IResource
 {
-
     abstract public function toArray(Entity $entity): array;
 
     public function collectionToArray(Collection $entities): array

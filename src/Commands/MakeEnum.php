@@ -34,29 +34,29 @@ class MakeEnum extends BaseCommand
         $this->setArguments();
         $columns = $this->getAllColumnsInTable($this->tableName);
 
-        $this->checkEmpty($columns,$this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
 
         $enums = [];
         foreach ($columns as $_column) {
             if ($_column->DATA_TYPE == 'enum') {
-                $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME)."Enum";
+                $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME) . "Enum";
                 $enums[$enumClassName] = array_filter(explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE)));
-                $filenameWithPath = $this->relativeEnumsPath . $enumClassName.'.php';
-                $this->checkDelete($filenameWithPath,$enumClassName,"Enum");
+                $filenameWithPath = $this->relativeEnumsPath . $enumClassName . '.php';
+                $this->checkDelete($filenameWithPath, $enumClassName, "Enum");
             }
         }
 
-        $attributeStub = file_get_contents($this->enumStubPath.'attribute.stub');
+        $attributeStub = file_get_contents($this->enumStubPath . 'attribute.stub');
 
         foreach ($enums as $enumName => $enum) {
-            $filenameWithPath = $this->relativeEnumsPath . $enumName.'.php';
+            $filenameWithPath = $this->relativeEnumsPath . $enumName . '.php';
 
             $this->checkDirectory($this->enumNamespace);
-            $this->checkClassExist($this->relativeEnumsPath,$enumName,"Enum");
+            $this->checkClassExist($this->relativeEnumsPath, $enumName, "Enum");
 
-            $enumCreator = new CreatorEnum($columns,$attributeStub,$enum,$enumName,$this->enumNamespace);
+            $enumCreator = new CreatorEnum($columns, $attributeStub, $enum, $enumName, $this->enumNamespace);
             $creator = new BaseCreator($enumCreator);
-            $baseContent = $creator->createClass($filenameWithPath,$this);
+            $baseContent = $creator->createClass($filenameWithPath, $this);
 
             $this->finalized($filenameWithPath, $enumName, $baseContent);
         }

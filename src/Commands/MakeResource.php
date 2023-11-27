@@ -38,18 +38,18 @@ class MakeResource extends BaseCommand
     public function handle(): void
     {
         $this->setArguments();
-        $resourceName = $this->entityName."Resource";
+        $resourceName = $this->entityName . "Resource";
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
         $resourceStubsPath = __DIR__ . '/../../' . config('repository.path.stub.resources');
-        $filenameWithPath = $relativeResourcesPath . $resourceName.'.php';
+        $filenameWithPath = $relativeResourcesPath . $resourceName . '.php';
 
-        $this->checkDelete($filenameWithPath,$resourceName,"Resource");
+        $this->checkDelete($filenameWithPath, $resourceName, "Resource");
         $this->checkDirectory($relativeResourcesPath);
-        $this->checkClassExist($resourceNamespace,$resourceName,"Resource");
+        $this->checkClassExist($resourceNamespace, $resourceName, "Resource");
 
         $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns,$this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
 
         $RepoCreator = new CreatorResource($columns,
             $this->tableName,
@@ -61,8 +61,8 @@ class MakeResource extends BaseCommand
             $this->detectForeignKeys,
             $this->entityVariableName);
         $creator = new BaseCreator($RepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath,$this);
-        $this->finalized($filenameWithPath,$resourceName,$baseContent);
+        $baseContent = $creator->createClass($filenameWithPath, $this);
+        $this->finalized($filenameWithPath, $resourceName, $baseContent);
 
     }
 

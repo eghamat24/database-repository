@@ -27,10 +27,12 @@ class CreatorMySqlRepository implements IClassCreator
     )
     {
     }
+
     public function getNameSpace(): string
     {
         return $this->repositoryNamespace . '\\' . $this->entityName;
     }
+
     public function createUses(): array
     {
         return [
@@ -40,18 +42,22 @@ class CreatorMySqlRepository implements IClassCreator
             "use Eghamat24\DatabaseRepository\Models\Repositories\MySqlRepository;"
         ];
     }
+
     public function getClassName(): string
     {
         return $this->mysqlRepositoryName;
     }
+
     public function getExtendSection(): string
     {
         return "extends MySqlRepository implements " . $this->interfaceName;
     }
+
     public function createAttributes(): array
     {
         return [];
     }
+
     public function createFunctions(): array
     {
 
@@ -81,7 +87,7 @@ class CreatorMySqlRepository implements IClassCreator
             $indx = 'getOneBy' . ucfirst(Str::camel($index->COLUMN_NAME));
             $functions[$indx] = $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE));
 
-            if($index->Non_unique == 1) {
+            if ($index->Non_unique == 1) {
                 $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
                 $functions[$indx] = $this->writeGetAllFunction($getAllStub, $index->COLUMN_NAME, $this->entityName);
             }
@@ -102,10 +108,10 @@ class CreatorMySqlRepository implements IClassCreator
         // Create "create" function
         foreach ($this->columns as $_column) {
             if (!in_array($_column->COLUMN_NAME, ['id', 'deleted_at'])) {
-                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME))."\n\t\t\t\t";
+                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME)) . "\n\t\t\t\t";
             }
             if (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
-                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME))."\n\t\t";
+                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME)) . "\n\t\t";
             }
         }
         $createFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ SetterFunctions }}"],
@@ -120,10 +126,10 @@ class CreatorMySqlRepository implements IClassCreator
         // Create "update" function
         foreach ($this->columns as $_column) {
             if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'deleted_at'])) {
-                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME))."\n\t\t\t\t";
+                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME)) . "\n\t\t\t\t";
             }
             if ($_column->COLUMN_NAME === 'updated_at') {
-                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME))."\n\t\t";
+                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME)) . "\n\t\t";
             }
         }
         $updateFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ UpdateFieldSetter }}"],

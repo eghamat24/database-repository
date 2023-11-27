@@ -12,10 +12,12 @@ abstract class RedisRepository
     {
         $this->cache = app('cache');
     }
+
     protected function getCache(): CacheManager
     {
         return $this->cache;
     }
+
     /**
      * @param Collection $entities
      * @param Filter[]|Collection $filters

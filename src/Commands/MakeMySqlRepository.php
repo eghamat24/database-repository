@@ -39,12 +39,12 @@ class MakeMySqlRepository extends BaseCommand
     public function handle(): void
     {
         $this->setArguments();
-        $filenameWithPath = $this->relativeMysqlRepositoryPath . $this->mysqlRepositoryName.'.php';
-        $this->checkDelete($filenameWithPath,$this->mysqlRepositoryName,"MySql Repository");
+        $filenameWithPath = $this->relativeMysqlRepositoryPath . $this->mysqlRepositoryName . '.php';
+        $this->checkDelete($filenameWithPath, $this->mysqlRepositoryName, "MySql Repository");
         $this->checkDirectory($this->relativeMysqlRepositoryPath);
-        $this->checkClassExist($this->repositoryNamespace,$this->mysqlRepositoryName,"MySql Repository");
+        $this->checkClassExist($this->repositoryNamespace, $this->mysqlRepositoryName, "MySql Repository");
         $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns,$this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
 
         $mysqlRepoCreator = new CreatorMySqlRepository($columns,
             $this->tableName,
@@ -60,7 +60,7 @@ class MakeMySqlRepository extends BaseCommand
             $this->detectForeignKeys
         );
         $creator = new BaseCreator($mysqlRepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath,$this);
+        $baseContent = $creator->createClass($filenameWithPath, $this);
 
         $this->finalized($filenameWithPath, $this->mysqlRepositoryName, $baseContent);
     }

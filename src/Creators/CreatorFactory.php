@@ -37,7 +37,7 @@ class CreatorFactory implements IClassCreator
         $setterStub = file_get_contents($this->factoryStubsPath . 'setter.stub');
         $setterFunctions = '';
         foreach ($this->columns as $_column) {
-            $setterFunctions .= trim($this->writeSetter($setterStub, $_column->COLUMN_NAME))."\n\t\t";
+            $setterFunctions .= trim($this->writeSetter($setterStub, $_column->COLUMN_NAME)) . "\n\t\t";
         }
         return ['makeEntityFromStdClass' =>
             str_replace(['{{ SetterFunctions }}', '{{ EntityName }}', '{{ EntityVariableName }}'],

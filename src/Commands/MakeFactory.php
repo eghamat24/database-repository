@@ -44,20 +44,20 @@ class MakeFactory extends BaseCommand
     {
         $this->setArguments();
 
-        $filenameWithPath = $this->relativeFactoriesPath . $this->factoryName.'.php';
+        $filenameWithPath = $this->relativeFactoriesPath . $this->factoryName . '.php';
 
-        $this->checkDelete($filenameWithPath,$this->entityName,"Factory");
+        $this->checkDelete($filenameWithPath, $this->entityName, "Factory");
         $this->checkDirectory($this->relativeFactoriesPath);
-        $this->checkClassExist($this->factoryNamespace,$this->entityName,"Factory");
+        $this->checkClassExist($this->factoryNamespace, $this->entityName, "Factory");
 
         $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns,$this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
 
         foreach ($columns as $_column) {
             $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
-        $baseContent = file_get_contents($this->factoryStubsPath.'class.stub');
+        $baseContent = file_get_contents($this->factoryStubsPath . 'class.stub');
 
         $factoryCreator = new CreatorFactory(
             $columns,
@@ -69,7 +69,7 @@ class MakeFactory extends BaseCommand
             $this->factoryName,
             $baseContent);
         $creator = new BaseCreator($factoryCreator);
-        $baseContent = $creator->createClass($filenameWithPath,$this);
+        $baseContent = $creator->createClass($filenameWithPath, $this);
 
         $this->finalized($filenameWithPath, $this->factoryName, $baseContent);
     }

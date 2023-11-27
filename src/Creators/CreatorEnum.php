@@ -9,10 +9,10 @@ class CreatorEnum implements IClassCreator
 {
     public function __construct(
         public Collection $columns,
-        public  $attributeStub,
-        public  $enum,
-        public  $enumName,
-        public  $enumNamespace
+        public            $attributeStub,
+        public            $enum,
+        public            $enumName,
+        public            $enumNamespace
     )
     {
 
@@ -20,15 +20,15 @@ class CreatorEnum implements IClassCreator
 
     public function createAttributes(): array
     {
-            $attributes = [];
-            foreach ($this->enum as $_enum) {
-                $attributes[strtoupper($_enum)] = $this->writeAttribute(
-                    $this->attributeStub,
-                    strtoupper($_enum),
-                    $_enum
-                );
-            }
-            return $attributes;
+        $attributes = [];
+        foreach ($this->enum as $_enum) {
+            $attributes[strtoupper($_enum)] = $this->writeAttribute(
+                $this->attributeStub,
+                strtoupper($_enum),
+                $_enum
+            );
+        }
+        return $attributes;
     }
 
     public function createFunctions(): array

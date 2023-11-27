@@ -8,10 +8,15 @@ use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 interface IClassCreator
 {
     public function getNameSpace(): string;
+
     public function createUses(): array;
+
     public function getClassName(): string;
+
     public function getExtendSection(): string;
+
     public function createAttributes(): array;
+
     public function createFunctions(): array;
 
 }

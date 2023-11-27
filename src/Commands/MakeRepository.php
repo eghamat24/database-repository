@@ -41,20 +41,20 @@ class MakeRepository extends BaseCommand
         $this->checkStrategyName();
 
         $this->setArguments();
-        $repositoryName = $this->entityName.'Repository';
+        $repositoryName = $this->entityName . 'Repository';
 //        $sqlRepositoryName = 'MySql'.$this->entityName.'Repository';
-        $sqlRepositoryName = ucwords($this->selectedDb).$this->entityName.'Repository';
+        $sqlRepositoryName = ucwords($this->selectedDb) . $this->entityName . 'Repository';
         $sqlRepositoryVariable = 'repository';
-        $redisRepositoryVariable ='redisRepository';
-        $redisRepositoryName = 'Redis'.$this->entityName.'Repository';
+        $redisRepositoryVariable = 'redisRepository';
+        $redisRepositoryName = 'Redis' . $this->entityName . 'Repository';
         $relativeRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
         $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
         $filenameWithPath = $relativeRepositoryPath . $repositoryName . '.php';
-        $this->checkDelete($filenameWithPath,$repositoryName,"Repository");
+        $this->checkDelete($filenameWithPath, $repositoryName, "Repository");
         $this->checkDirectory($relativeRepositoryPath);
-        $this->checkClassExist($this->repositoryNamespace,$repositoryName,"Repository");
+        $this->checkClassExist($this->repositoryNamespace, $repositoryName, "Repository");
         $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns,$this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
         $RepoCreator = new CreatorRepository(
             $columns,
             $sqlRepositoryVariable,
@@ -74,7 +74,7 @@ class MakeRepository extends BaseCommand
             $this->strategyName
         );
         $creator = new BaseCreator($RepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath,$this);
+        $baseContent = $creator->createClass($filenameWithPath, $this);
         $this->finalized($filenameWithPath, $repositoryName, $baseContent);
     }
 }

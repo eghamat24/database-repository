@@ -79,7 +79,7 @@ class MakeInterfaceRepository extends BaseCommand
             $columnInfo = collect($columnsInfo)->where('COLUMN_NAME', $index->COLUMN_NAME)->first();
             $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE)), -2, 0);
 
-            if($index->Non_unique == 1) {
+            if ($index->Non_unique == 1) {
                 $baseContent = substr_replace($baseContent, $this->writeGetOneFunction($getAllStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE)), -2, 0);
             }
         }

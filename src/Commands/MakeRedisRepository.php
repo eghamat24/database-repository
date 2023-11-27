@@ -40,25 +40,25 @@ class MakeRedisRepository extends BaseCommand
         $this->checkStrategyName();
         $this->setArguments();
 
-        $redisRepositoryName = "Redis$this->entityName"."Repository";
+        $redisRepositoryName = "Redis$this->entityName" . "Repository";
         $redisRepositoryNamespace = config('repository.path.namespace.repositories');
         $relativeRedisRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
         $filenameWithPath = $relativeRedisRepositoryPath . $redisRepositoryName . '.php';
 
-        $this->checkDelete($filenameWithPath,$redisRepositoryName,"Redis Repository");
+        $this->checkDelete($filenameWithPath, $redisRepositoryName, "Redis Repository");
         $this->checkDirectory($relativeRedisRepositoryPath);
-        $this->checkClassExist($this->repositoryNamespace,$redisRepositoryName,"Redis Repository");
+        $this->checkClassExist($this->repositoryNamespace, $redisRepositoryName, "Redis Repository");
         $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns,$this->tableName);
+        $this->checkEmpty($columns, $this->tableName);
 
         if ($this->detectForeignKeys) {
             $foreignKeys = $this->extractForeignKeys($this->tableName);
         }
 
         $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
-        $mysqlRepoCreator = new CreatorRedisRepository($redisRepositoryName,$redisRepositoryNamespace, $this->entityName,$this->strategyName,$repositoryStubsPath);
+        $mysqlRepoCreator = new CreatorRedisRepository($redisRepositoryName, $redisRepositoryNamespace, $this->entityName, $this->strategyName, $repositoryStubsPath);
         $creator = new BaseCreator($mysqlRepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath,$this);
+        $baseContent = $creator->createClass($filenameWithPath, $this);
         $this->finalized($filenameWithPath, $redisRepositoryName, $baseContent);
     }
 }

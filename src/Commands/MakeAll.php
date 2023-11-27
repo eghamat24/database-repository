@@ -48,7 +48,7 @@ class MakeAll extends Command
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
         $addToGit = $this->option('add-to-git');
-        $strategy=$this->option('strategy_name');
+        $strategy = $this->option('strategy_name');
         if ($this->option('all-tables')) {
             $tableNames = $this->getAllTableNames()->pluck('TABLE_NAME');
         } else if ($this->option('table_names')) {
@@ -72,8 +72,8 @@ class MakeAll extends Command
             $this->call('repository:make-resource', $arguments);
             $this->call('repository:make-interface-repository', $arguments);
             $this->call('repository:make-mysql-repository', $arguments);
-            $this->call('repository:make-redis-repository',[...$arguments,'strategy'=>$strategy]);
-            $this->call('repository:make-repository', [...$arguments,'strategy'=>$strategy,'selected_db'=>$this->selectedDb]);
+            $this->call('repository:make-redis-repository', [...$arguments, 'strategy' => $strategy]);
+            $this->call('repository:make-repository', [...$arguments, 'strategy' => $strategy, 'selected_db' => $this->selectedDb]);
         }
     }
 }

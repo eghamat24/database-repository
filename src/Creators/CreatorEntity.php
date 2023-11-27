@@ -15,21 +15,22 @@ class CreatorEntity implements IClassCreator
 
     public function __construct(
         public Collection $columns,
-        public string $detectForeignKeys,
-        public string $tableName,
-        public string $entityName,
-        public string $entityNamespace,
-        public string $entityStubsPath)
+        public string     $detectForeignKeys,
+        public string     $tableName,
+        public string     $entityName,
+        public string     $entityNamespace,
+        public string     $entityStubsPath)
     {
 
     }
 
     public function getExtendSection(): string
     {
-        return 'extends '.self::PARENT_NAME;
+        return 'extends ' . self::PARENT_NAME;
     }
 
-    public function createAttributes():array{
+    public function createAttributes(): array
+    {
         $columns = $this->columns;
         $entityStubsPath = $this->entityStubsPath;
         $detectForeignKeys = $this->detectForeignKeys;
@@ -46,7 +47,7 @@ class CreatorEntity implements IClassCreator
             $attributes[$_column->COLUMN_NAME] =
                 $this->writeAttribute(
                     $entityStubsPath,
-                    $_column->COLUMN_NAME.(!in_array($_column->COLUMN_DEFAULT, [null, 'NULL']) ? ' = '.$defaultValue : ''),
+                    $_column->COLUMN_NAME . (!in_array($_column->COLUMN_DEFAULT, [null, 'NULL']) ? ' = ' . $defaultValue : ''),
                     ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType
                 );
         }
@@ -73,7 +74,7 @@ class CreatorEntity implements IClassCreator
         return ["use Eghamat24\DatabaseRepository\Models\Entity\Entity;"];
     }
 
-    public function createFunctions():array
+    public function createFunctions(): array
     {
         $columns = $this->columns;
         $entityStubsPath = $this->entityStubsPath;
@@ -83,14 +84,14 @@ class CreatorEntity implements IClassCreator
         foreach ($columns as $_column) {
             $dataType = $this->getDataType($_column->COLUMN_TYPE, $_column->DATA_TYPE);
 
-            $settersAndGetters['get'.ucwords($_column->COLUMN_NAME)] =
+            $settersAndGetters['get' . ucwords($_column->COLUMN_NAME)] =
                 $this->writeAccessors(
                     $entityStubsPath,
                     $_column->COLUMN_NAME,
                     ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType,
                     'getter'
                 );
-            $settersAndGetters['set'.ucwords($_column->COLUMN_NAME)] =
+            $settersAndGetters['set' . ucwords($_column->COLUMN_NAME)] =
                 $this->writeAccessors(
                     $entityStubsPath,
                     $_column->COLUMN_NAME,
@@ -104,20 +105,20 @@ class CreatorEntity implements IClassCreator
 
             // Create Additional Setters and Getters from Foreign keys
             foreach ($foreignKeys as $_foreignKey) {
-                $settersAndGetters['get'.ucwords($_foreignKey->COLUMN_NAME)] =
+                $settersAndGetters['get' . ucwords($_foreignKey->COLUMN_NAME)] =
                     $this->writeAccessors(
                         $entityStubsPath,
                         $_foreignKey->VARIABLE_NAME,
                         $_foreignKey->ENTITY_DATA_TYPE,
                         'getter'
                     );
-                $settersAndGetters['set'.ucwords($_foreignKey->COLUMN_NAME)] =
-                        $this->writeAccessors(
-                            $entityStubsPath,
-                            $_foreignKey->VARIABLE_NAME,
-                            $_foreignKey->ENTITY_DATA_TYPE,
-                            'setter'
-                        );
+                $settersAndGetters['set' . ucwords($_foreignKey->COLUMN_NAME)] =
+                    $this->writeAccessors(
+                        $entityStubsPath,
+                        $_foreignKey->VARIABLE_NAME,
+                        $_foreignKey->ENTITY_DATA_TYPE,
+                        'setter'
+                    );
             }
         }
         return $settersAndGetters;
@@ -125,15 +126,15 @@ class CreatorEntity implements IClassCreator
 
     private function writeAttribute(string $entityStubsPath, string $attributeName, string $attributeType): string
     {
-        $attributeStub = file_get_contents($entityStubsPath.'attribute.stub');
+        $attributeStub = file_get_contents($entityStubsPath . 'attribute.stub');
         return str_replace(['{{ AttributeType }}', '{{ AttributeName }}'],
             [$attributeType, $attributeName],
             $attributeStub);
     }
 
-    private function writeAccessors(string $entityStubsPath, string $attributeName, string $attributeType,string $type): string
+    private function writeAccessors(string $entityStubsPath, string $attributeName, string $attributeType, string $type): string
     {
-        $accessorStub = file_get_contents($entityStubsPath.$type.'.stub');
+        $accessorStub = file_get_contents($entityStubsPath . $type . '.stub');
         return str_replace(['{{ AttributeType }}', '{{ AttributeName }}', '{{ GetterName }}', '{{ SetterName }}'],
             [$attributeType, $attributeName, ucfirst($attributeName), ucfirst($attributeName)],
             $accessorStub);

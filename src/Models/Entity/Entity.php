@@ -100,7 +100,7 @@ abstract class Entity implements JsonSerializable, Arrayable
         $changedAttributes = [];
         $attributes = $this->toArray();
         foreach ($attributes as $key => $value) {
-            if (isset($this->originals[$key]) && $value !== $this->originals[$key] && ! ((is_array($this->originals[$key]) || is_object($this->originals[$key])))) {
+            if (isset($this->originals[$key]) && $value !== $this->originals[$key] && !((is_array($this->originals[$key]) || is_object($this->originals[$key])))) {
                 $changedAttributes[] = $key;
             }
         }

@@ -108,7 +108,7 @@ abstract class MySqlRepository
         return $query->exists();
     }
 
-     public function updateOrCreate(Entity $model)
+    public function updateOrCreate(Entity $model)
     {
         if ($this->exists($model->getPrimaryKey())) {
             $this->update($model);

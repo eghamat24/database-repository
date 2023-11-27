@@ -97,25 +97,25 @@ trait CustomMySqlQueries
         $indexes = DB::table('INFORMATION_SCHEMA.KEY_COLUMN_USAGE')
             ->where('TABLE_SCHEMA', config('database.connections.mysql.database'))
             ->where('TABLE_NAME', $tableName)
-            ->where('CONSTRAINT_NAME', '!=' ,'PRIMARY')
+            ->where('CONSTRAINT_NAME', '!=', 'PRIMARY')
             ->whereNull('REFERENCED_TABLE_NAME')
             ->orderBy('ORDINAL_POSITION')
             ->get();
 
         $indexesData = DB::select("SHOW INDEX FROM $tableName WHERE Key_name != 'PRIMARY'");
-        
+
         collect($indexes)->each(function ($index) use ($indexesData) {
             $indexesData = collect($indexesData)->where('Column_name', $index->COLUMN_NAME)->first();
             $index->Non_unique = $indexesData->Non_unique;
             $index->Index_type = $indexesData->Index_type;
         });
-        
+
         return $indexes;
     }
 
     public function getDataType(string $columnType, string $dataType): string
     {
-        if(array_key_exists($columnType, $this->columnTypes)) {
+        if (array_key_exists($columnType, $this->columnTypes)) {
             return $this->columnTypes[$columnType];
         }
 

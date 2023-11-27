@@ -38,7 +38,7 @@ class CreatorRepository implements IClassCreator
     private function writeFunction(string $functionStub, string $functionName, string $columnName, string $attributeType): string
     {
         $columnNameSingle = Str::camel($columnName);
-        
+
         if ($functionName === 'getOneBy') {
             $functionReturnType = 'null|{{ EntityName }}';
             $functionName .= ucfirst(Str::camel($columnName));
@@ -59,19 +59,21 @@ class CreatorRepository implements IClassCreator
 
         $redisCashFunction = str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ ColumnNameSingle }}'], [$functionName, $columnName, $columnNameSingle], $redisCashFunction);
 
-        return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}','{{redisFunction}}'],
+        return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}', '{{redisFunction}}'],
             [$functionName, $attributeType, Str::camel($columnName), $functionReturnType, $redisCashFunction],
             $functionStub);
     }
+
     private function writeSqlAttribute(string $attributeStub, string $sqlRepositoryVariable, string $sqlRepositoryName): string
     {
-      return  str_replace(['{{ SqlRepositoryVariable }}', '{{ SqlRepositoryName }}'],
+        return str_replace(['{{ SqlRepositoryVariable }}', '{{ SqlRepositoryName }}'],
             [$sqlRepositoryVariable, $sqlRepositoryName],
             $attributeStub);
     }
-    public function writeRedisAttribute(string $attributeStub,string $redisRepositoryVariable,string  $redisRepositoryName):string
+
+    public function writeRedisAttribute(string $attributeStub, string $redisRepositoryVariable, string $redisRepositoryName): string
     {
-        return  str_replace(['{{ RedisRepositoryVariable }}', '{{ RedisRepositoryName }}'],
+        return str_replace(['{{ RedisRepositoryVariable }}', '{{ RedisRepositoryName }}'],
             [$redisRepositoryVariable, $redisRepositoryName],
             $attributeStub);
     }
@@ -103,8 +105,8 @@ class CreatorRepository implements IClassCreator
     {
         $attributeSqlStub = file_get_contents($this->repositoryStubsPath . 'attribute.sql.stub');
         $attributes = [];
-        $attributes['repository'] = 'private '.$this->interfaceName.' $repository;';
-        $attributes['redisRepository'] = 'private '.$this->redisRepositoryName.' $redisRepository;';
+        $attributes['repository'] = 'private ' . $this->interfaceName . ' $repository;';
+        $attributes['redisRepository'] = 'private ' . $this->redisRepositoryName . ' $redisRepository;';
         return $attributes;
     }
 
@@ -126,7 +128,7 @@ class CreatorRepository implements IClassCreator
             $fun_name = ucfirst(Str::camel($index->COLUMN_NAME));
             $functions['getOneBy' . $fun_name] = $this->writeFunction($functionStub, 'getOneBy', $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE));
 
-            if($index->Non_unique == 1) {
+            if ($index->Non_unique == 1) {
                 $fun_name = ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
                 $functions['getAllBy' . $fun_name] = $this->writeFunction($functionStub, 'getAllBy', $index->COLUMN_NAME, 'array');
             }
@@ -155,27 +157,31 @@ class CreatorRepository implements IClassCreator
         }
         return $functions;
     }
+
     public function getConstruct(string $setterSqlStub, string $constructStub)
     {
-        return str_replace("{{ Setters }}", trim($this->writeSqlAttribute($setterSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName,$this->redisRepositoryVariable,$this->redisRepositoryName)), $constructStub);
+        return str_replace("{{ Setters }}", trim($this->writeSqlAttribute($setterSqlStub, $this->sqlRepositoryVariable, $this->sqlRepositoryName, $this->redisRepositoryVariable, $this->redisRepositoryName)), $constructStub);
     }
+
     public function getConstructRedis(string $setterSqlStub, string $constructStub)
     {
-        return str_replace("{{ Setters }}", trim($this->writeRedisAttribute($setterSqlStub,$this->redisRepositoryVariable,$this->redisRepositoryName)), $constructStub);
+        return str_replace("{{ Setters }}", trim($this->writeRedisAttribute($setterSqlStub, $this->redisRepositoryVariable, $this->redisRepositoryName)), $constructStub);
     }
+
     private function getRedisCashFunctionGetOneBy($strategyName)
     {
-        $repositoryRedisStubsPath=__DIR__ . '/../../'.'stubs/Repositories/Redis/getOneBy/base.';
+        $repositoryRedisStubsPath = __DIR__ . '/../../' . 'stubs/Repositories/Redis/getOneBy/base.';
         return match ($strategyName) {
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
             'ClearableTemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'clearable_temporary_cache_strategy.stub'),
             'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
-         };
+        };
     }
+
     private function getRedisCashFunctionGetAllBy($strategyName)
     {
-        $repositoryRedisStubsPath=__DIR__ . '/../../'.'stubs/Repositories/Redis/getAllBy/base.';
+        $repositoryRedisStubsPath = __DIR__ . '/../../' . 'stubs/Repositories/Redis/getAllBy/base.';
         return match ($strategyName) {
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
@@ -183,9 +189,10 @@ class CreatorRepository implements IClassCreator
             'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
         };
     }
+
     private function getRedisCashFunctionCreate($strategyName)
     {
-        $repositoryRedisStubsPath=__DIR__ . '/../../'.'stubs/Repositories/Redis/create/base.';
+        $repositoryRedisStubsPath = __DIR__ . '/../../' . 'stubs/Repositories/Redis/create/base.';
         return match ($strategyName) {
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
@@ -193,9 +200,10 @@ class CreatorRepository implements IClassCreator
             'TemporaryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'temporary_cache_strategy.stub'),
         };
     }
+
     private function getRedisCashFunctionUpdate($strategyName)
     {
-        $repositoryRedisStubsPath=__DIR__ . '/../../'.'stubs/Repositories/Redis/update/base.';
+        $repositoryRedisStubsPath = __DIR__ . '/../../' . 'stubs/Repositories/Redis/update/base.';
         return match ($strategyName) {
             'QueryCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'query_cache_strategy.stub'),
             'SingleKeyCacheStrategy' => file_get_contents($repositoryRedisStubsPath . 'single_key_cache_strategy.stub'),
