@@ -53,7 +53,7 @@ class CreatorEnum implements IClassCreator
 
     public function getClassName(): string
     {
-        return $this->enumName;
+        return $this->enumName . ' : string';
     }
 
     private function writeAttribute(string $attributeStub, string $attributeName, string $attributeString): string

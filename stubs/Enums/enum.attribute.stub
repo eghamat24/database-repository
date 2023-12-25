@@ -1,1 +1,1 @@
-public const {{ AttributeName }} = '{{ AttributeString }}';
+case {{ AttributeName }} = '{{ AttributeString }}';
