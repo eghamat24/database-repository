@@ -38,16 +38,38 @@ class CreatorEntity implements IClassCreator
         $attributes = [];
 
         foreach ($columns as $_column) {
-            $dataType = $this->getDataType($_column->COLUMN_TYPE, $_column->DATA_TYPE);
-            $defaultValue = ($_column->COLUMN_DEFAULT ?? 'null') ? ($_column->COLUMN_DEFAULT ?? 'null') : "''";
 
-            $defaultValue = ($dataType == self::BOOL_TYPE) ? ((in_array($defaultValue, [0, '', "''"])) ? 'false' :
-                ((in_array($defaultValue, [1, '1'])) ? 'true' : $defaultValue)) : $defaultValue;
+            $dataType = $this->getDataType($_column->COLUMN_TYPE, $_column->DATA_TYPE);
+
+            $defaultValue = null;
+            if ($_column->COLUMN_DEFAULT !== null) {
+                $defaultValue = $_column->COLUMN_DEFAULT;
+
+                if ($dataType == 'int') {
+                    $defaultValue = intval($defaultValue);
+                }
+
+                if ($dataType == self::BOOL_TYPE) {
+                    if (in_array($defaultValue, [0, '', "''"])) {
+                        $defaultValue = 'false';
+                    } elseif (in_array($defaultValue, [1, '1'])) {
+                        $defaultValue = 'true';
+                    }
+                }
+            }
+
+            $columnString = $_column->COLUMN_NAME;
+            if (!in_array($_column->COLUMN_DEFAULT, [null, 'NULL'])) {
+                $columnString .= ' = ' . $defaultValue;
+            }
+            if ($_column->IS_NULLABLE === 'YES') {
+                $columnString .= ' = null';
+            }
 
             $attributes[$_column->COLUMN_NAME] =
                 $this->writeAttribute(
                     $entityStubsPath,
-                    $_column->COLUMN_NAME . (!in_array($_column->COLUMN_DEFAULT, [null, 'NULL']) ? ' = ' . $defaultValue : ''),
+                    $columnString,
                     ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType
                 );
         }
