@@ -9,7 +9,6 @@ use Eghamat24\DatabaseRepository\Commands;
 use Eghamat24\DatabaseRepository\Commands\MakeRedisRepository;
 use Illuminate\Support\Str;
 
-
 class CreatorRepository implements IClassCreator
 {
     public function __construct(
@@ -39,28 +38,37 @@ class CreatorRepository implements IClassCreator
     {
         $columnNameSingle = Str::camel($columnName);
 
+        $returnResult = '';
+        $functionReturnType = '';
+
         if ($functionName === 'getOneBy') {
             $functionReturnType = 'null|{{ EntityName }}';
             $functionName .= ucfirst(Str::camel($columnName));
             $columnName = Str::camel($columnName);
             $redisCashFunction = $this->getRedisCashFunctionGetOneBy($this->strategyName);
+            $returnResult = 'return $entity;';
         } elseif ($functionName === 'getAllBy') {
             $functionReturnType = 'Collection';
             $functionName .= ucfirst(Str::plural(Str::camel($columnName)));
             $columnName = Str::plural(Str::camel($columnName));
             $redisCashFunction = $this->getRedisCashFunctionGetAllBy($this->strategyName);
+            $returnResult = 'return $entities;';
         } elseif ($functionName === 'create') {
             $functionReturnType = $attributeType;
             $redisCashFunction = $this->getRedisCashFunctionCreate($this->strategyName);
+            $returnResult = 'return $this->{{ SqlRepositoryVariable }}->{{ FunctionName }}(${{ AttributeName }});';
         } elseif (in_array($functionName, ['update', 'remove', 'restore'])) {
             $functionReturnType = 'int';
             $redisCashFunction = $this->getRedisCashFunctionUpdate($this->strategyName);
+            $returnResult = 'return $this->{{ SqlRepositoryVariable }}->{{ FunctionName }}(${{ AttributeName }});';
         }
 
         $redisCashFunction = str_replace(['{{ FunctionName }}', '{{ ColumnName }}', '{{ ColumnNameSingle }}'], [$functionName, $columnName, $columnNameSingle], $redisCashFunction);
 
-        return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}', '{{redisFunction}}'],
-            [$functionName, $attributeType, Str::camel($columnName), $functionReturnType, $redisCashFunction],
+        $returnResult = str_replace(['{{ SqlRepositoryVariable }}', '{{ FunctionName }}', '{{ AttributeName }}'], [$this->sqlRepositoryVariable, $functionName, Str::camel($columnName)], $returnResult);
+
+        return str_replace(['{{ FunctionName }}', '{{ AttributeType }}', '{{ AttributeName }}', '{{ FunctionReturnType }}', '{{redisFunction}}', '{{returnResult}}'],
+            [$functionName, $attributeType, Str::camel($columnName), $functionReturnType, $redisCashFunction, $returnResult],
             $functionStub);
     }
 

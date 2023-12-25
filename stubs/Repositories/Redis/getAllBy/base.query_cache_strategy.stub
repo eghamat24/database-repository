@@ -3,9 +3,9 @@ $cacheKey = $this->redisRepository->makeKey([
             '{{ ColumnNameSingle }}' => ${{ ColumnName }},
         ]);
 
-        $entity = $this->redisRepository->get($cacheKey);
+        $entities = $this->redisRepository->get($cacheKey);
 
-        if (is_null($entity)) {
-            $entity = $this->repository->{{ FunctionName }}(${{ ColumnName }});
-            $this->redisRepository->put($cacheKey, $entity);
+        if (is_null($entities)) {
+            $entities = $this->repository->{{ FunctionName }}(${{ ColumnName }});
+            $this->redisRepository->put($cacheKey, $entities);
         }
