@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 trait CustomMySqlQueries
 {
-    protected $dataTypes = [
+    protected array $dataTypes = [
         'bool' => 'bool',
         'boolean' => 'bool',
         'bit' => 'string',
@@ -41,7 +41,7 @@ trait CustomMySqlQueries
         'point' => 'string',
     ];
 
-    protected $columnTypes = [
+    protected array $columnTypes = [
         'tinyint(1)' => 'bool'
     ];
 
