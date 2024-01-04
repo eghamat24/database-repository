@@ -48,7 +48,8 @@ class MakeAll extends Command
             exit;
         }
 
-        $this->selectedDb = $this->hasOption('selected_db') && $this->option('selected_db') ? $this->option('selected_db') : config('repository.default_db');
+        $selectedDb = $this->option('selected_db') ?: config('repository.default_db');
+
         $force = $this->option('force');
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
