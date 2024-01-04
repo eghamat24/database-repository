@@ -2,6 +2,7 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
 use Eghamat24\DatabaseRepository\Creators\CreatorEnum;
@@ -35,18 +36,7 @@ class MakeEnum extends BaseCommand
 
         $this->checkEmpty($columns, $this->tableName);
 
-        $enums = [];
-        foreach ($columns as $_column) {
-
-            if ($_column->DATA_TYPE !== 'enum') {
-               continue;
-            }
-
-            $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME) . 'Enum';
-            $enums[$enumClassName] = array_filter(explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE)));
-            $filenameWithPath = $this->relativeEnumsPath . $enumClassName . '.php';
-            $this->checkDelete($filenameWithPath, $enumClassName, 'Enum');
-        }
+        $enums = $this->extractEnumsFromColumns($columns);
 
         $attributeStub = file_get_contents($this->enumStubPath . 'attribute.stub');
 
@@ -62,5 +52,47 @@ class MakeEnum extends BaseCommand
 
             $this->finalized($filenameWithPath, $enumName, $baseContent);
         }
+    }
+
+
+    /**
+     * @param Collection $columns
+     * @return array
+     */
+    public function extractEnumsFromColumns(Collection $columns): array
+    {
+        $enums = [];
+        foreach ($columns as $_column) {
+
+            if ($_column->DATA_TYPE !== 'enum') {
+                continue;
+            }
+
+            $enumClassName = $this->getEnumClassName($_column);
+            $enums[$enumClassName] = $this->extractEnumValues($_column->COLUMN_TYPE);
+
+            $this->checkDelete(
+                $this->relativeEnumsPath . $enumClassName . '.php',
+                $enumClassName,
+                'Enum'
+            );
+        }
+
+        return $enums;
+    }
+
+    private function getEnumClassName(mixed $_column): string
+    {
+        $tableName = ucfirst(Str::camel($_column->TABLE_NAME));
+        $columnName = $_column->COLUMN_NAME;
+
+        return Str::studly(Str::singular($tableName) . '_' . $columnName) . 'Enum';
+    }
+
+    private function extractEnumValues($columnType): array
+    {
+        $items = explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $columnType));
+
+        return array_filter($items);
     }
 }
