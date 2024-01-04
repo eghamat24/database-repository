@@ -37,12 +37,15 @@ class MakeEnum extends BaseCommand
 
         $enums = [];
         foreach ($columns as $_column) {
-            if ($_column->DATA_TYPE == 'enum') {
-                $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME) . 'Enum';
-                $enums[$enumClassName] = array_filter(explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE)));
-                $filenameWithPath = $this->relativeEnumsPath . $enumClassName . '.php';
-                $this->checkDelete($filenameWithPath, $enumClassName, 'Enum');
+
+            if ($_column->DATA_TYPE !== 'enum') {
+               continue;
             }
+
+            $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME) . 'Enum';
+            $enums[$enumClassName] = array_filter(explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE)));
+            $filenameWithPath = $this->relativeEnumsPath . $enumClassName . '.php';
+            $this->checkDelete($filenameWithPath, $enumClassName, 'Enum');
         }
 
         $attributeStub = file_get_contents($this->enumStubPath . 'attribute.stub');
