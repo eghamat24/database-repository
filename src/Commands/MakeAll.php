@@ -75,19 +75,30 @@ class MakeAll extends Command
                 '--add-to-git' => $addToGit
             ];
 
-            $commands = [
-                'repository:make-entity' => $arguments,
-                'repository:make-enum' => array_diff_key($arguments, ['--foreign-keys' => null]),
-                'repository:make-factory' => array_diff_key($arguments, ['--foreign-keys' => null]),
-                'repository:make-resource' => $arguments,
-                'repository:make-interface-repository' => $arguments,
-                'repository:make-redis-repository' => $arguments + ['strategy' => $strategy],
-                'repository:make-repository' => $arguments + ['strategy' => $strategy, 'selected_db' => $selectedDb]
-            ];
+            $this->runCommandsWithArguments($arguments, $strategy, $selectedDb);
+        }
+    }
 
-            foreach ($commands as $command => $args) {
-                $this->call($command, $args);
-            }
+    /**
+     * @param array $arguments
+     * @param bool|array|string|null $strategy
+     * @param mixed $selectedDb
+     * @return void
+     */
+    private function runCommandsWithArguments(array $arguments, bool|array|string|null $strategy, mixed $selectedDb): void
+    {
+        $commands = [
+            'repository:make-entity' => $arguments,
+            'repository:make-enum' => array_diff_key($arguments, ['--foreign-keys' => null]),
+            'repository:make-factory' => array_diff_key($arguments, ['--foreign-keys' => null]),
+            'repository:make-resource' => $arguments,
+            'repository:make-interface-repository' => $arguments,
+            'repository:make-redis-repository' => $arguments + ['strategy' => $strategy],
+            'repository:make-repository' => $arguments + ['strategy' => $strategy, 'selected_db' => $selectedDb]
+        ];
+
+        foreach ($commands as $command => $args) {
+            $this->call($command, $args);
         }
     }
 }
