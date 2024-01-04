@@ -6,10 +6,11 @@ use Illuminate\Support\Str;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
 use Eghamat24\DatabaseRepository\Creators\CreatorEnum;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
-use Illuminate\Console\Command;
 
 class MakeEnum extends BaseCommand
 {
+    use CustomMySqlQueries;
+
     /**
      * The name and signature of the console command.
      *
@@ -27,8 +28,6 @@ class MakeEnum extends BaseCommand
      */
     protected $description = 'Create a new enum(s).';
 
-    use CustomMySqlQueries;
-
     public function handle(): void
     {
         $this->setArguments();
@@ -39,10 +38,10 @@ class MakeEnum extends BaseCommand
         $enums = [];
         foreach ($columns as $_column) {
             if ($_column->DATA_TYPE == 'enum') {
-                $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME) . "Enum";
+                $enumClassName = Str::studly(Str::singular(ucfirst(Str::camel($_column->TABLE_NAME))) . '_' . $_column->COLUMN_NAME) . 'Enum';
                 $enums[$enumClassName] = array_filter(explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $_column->COLUMN_TYPE)));
                 $filenameWithPath = $this->relativeEnumsPath . $enumClassName . '.php';
-                $this->checkDelete($filenameWithPath, $enumClassName, "Enum");
+                $this->checkDelete($filenameWithPath, $enumClassName, 'Enum');
             }
         }
 
@@ -52,7 +51,7 @@ class MakeEnum extends BaseCommand
             $filenameWithPath = $this->relativeEnumsPath . $enumName . '.php';
 
             $this->checkDirectory($this->enumNamespace);
-            $this->checkClassExist($this->relativeEnumsPath, $enumName, "Enum");
+            $this->checkClassExist($this->relativeEnumsPath, $enumName, 'Enum');
 
             $enumCreator = new CreatorEnum($columns, $attributeStub, $enum, $enumName, $this->enumNamespace);
             $creator = new BaseCreator($enumCreator);
