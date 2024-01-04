@@ -4,7 +4,6 @@ namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
-use phpDocumentor\Reflection\PseudoTypes\NonEmptyLowercaseString;
 
 class MakeAll extends Command
 {
@@ -37,9 +36,15 @@ class MakeAll extends Command
      */
     public function handle()
     {
-        $strategyNames = array("ClearableTemporaryCacheStrategy", "QueryCacheStrategy", "SingleKeyCacheStrategy", "TemporaryCacheStrategy");
-        if (!in_array($this->option('strategy_name'), $strategyNames)) {
-            $this->alert("This pattern strategy does not exist !!! ");
+        $strategyNames = [
+            'ClearableTemporaryCacheStrategy',
+            'QueryCacheStrategy',
+            'SingleKeyCacheStrategy',
+            'TemporaryCacheStrategy'
+        ];
+
+        if (in_array($this->option('strategy_name'), $strategyNames) === false) {
+            $this->alert('This pattern strategy does not exist !!! ');
             exit;
         }
 
@@ -49,6 +54,7 @@ class MakeAll extends Command
         $detectForeignKeys = $this->option('foreign-keys');
         $addToGit = $this->option('add-to-git');
         $strategy = $this->option('strategy_name');
+
         if ($this->option('all-tables')) {
             $tableNames = $this->getAllTableNames()->pluck('TABLE_NAME');
         } else if ($this->option('table_names')) {
@@ -59,6 +65,7 @@ class MakeAll extends Command
         }
 
         foreach ($tableNames as $_tableName) {
+
             $arguments = [
                 'table_name' => $_tableName,
                 '--foreign-keys' => $detectForeignKeys,
