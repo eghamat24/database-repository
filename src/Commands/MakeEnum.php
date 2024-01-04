@@ -46,9 +46,8 @@ class MakeEnum extends BaseCommand
             $this->checkDirectory($this->enumNamespace);
             $this->checkClassExist($this->relativeEnumsPath, $enumName, 'Enum');
 
-            $enumCreator = new CreatorEnum($columns, $attributeStub, $enum, $enumName, $this->enumNamespace);
-            $creator = new BaseCreator($enumCreator);
-            $baseContent = $creator->createClass($filenameWithPath, $this);
+            $baseContent = $this->getBaseCreator($columns, $attributeStub, $enum, $enumName)
+                ->createClass($filenameWithPath, $this);
 
             $this->finalized($filenameWithPath, $enumName, $baseContent);
         }
@@ -94,5 +93,19 @@ class MakeEnum extends BaseCommand
         $items = explode(',', str_replace(['enum(', '\'', ')'], ['', '', ''], $columnType));
 
         return array_filter($items);
+    }
+
+    /**
+     * @param Collection $columns
+     * @param bool|string $attributeStub
+     * @param mixed $enum
+     * @param int|string $enumName
+     * @return BaseCreator
+     */
+    private function getBaseCreator(Collection $columns, bool|string $attributeStub, mixed $enum, int|string $enumName): BaseCreator
+    {
+        $enumCreator = new CreatorEnum($columns, $attributeStub, $enum, $enumName, $this->enumNamespace);
+
+        return new BaseCreator($enumCreator);
     }
 }
