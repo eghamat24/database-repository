@@ -2,15 +2,15 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
-use Illuminate\Support\Str;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
-use Eghamat24\DatabaseRepository\Creators\CreatorEntity;
 use Eghamat24\DatabaseRepository\Creators\CreatorMySqlRepository;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
-use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class MakeMySqlRepository extends BaseCommand
 {
+    use CustomMySqlQueries;
+
     /**
      * The name and signature of the console command.
      *
@@ -29,7 +29,6 @@ class MakeMySqlRepository extends BaseCommand
      */
     protected $description = 'Create a new MySql repository class';
 
-    use CustomMySqlQueries;
 
     /**
      * Execute the console command.
