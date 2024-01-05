@@ -11,6 +11,8 @@ class MakeMySqlRepository extends BaseCommand
 {
     use CustomMySqlQueries;
 
+    private const OBJECT_NAME = 'MySql Repository';
+
     /**
      * The name and signature of the console command.
      *
@@ -30,22 +32,52 @@ class MakeMySqlRepository extends BaseCommand
     protected $description = 'Create a new MySql repository class';
 
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle(): void
     {
         $this->setArguments();
-        $filenameWithPath = $this->relativeMysqlRepositoryPath . $this->mysqlRepositoryName . '.php';
-        $this->checkDelete($filenameWithPath, $this->mysqlRepositoryName, "MySql Repository");
-        $this->checkDirectory($this->relativeMysqlRepositoryPath);
-        $this->checkClassExist($this->repositoryNamespace, $this->mysqlRepositoryName, "MySql Repository");
-        $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns, $this->tableName);
 
-        $mysqlRepoCreator = new CreatorMySqlRepository($columns,
+        $filenameWithPath = $this->getFileNameWithPath(
+            $this->relativeMysqlRepositoryPath,
+            $this->mysqlRepositoryName
+        );
+
+        $this->checkAndPrepare($filenameWithPath);
+
+        $this->finalized(
+            $filenameWithPath,
+            $this->mysqlRepositoryName,
+            $this->generateBaseContent($filenameWithPath)
+        );
+    }
+
+
+    private function getFileNameWithPath(string $relativePath, string $sectionName): string
+    {
+        return $relativePath . $sectionName . '.php';
+    }
+
+
+    private function checkAndPrepare(string $filenameWithPath)
+    {
+        $this->checkDelete($filenameWithPath, $this->mysqlRepositoryName, self::OBJECT_NAME);
+        $this->checkDirectory($this->relativeMysqlRepositoryPath);
+        $this->checkClassExist($this->repositoryNamespace, $this->mysqlRepositoryName, self::OBJECT_NAME);
+    }
+
+
+    private function getColumnsOf(string $tableName): Collection
+    {
+        $columns = $this->getAllColumnsInTable($tableName);
+        $this->checkEmpty($columns, $tableName);
+
+        return $columns;
+    }
+
+
+    private function generateBaseContent(string $filenameWithPath): string
+    {
+        $mysqlRepoCreator = new CreatorMySqlRepository(
+            $this->getColumnsOf($this->tableName),
             $this->tableName,
             $this->entityName,
             $this->entityVariableName,
@@ -58,9 +90,7 @@ class MakeMySqlRepository extends BaseCommand
             $this->mysqlRepositoryStubsPath,
             $this->detectForeignKeys
         );
-        $creator = new BaseCreator($mysqlRepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath, $this);
 
-        $this->finalized($filenameWithPath, $this->mysqlRepositoryName, $baseContent);
+        return (new BaseCreator($mysqlRepoCreator))->createClass($filenameWithPath, $this);
     }
 }
