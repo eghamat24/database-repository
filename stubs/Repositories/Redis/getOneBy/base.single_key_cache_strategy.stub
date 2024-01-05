@@ -1,6 +1,6 @@
     $entity = $this->redisRepository->get();
 
-    if (is_null($entity)) {
+    if ($entity === null) {
         $entity = $this->repository->{{ FunctionName }}(${{ ColumnName }});
         $this->redisRepository->put($entity);
     }
