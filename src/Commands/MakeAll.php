@@ -2,10 +2,9 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
-use Illuminate\Console\Command;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 
-class MakeAll extends Command
+class MakeAll extends BaseCommand
 {
     use CustomMySqlQueries;
 
@@ -93,6 +92,7 @@ class MakeAll extends Command
             'repository:make-factory' => array_diff_key($arguments, ['--foreign-keys' => null]),
             'repository:make-resource' => $arguments,
             'repository:make-interface-repository' => $arguments,
+            'repository:make-mysql-repository' => $arguments,
             'repository:make-redis-repository' => $arguments + ['strategy' => $strategy],
             'repository:make-repository' => $arguments + ['strategy' => $strategy, 'selected_db' => $selectedDb]
         ];
