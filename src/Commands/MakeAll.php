@@ -4,7 +4,6 @@ namespace Eghamat24\DatabaseRepository\Commands;
 
 use Illuminate\Console\Command;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
-use phpDocumentor\Reflection\PseudoTypes\NonEmptyLowercaseString;
 
 class MakeAll extends Command
 {
@@ -37,18 +36,26 @@ class MakeAll extends Command
      */
     public function handle()
     {
-        $strategyNames = array("ClearableTemporaryCacheStrategy", "QueryCacheStrategy", "SingleKeyCacheStrategy", "TemporaryCacheStrategy");
-        if (!in_array($this->option('strategy_name'), $strategyNames)) {
-            $this->alert("This pattern strategy does not exist !!! ");
+        $strategyNames = [
+            'ClearableTemporaryCacheStrategy',
+            'QueryCacheStrategy',
+            'SingleKeyCacheStrategy',
+            'TemporaryCacheStrategy'
+        ];
+
+        if (in_array($this->option('strategy_name'), $strategyNames) === false) {
+            $this->alert('This pattern strategy does not exist !!! ');
             exit;
         }
 
-        $this->selectedDb = $this->hasOption('selected_db') && $this->option('selected_db') ? $this->option('selected_db') : config('repository.default_db');
+        $selectedDb = $this->option('selected_db') ?: config('repository.default_db');
+
         $force = $this->option('force');
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
         $addToGit = $this->option('add-to-git');
         $strategy = $this->option('strategy_name');
+
         if ($this->option('all-tables')) {
             $tableNames = $this->getAllTableNames()->pluck('TABLE_NAME');
         } else if ($this->option('table_names')) {
@@ -59,6 +66,7 @@ class MakeAll extends Command
         }
 
         foreach ($tableNames as $_tableName) {
+
             $arguments = [
                 'table_name' => $_tableName,
                 '--foreign-keys' => $detectForeignKeys,
@@ -66,14 +74,31 @@ class MakeAll extends Command
                 '--force' => $force,
                 '--add-to-git' => $addToGit
             ];
-            $this->call('repository:make-entity', $arguments);
-            $this->call('repository:make-enum', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
-            $this->call('repository:make-factory', ['table_name' => $_tableName, '--delete' => $delete, '--force' => $force, '--add-to-git' => $addToGit]);
-            $this->call('repository:make-resource', $arguments);
-            $this->call('repository:make-interface-repository', $arguments);
-            $this->call('repository:make-mysql-repository', $arguments);
-            $this->call('repository:make-redis-repository', [...$arguments, 'strategy' => $strategy]);
-            $this->call('repository:make-repository', [...$arguments, 'strategy' => $strategy, 'selected_db' => $this->selectedDb]);
+
+            $this->runCommandsWithArguments($arguments, $strategy, $selectedDb);
+        }
+    }
+
+    /**
+     * @param array $arguments
+     * @param bool|array|string|null $strategy
+     * @param mixed $selectedDb
+     * @return void
+     */
+    private function runCommandsWithArguments(array $arguments, bool|array|string|null $strategy, mixed $selectedDb): void
+    {
+        $commands = [
+            'repository:make-entity' => $arguments,
+            'repository:make-enum' => array_diff_key($arguments, ['--foreign-keys' => null]),
+            'repository:make-factory' => array_diff_key($arguments, ['--foreign-keys' => null]),
+            'repository:make-resource' => $arguments,
+            'repository:make-interface-repository' => $arguments,
+            'repository:make-redis-repository' => $arguments + ['strategy' => $strategy],
+            'repository:make-repository' => $arguments + ['strategy' => $strategy, 'selected_db' => $selectedDb]
+        ];
+
+        foreach ($commands as $command => $args) {
+            $this->call($command, $args);
         }
     }
 }
