@@ -76,7 +76,17 @@ class MakeMySqlRepository extends BaseCommand
 
     private function generateBaseContent(string $filenameWithPath): string
     {
-        $mysqlRepoCreator = new CreatorMySqlRepository(
+        $mysqlRepoCreator = $this->makeMySqlRepoCreator();
+
+        return (new BaseCreator($mysqlRepoCreator))->createClass($filenameWithPath, $this);
+    }
+
+    /**
+     * @return CreatorMySqlRepository
+     */
+    private function makeMySqlRepoCreator(): CreatorMySqlRepository
+    {
+        return new CreatorMySqlRepository(
             $this->getColumnsOf($this->tableName),
             $this->tableName,
             $this->entityName,
@@ -90,7 +100,5 @@ class MakeMySqlRepository extends BaseCommand
             $this->mysqlRepositoryStubsPath,
             $this->detectForeignKeys
         );
-
-        return (new BaseCreator($mysqlRepoCreator))->createClass($filenameWithPath, $this);
     }
 }
