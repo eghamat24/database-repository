@@ -2,16 +2,17 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Eghamat24\DatabaseRepository\CreateEntity;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Eghamat24\DatabaseRepository\Creators\CreatorEntity;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
-use Illuminate\Support\Collection;
 
 class MakeEntity extends BaseCommand
 {
     use CustomMySqlQueries;
+
+    private const OBJECT_NAME = 'Entity';
 
     /**
      * The name and signature of the console command.
