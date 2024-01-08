@@ -2,14 +2,17 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
-//use Illuminate\Console\Command;
-use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
 use Eghamat24\DatabaseRepository\Creators\CreatorRepository;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 
 class MakeRepository extends BaseCommand
 {
+    use CustomMySqlQueries;
+
+    private const OBJECT_NAME = 'Repository';
+
     /**
      * The name and signature of the console command.
      *
@@ -28,36 +31,36 @@ class MakeRepository extends BaseCommand
      */
     protected $description = 'Create a new repository';
 
-    use CustomMySqlQueries;
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle(): void
     {
         $this->checkDatabasesExist();
         $this->checkStrategyName();
 
         $this->setArguments();
-        $repositoryName = $this->entityName . 'Repository';
-//        $sqlRepositoryName = 'MySql'.$this->entityName.'Repository';
-        $sqlRepositoryName = ucwords($this->selectedDb) . $this->entityName . 'Repository';
-        $sqlRepositoryVariable = 'repository';
-        $redisRepositoryVariable = 'redisRepository';
-        $redisRepositoryName = 'Redis' . $this->entityName . 'Repository';
+        $repositoryName = $this->entityName . self::OBJECT_NAME;
         $relativeRepositoryPath = config('repository.path.relative.repositories') . "$this->entityName" . DIRECTORY_SEPARATOR;
-        $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
+
         $filenameWithPath = $relativeRepositoryPath . $repositoryName . '.php';
-        $this->checkDelete($filenameWithPath, $repositoryName, "Repository");
-        $this->checkDirectory($relativeRepositoryPath);
-        $this->checkClassExist($this->repositoryNamespace, $repositoryName, "Repository");
-        $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns, $this->tableName);
-        $RepoCreator = new CreatorRepository(
-            $columns,
-            $sqlRepositoryVariable,
+        $this->checkAndPrepare($filenameWithPath, $repositoryName, $relativeRepositoryPath);
+
+        $repositoryCreator = $this->getRepositoryCreator($repositoryName);
+        $baseContent = $this->createBaseContent($repositoryCreator, $filenameWithPath);
+
+        $this->finalized($filenameWithPath, $repositoryName, $baseContent);
+    }
+
+    /**
+     * @param string $repositoryName
+     * @return CreatorRepository
+     */
+    private function getRepositoryCreator(string $repositoryName): CreatorRepository
+    {
+        $sqlRepositoryName = ucwords($this->selectedDb) . $repositoryName;
+        $repositoryStubsPath = __DIR__ . '/../../' . config('repository.path.stub.repositories.base');
+
+        return new CreatorRepository(
+            $this->getColumnsOf($this->tableName),
+            'repository',
             $sqlRepositoryName,
             $repositoryStubsPath,
             $this->detectForeignKeys,
@@ -69,12 +72,45 @@ class MakeRepository extends BaseCommand
             $this->interfaceName,
             $this->repositoryNamespace,
             $this->selectedDb,
-            $redisRepositoryVariable,
-            $redisRepositoryName,
+            'redisRepository',
+            'Redis' . $repositoryName,
             $this->strategyName
         );
+    }
+
+    /**
+     * @param string $tableName
+     * @return Collection
+     */
+    private function getColumnsOf(string $tableName): Collection
+    {
+        $columns = $this->getAllColumnsInTable($tableName);
+        $this->checkEmpty($columns, $tableName);
+
+        return $columns;
+    }
+
+    /**
+     * @param CreatorRepository $RepoCreator
+     * @param string $filenameWithPath
+     * @return string
+     */
+    private function createBaseContent(CreatorRepository $RepoCreator, string $filenameWithPath): string
+    {
         $creator = new BaseCreator($RepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath, $this);
-        $this->finalized($filenameWithPath, $repositoryName, $baseContent);
+        return $creator->createClass($filenameWithPath, $this);
+    }
+
+    /**
+     * @param string $filenameWithPath
+     * @param string $repositoryName
+     * @param string $relativeRepositoryPath
+     * @return void
+     */
+    private function checkAndPrepare(string $filenameWithPath, string $repositoryName, string $relativeRepositoryPath): void
+    {
+        $this->checkDelete($filenameWithPath, $repositoryName, self::OBJECT_NAME);
+        $this->checkDirectory($relativeRepositoryPath);
+        $this->checkClassExist($this->repositoryNamespace, $repositoryName, self::OBJECT_NAME);
     }
 }
