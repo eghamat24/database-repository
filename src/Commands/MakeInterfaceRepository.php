@@ -71,7 +71,7 @@ class MakeInterfaceRepository extends BaseCommand
 
     private function writeFunctionOnBaseContent($baseContent, string $writeFunction): string|array
     {
-        return substr_replace($baseContent, $writeFunction, -2, 0);
+        return \substr_replace($baseContent, $writeFunction, -2, 0);
     }
 
     private function writeFunction(string $stub, string $columnName, string $attributeType, array $placeHolders): array|string

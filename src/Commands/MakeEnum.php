@@ -12,6 +12,8 @@ class MakeEnum extends BaseCommand
 {
     use CustomMySqlQueries;
 
+    private const OBJECT_NAME = 'Enum';
+
     /**
      * The name and signature of the console command.
      *
@@ -32,10 +34,7 @@ class MakeEnum extends BaseCommand
     public function handle(): void
     {
         $this->setArguments();
-        $columns = $this->getAllColumnsInTable($this->tableName);
-
-        $this->checkEmpty($columns, $this->tableName);
-
+        $columns = $this->getColumnsOf($this->tableName);
         $enums = $this->extractEnumsFromColumns($columns);
 
         $attributeStub = file_get_contents($this->enumStubPath . 'attribute.stub');
@@ -43,9 +42,7 @@ class MakeEnum extends BaseCommand
         foreach ($enums as $enumName => $enum) {
             $filenameWithPath = $this->relativeEnumsPath . $enumName . '.php';
 
-            $this->checkDirectory($this->enumNamespace);
-            $this->checkClassExist($this->relativeEnumsPath, $enumName, 'Enum');
-
+            $this->checkAndPrepare($enumName);
             $baseContent = $this->getBaseCreator($columns, $attributeStub, $enum, $enumName)
                 ->createClass($filenameWithPath, $this);
 
@@ -73,7 +70,7 @@ class MakeEnum extends BaseCommand
             $this->checkDelete(
                 $this->relativeEnumsPath . $enumClassName . '.php',
                 $enumClassName,
-                'Enum'
+                self::OBJECT_NAME
             );
         }
 
@@ -85,7 +82,7 @@ class MakeEnum extends BaseCommand
         $tableName = ucfirst(Str::camel($_column->TABLE_NAME));
         $columnName = $_column->COLUMN_NAME;
 
-        return Str::studly(Str::singular($tableName) . '_' . $columnName) . 'Enum';
+        return Str::studly(Str::singular($tableName) . '_' . $columnName) . self::OBJECT_NAME;
     }
 
     private function extractEnumValues($columnType): array
@@ -107,5 +104,27 @@ class MakeEnum extends BaseCommand
         $enumCreator = new CreatorEnum($columns, $attributeStub, $enum, $enumName, $this->enumNamespace);
 
         return new BaseCreator($enumCreator);
+    }
+
+    /**
+     * @param string $table
+     * @return Collection
+     */
+    public function getColumnsOf(string $table): Collection
+    {
+        $columns = $this->getAllColumnsInTable($table);
+        $this->checkEmpty($columns, $table);
+
+        return $columns;
+    }
+
+    /**
+     * @param int|string $enumName
+     * @return void
+     */
+    public function checkAndPrepare(int|string $enumName): void
+    {
+        $this->checkDirectory($this->enumNamespace);
+        $this->checkClassExist($this->relativeEnumsPath, $enumName, self::OBJECT_NAME);
     }
 }
