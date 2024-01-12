@@ -2,6 +2,7 @@
 
 namespace Eghamat24\DatabaseRepository\Creators;
 
+use Eghamat24\DatabaseRepository\Models\Enums\DataTypeEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
@@ -38,8 +39,8 @@ class CreatorMySqlRepository implements IClassCreator
         return [
             "use $this->entityNamespace\\$this->entityName;",
             "use $this->factoryNamespace\\$this->factoryName;",
-            "use Illuminate\Support\Collection;",
-            "use Eghamat24\DatabaseRepository\Models\Repositories\MySqlRepository;"
+            'use Illuminate\Support\Collection;',
+            'use Eghamat24\DatabaseRepository\Models\Repositories\MySqlRepository;'
         ];
     }
 
@@ -50,7 +51,7 @@ class CreatorMySqlRepository implements IClassCreator
 
     public function getExtendSection(): string
     {
-        return "extends MySqlRepository implements " . $this->interfaceName;
+        return 'extends MySqlRepository implements ' . $this->interfaceName;
     }
 
     public function createAttributes(): array
@@ -61,35 +62,46 @@ class CreatorMySqlRepository implements IClassCreator
     public function createFunctions(): array
     {
 
-        $baseContent = file_get_contents($this->mysqlRepositoryStubsPath . 'class.stub');
-        $constructContent = file_get_contents($this->mysqlRepositoryStubsPath . 'construct.stub');
-        $getOneStub = file_get_contents($this->mysqlRepositoryStubsPath . 'getOneBy.stub');
-        $getAllStub = file_get_contents($this->mysqlRepositoryStubsPath . 'getAllBy.stub');
-        $createFunctionStub = file_get_contents($this->mysqlRepositoryStubsPath . 'create.stub');
-        $updateFunctionStub = file_get_contents($this->mysqlRepositoryStubsPath . 'update.stub');
-        $deleteStub = file_get_contents($this->mysqlRepositoryStubsPath . 'delete.stub');
-        $undeleteStub = file_get_contents($this->mysqlRepositoryStubsPath . 'undelete.stub');
-        $getterStub = file_get_contents($this->mysqlRepositoryStubsPath . 'getter.stub');
-        $setterStub = file_get_contents($this->mysqlRepositoryStubsPath . 'setter.stub');
-        $timeFieldStub = file_get_contents($this->mysqlRepositoryStubsPath . 'timeField.stub');
+        $stubList = [
+            'baseContent' => 'class.stub',
+            'constructContent' => 'construct.stub',
+            'getOneStub' => 'getOneBy.stub',
+            'getAllStub' => 'getAllBy.stub',
+            'createFunctionStub' => 'create.stub',
+            'updateFunctionStub' => 'update.stub',
+            'deleteStub' => 'delete.stub',
+            'undeleteStub' => 'undelete.stub',
+            'getterStub' => 'getter.stub',
+            'setterStub' => 'setter.stub',
+            'timeFieldStub' => 'timeField.stub',
+        ];
+
+        $stubContent = [];
+        foreach ($stubList as $stubKey => $stubName) {
+            $stubContent[$stubKey] = file_get_contents($this->mysqlRepositoryStubsPath . $stubName);
+        }
+
+        $hasSoftDelete = in_array('deleted_at', $this->columns->pluck('COLUMN_NAME')->toArray(), true);
 
         $functions = [];
-        // Initialize MySql Repository
-        $hasSoftDelete = in_array('deleted_at', $this->columns->pluck('COLUMN_NAME')->toArray(), true);
-        $functions['__construct'] = $this->getConstruct($this->tableName, $this->factoryName, $hasSoftDelete, $constructContent);
-        $functions['getOneById'] = $this->writeGetOneFunction($getOneStub, 'id', 'int');
-        $functions['getAllByIds'] = $this->writeGetAllFunction($getAllStub, 'id', 'int');
+        $functions['__construct'] = $this->getConstruct($this->tableName, $this->factoryName, $hasSoftDelete, $stubContent['constructContent']);
+        $functions['getOneById'] = $this->writeGetOneFunction($stubContent['getOneStub'], 'id', DataTypeEnum::INTEGER_TYPE);
+        $functions['getAllByIds'] = $this->writeGetAllFunction($stubContent['getAllStub'], 'id', DataTypeEnum::INTEGER_TYPE);
         $columnsInfo = $this->getAllColumnsInTable($this->tableName);
 
         $indexes = $this->extractIndexes($this->tableName);
         foreach ($indexes as $index) {
             $columnInfo = collect($columnsInfo)->where('COLUMN_NAME', $index->COLUMN_NAME)->first();
             $indx = 'getOneBy' . ucfirst(Str::camel($index->COLUMN_NAME));
-            $functions[$indx] = $this->writeGetOneFunction($getOneStub, $index->COLUMN_NAME, $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE));
+            $functions[$indx] = $this->writeGetOneFunction(
+                $stubContent['getOneStub'],
+                $index->COLUMN_NAME,
+                $this->getDataType($columnInfo->COLUMN_TYPE, $columnInfo->DATA_TYPE)
+            );
 
             if ($index->Non_unique == 1) {
                 $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($index->COLUMN_NAME)));
-                $functions[$indx] = $this->writeGetAllFunction($getAllStub, $index->COLUMN_NAME, $this->entityName);
+                $functions[$indx] = $this->writeGetAllFunction($stubContent['getAllStub'], $index->COLUMN_NAME, $this->entityName);
             }
         }
 
@@ -97,60 +109,33 @@ class CreatorMySqlRepository implements IClassCreator
             $foreignKeys = $this->extractForeignKeys($this->tableName);
             foreach ($foreignKeys as $_foreignKey) {
                 $indx = 'getOneBy' . ucfirst(Str::camel($_foreignKey->COLUMN_NAME));
-                $functions[$indx] = $this->writeGetOneFunction($getOneStub, $_foreignKey->COLUMN_NAME, $this->entityName);
+                $functions[$indx] = $this->writeGetOneFunction($stubContent['getOneStub'], $_foreignKey->COLUMN_NAME, $this->entityName);
                 $indx = 'getAllBy' . ucfirst(Str::plural(Str::camel($_foreignKey->COLUMN_NAME)));
-                $functions[$indx] = $this->writeGetAllFunction($getAllStub, $_foreignKey->COLUMN_NAME, $this->entityName);
+                $functions[$indx] = $this->writeGetAllFunction($stubContent['getAllStub'], $_foreignKey->COLUMN_NAME, $this->entityName);
             }
         }
 
         $getterFunctions = '';
         $setterFunctions = '';
-        // Create "create" function
-        foreach ($this->columns as $_column) {
-            if (!in_array($_column->COLUMN_NAME, ['id', 'deleted_at'])) {
-                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME)) . "\n\t\t\t\t";
-            }
-            if (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
-                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME)) . "\n\t\t";
-            }
-        }
-        $createFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ SetterFunctions }}"],
-            [trim(substr($getterFunctions, 0, -1)), trim(substr($setterFunctions, 0, -1))],
-            $createFunctionStub
-        );
-
-        $functions['create'] = $createFunctionStub;
+        $functions = $this->makeCreateFunction($stubContent, $getterFunctions, $setterFunctions, $functions);
 
         $getterFunctions = '';
         $setterFunctions = '';
-        // Create "update" function
-        foreach ($this->columns as $_column) {
-            if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'deleted_at'])) {
-                $getterFunctions .= trim($this->writeGetterFunction($getterStub, $_column->COLUMN_NAME)) . "\n\t\t\t\t";
-            }
-            if ($_column->COLUMN_NAME === 'updated_at') {
-                $setterFunctions .= trim($this->writeSetterFunction($setterStub, $_column->COLUMN_NAME)) . "\n\t\t";
-            }
-        }
-        $updateFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ UpdateFieldSetter }}"],
-            [trim(substr($getterFunctions, 0, -1)), trim(substr($setterFunctions, 0, -1))],
-            $updateFunctionStub
-        );
-
-        $functions['update'] = $updateFunctionStub;
+        $functions = $this->makeUpdateFunction($stubContent, $getterFunctions, $setterFunctions, $functions);
 
         // Create "delete" and "undelete" functions if necessary
         if ($hasSoftDelete) {
-            $functions['remove'] = $deleteStub;
-            $functions['restore'] = $undeleteStub;
+            $functions['remove'] = $stubContent['deleteStub'];
+            $functions['restore'] = $stubContent['undeleteStub'];
         }
 
         foreach ($functions as &$func) {
-            $func = str_replace(["{{ EntityName }}", "{{ EntityVariableName }}"],
+            $func = str_replace(['{{ EntityName }}', '{{ EntityVariableName }}'],
                 [$this->entityName, $this->entityVariableName],
                 $func
             );
         }
+
         return $functions;
     }
 
@@ -188,5 +173,64 @@ class CreatorMySqlRepository implements IClassCreator
             ['{{ TableName }}', '{{ FactoryName }}', '{{ HasSoftDelete }}'],
             [$tableName, $factoryName, $hasSoftDelete ? 'true' : 'false'],
             $constructContent);
+    }
+
+    /**
+     * @param array $stubContent
+     * @param string $getterFunctions
+     * @param string $setterFunctions
+     * @param array $functions
+     * @return array
+     */
+    public function makeCreateFunction(array &$stubContent, string &$getterFunctions, string &$setterFunctions, array &$functions): array
+    {
+        foreach ($this->columns as $_column) {
+            if (!in_array($_column->COLUMN_NAME, ['id', 'deleted_at'])) {
+                $getterFunctions .= trim($this->writeGetterFunction($stubContent['getterStub'], $_column->COLUMN_NAME)) . "\n\t\t\t\t";
+            }
+
+            if (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
+                $setterFunctions .= trim($this->writeSetterFunction($stubContent['setterStub'], $_column->COLUMN_NAME)) . "\n\t\t";
+            }
+        }
+
+        $createFunctionStub = str_replace(["{{ GetterFunctions }}", "{{ SetterFunctions }}"],
+            [trim(substr($getterFunctions, 0, -1)), trim(substr($setterFunctions, 0, -1))],
+            $stubContent['createFunctionStub']
+        );
+
+        $functions['create'] = $createFunctionStub;
+
+        return $functions;
+    }
+
+    /**
+     * @param array $stubContent
+     * @param string $getterFunctions
+     * @param string $setterFunctions
+     * @param array $functions
+     * @return array
+     */
+    public function makeUpdateFunction(array &$stubContent, string &$getterFunctions, string &$setterFunctions, array &$functions): array
+    {
+        foreach ($this->columns as $_column) {
+
+            if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'deleted_at'])) {
+                $getterFunctions .= trim($this->writeGetterFunction($stubContent['getterStub'], $_column->COLUMN_NAME)) . "\n\t\t\t\t";
+            }
+
+            if ($_column->COLUMN_NAME === 'updated_at') {
+                $setterFunctions .= trim($this->writeSetterFunction($stubContent['setterStub'], $_column->COLUMN_NAME)) . "\n\t\t";
+            }
+        }
+
+        $updateFunctionStub = str_replace(['{{ GetterFunctions }}', '{{ UpdateFieldSetter }}'],
+            [trim(substr($getterFunctions, 0, -1)), trim(substr($setterFunctions, 0, -1))],
+            $stubContent['updateFunctionStub']
+        );
+
+        $functions['update'] = $updateFunctionStub;
+
+        return $functions;
     }
 }
