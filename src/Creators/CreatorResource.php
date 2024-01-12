@@ -31,9 +31,11 @@ class CreatorResource implements IClassCreator
 
     public function createUses(): array
     {
-        return ["use $this->entityNamespace\\$this->entityName;",
-            "use Eghamat24\DatabaseRepository\Models\Entity\Entity;",
-            "use Eghamat24\DatabaseRepository\Models\Resources\Resource;"];
+        return [
+            "use $this->entityNamespace\\$this->entityName;",
+            'use Eghamat24\DatabaseRepository\Models\Entity\Entity;',
+            'use Eghamat24\DatabaseRepository\Models\Resources\Resource;'
+        ];
     }
 
     public function getClassName(): string
@@ -70,25 +72,34 @@ class CreatorResource implements IClassCreator
                 $foreignGetterFunctions .= $this->writeForeignGetter($foreignGetterStub, $_foreignKey->VARIABLE_NAME, $_foreignKey->ENTITY_DATA_TYPE);
             }
         }
+
         $functions = [];
         $functions['toArray'] = str_replace(['{{ Getters }}'], [$getters], $getterFunStub);
         $functions['toArray'] = str_replace(['{{ EntityVariableName }}'], [$this->entityVariableName], $functions['toArray']);
         $functions['toArrayWithForeignKeys'] = str_replace(['{{ ForeignGetterFunctions }}'], [$foreignGetterFunctions], $foreignFunStub);
         $functions['toArrayWithForeignKeys'] = str_replace(['{{ EntityVariableName }}'], [$this->entityVariableName], $functions['toArrayWithForeignKeys']);
+
         return $functions;
     }
 
-    public function writeGetter(string $getterStub, string $columnName, string $attributeName)
+    public function writeGetter(string $getterStub, string $columnName, string $attributeName): array|string
     {
-        return str_replace(['{{ ColumnName }}', '{{ GetterName }}'],
-            [$columnName, ucfirst($attributeName)],
-            $getterStub);
+        $replaceMapping = [
+            '{{ ColumnName }}' => $columnName,
+            '{{ GetterName }}' => ucfirst($attributeName),
+        ];
+
+        return str_replace(array_keys($replaceMapping), array_values($replaceMapping), $getterStub);
     }
 
-    public function writeForeignGetter(string $foreignGetterStub, string $columnName, string $attributeName)
+    public function writeForeignGetter(string $foreignGetterStub, string $columnName, string $attributeName): array|string
     {
-        return str_replace(['{{ AttributeName }}', '{{ GetterName }}', '{{ AttributeType }}'],
-            [Str::snake($columnName), ucfirst($columnName), ucfirst($attributeName)],
-            $foreignGetterStub);
+        $replaceMapping = [
+            '{{ AttributeName }}' => Str::snake($columnName),
+            '{{ GetterName }}' => ucfirst($columnName),
+            '{{ AttributeType }}' => ucfirst($attributeName)
+        ];
+
+        return str_replace(array_keys($replaceMapping), array_values($replaceMapping), $foreignGetterStub);
     }
 }
