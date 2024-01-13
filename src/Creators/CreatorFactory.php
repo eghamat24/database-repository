@@ -39,6 +39,7 @@ class CreatorFactory implements IClassCreator
         foreach ($this->columns as $_column) {
             $setterFunctions .= trim($this->writeSetter($setterStub, $_column->COLUMN_NAME)) . "\n\t\t";
         }
+
         return ['makeEntityFromStdClass' =>
             str_replace(['{{ SetterFunctions }}', '{{ EntityName }}', '{{ EntityVariableName }}'],
                 [$setterFunctions, $this->entityName, $this->entityVariableName],
@@ -50,8 +51,8 @@ class CreatorFactory implements IClassCreator
     {
         return [
             "use $this->entityNamespace\\$this->entityName;",
-            "use Eghamat24\DatabaseRepository\Models\Factories\Factory;",
-            "use stdClass;"
+            'use Eghamat24\DatabaseRepository\Models\Factories\Factory;',
+            'use stdClass;'
         ];
 
     }
@@ -63,9 +64,12 @@ class CreatorFactory implements IClassCreator
 
     public function writeSetter(string $setterStub, string $columnName): string
     {
-        return str_replace(['{{ SetterName }}', '{{ AttributeName }}'],
-            [ucfirst($columnName), Str::snake($columnName)],
-            $setterStub);
+        $replacementTokens = [
+            '{{ SetterName }}' => ucfirst($columnName),
+            '{{ AttributeName }}' => Str::snake($columnName)
+        ];
+
+        return str_replace(array_keys($replacementTokens), array_values($replacementTokens), $setterStub);
     }
 
     public function getClassName(): string

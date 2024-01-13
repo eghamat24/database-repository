@@ -2,9 +2,6 @@
 
 namespace Eghamat24\DatabaseRepository\Creators;
 
-use Illuminate\Support\Str;
-use Eghamat24\DatabaseRepository\CustomMySqlQueries;
-
 class CreatorRedisRepository implements IClassCreator
 {
     public function __construct(
@@ -38,7 +35,7 @@ class CreatorRedisRepository implements IClassCreator
 
     public function getExtendSection(): string
     {
-        return "extends RedisRepository";
+        return 'extends RedisRepository';
     }
 
     public function createAttributes(): array
@@ -54,9 +51,9 @@ class CreatorRedisRepository implements IClassCreator
         return $functions;
     }
 
-    public function getConstructRedis(string $constructStub)
+    public function getConstructRedis(string $constructStub): array|string
     {
-        return str_replace("{{Strategy}}", $this->strategyName, $constructStub);
+        return str_replace('{{Strategy}}', $this->strategyName, $constructStub);
     }
 
 }

@@ -2,11 +2,11 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Eghamat24\DatabaseRepository\Creators\CreatorEntity;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
-use Illuminate\Support\Collection;
 
 class MakeEntity extends BaseCommand
 {
@@ -47,7 +47,7 @@ class MakeEntity extends BaseCommand
             $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
-        $entityCreator = $this->getEntityCreator($columns);
+        $entityCreator = $this->getCreatorEntity($columns);
         $baseContent = $this->getBaseContent($entityCreator, $filenameWithPath);
 
         $this->finalized($filenameWithPath, $this->entityName, $baseContent);
@@ -80,7 +80,7 @@ class MakeEntity extends BaseCommand
      * @param Collection $columns
      * @return CreatorEntity
      */
-    private function getEntityCreator(Collection $columns): CreatorEntity
+    private function getCreatorEntity(Collection $columns): CreatorEntity
     {
         return new CreatorEntity($columns,
             $this->detectForeignKeys,
@@ -97,7 +97,6 @@ class MakeEntity extends BaseCommand
      * @return string
      */
     private function getBaseContent(CreatorEntity $entityCreator, string $filenameWithPath): string
-    {
         $creator = new BaseCreator($entityCreator);
         return $creator->createClass($filenameWithPath, $this);
     }

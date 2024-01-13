@@ -3,7 +3,6 @@
 namespace Eghamat24\DatabaseRepository\Creators;
 
 use Illuminate\Support\Collection;
-use Eghamat24\DatabaseRepository\Commands\MakeEnum;
 
 class CreatorEnum implements IClassCreator
 {
@@ -22,12 +21,14 @@ class CreatorEnum implements IClassCreator
     {
         $attributes = [];
         foreach ($this->enum as $_enum) {
+
             $attributes[strtoupper($_enum)] = $this->writeAttribute(
                 $this->attributeStub,
                 strtoupper($_enum),
                 $_enum
             );
         }
+
         return $attributes;
     }
 
@@ -58,8 +59,11 @@ class CreatorEnum implements IClassCreator
 
     private function writeAttribute(string $attributeStub, string $attributeName, string $attributeString): string
     {
-        return str_replace(['{{ AttributeName }}', '{{ AttributeString }}'],
-            [$attributeName, $attributeString],
-            $attributeStub);
+        $replaceMapping = [
+            '{{ AttributeName }}' => $attributeName,
+            '{{ AttributeString }}' => $attributeString,
+        ];
+
+        return str_replace(array_keys($replaceMapping), array_values($replaceMapping), $attributeStub);
     }
 }
