@@ -2,16 +2,17 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Eghamat24\DatabaseRepository\CreateEntity;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Eghamat24\DatabaseRepository\Creators\CreatorEntity;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
-use Illuminate\Support\Collection;
 
 class MakeEntity extends BaseCommand
 {
     use CustomMySqlQueries;
+
+    private const OBJECT_NAME = 'Entity';
 
     /**
      * The name and signature of the console command.
@@ -39,28 +40,65 @@ class MakeEntity extends BaseCommand
         $this->setArguments();
         $filenameWithPath = $this->relativeEntitiesPath . $this->entityName . '.php';
 
-        $this->checkDelete($filenameWithPath, $this->entityName, "Entity");
-        $this->checkDirectory($this->relativeEntitiesPath);
-        $this->checkClassExist($this->entityNamespace, $this->entityName, "Entity");
-
-        $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns, $this->tableName);
+        $this->checkAndPrepare($filenameWithPath);
+        $columns = $this->getColumnsOf($this->tableName);
 
         foreach ($columns as $_column) {
             $_column->COLUMN_NAME = Str::camel($_column->COLUMN_NAME);
         }
 
-        $entityCreator = new CreatorEntity($columns,
+        $entityCreator = $this->getCreatorEntity($columns);
+        $baseContent = $this->createBaseContent($entityCreator, $filenameWithPath);
+
+        $this->finalized($filenameWithPath, $this->entityName, $baseContent);
+    }
+
+    /**
+     * @param string $tableName
+     * @return Collection
+     */
+    private function getColumnsOf(string $tableName): Collection
+    {
+        $columns = $this->getAllColumnsInTable($tableName);
+        $this->checkEmpty($columns, $tableName);
+
+        return $columns;
+    }
+
+    /**
+     * @param string $filenameWithPath
+     * @return void
+     */
+    private function checkAndPrepare(string $filenameWithPath): void
+    {
+        $this->checkDelete($filenameWithPath, $this->entityName, self::OBJECT_NAME);
+        $this->checkDirectory($this->relativeEntitiesPath);
+        $this->checkClassExist($this->entityNamespace, $this->entityName, self::OBJECT_NAME);
+    }
+
+    /**
+     * @param Collection $columns
+     * @return CreatorEntity
+     */
+    private function getCreatorEntity(Collection $columns): CreatorEntity
+    {
+        return new CreatorEntity($columns,
             $this->detectForeignKeys,
             $this->tableName,
             $this->entityName,
             $this->entityNamespace,
             $this->entityStubsPath
         );
+    }
+
+    /**
+     * @param CreatorEntity $entityCreator
+     * @param string $filenameWithPath
+     * @return string
+     */
+    public function createBaseContent(CreatorEntity $entityCreator, string $filenameWithPath): string
+    {
         $creator = new BaseCreator($entityCreator);
-        $baseContent = $creator->createClass($filenameWithPath, $this);
-
-        $this->finalized($filenameWithPath, $this->entityName, $baseContent);
-
+        return $creator->createClass($filenameWithPath, $this);
     }
 }

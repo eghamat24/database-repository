@@ -5,7 +5,7 @@ $cacheKey = $this->redisRepository->makeKey([
 
         $entities = $this->redisRepository->get($cacheKey);
 
-        if (is_null($entities)) {
+        if ($entities === null) {
             $entities = $this->repository->{{ FunctionName }}(${{ ColumnName }});
             $this->redisRepository->put($cacheKey, $entities);
         }
