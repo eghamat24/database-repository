@@ -2,11 +2,7 @@
 
 namespace Eghamat24\DatabaseRepository\Creators;
 
-use Illuminate\Support\Str;
-use Illuminate\Console\Command;
 use Eghamat24\DatabaseRepository\Commands\BaseCommand;
-use Eghamat24\DatabaseRepository\Utility;
-use function Eghamat24\DatabaseRepository\Commands\config;
 
 class BaseCreator extends BaseCommand
 {
@@ -17,10 +13,10 @@ class BaseCreator extends BaseCommand
     const SINGLE_KEY_CACHE_STRATEGY = 'SingleKeyCacheStrategy';
 
     private $creator;
-    private null|string $choice = null;
 
     public function __construct(IClassCreator $creator)
     {
+        parent::__construct();
         $this->creator = $creator;
     }
 

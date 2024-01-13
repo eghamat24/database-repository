@@ -2,15 +2,12 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\Collection;
 use Illuminate\Console\Command;
-use Eghamat24\DatabaseRepository\CustomMySqlQueries;
 use Illuminate\Support\Str;
 
-class BaseCommand extends Command
+abstract class BaseCommand extends Command
 {
-//    use CustomMySqlQueries;
     public string $selectedDb;
     public string $tableName;
     public string $detectForeignKeys;
@@ -74,7 +71,7 @@ class BaseCommand extends Command
     public function checkDelete(string $filenameWithPath, string $entityName, string $objectName): void
     {
         if (file_exists($filenameWithPath) && $this->option('delete')) {
-            unlink($filenameWithPath);
+            \unlink($filenameWithPath);
             $this->info("$objectName '$entityName' has been deleted.");
         }
     }
@@ -125,19 +122,25 @@ class BaseCommand extends Command
 
     public function checkStrategyName()
     {
-        $strategyNames = array("ClearableTemporaryCacheStrategy", "QueryCacheStrategy", "SingleKeyCacheStrategy", "TemporaryCacheStrategy");
+        $strategyNames = [
+            'ClearableTemporaryCacheStrategy',
+            'QueryCacheStrategy',
+            'SingleKeyCacheStrategy',
+            'TemporaryCacheStrategy'
+        ];
+
         if (!in_array($this->argument('strategy'), $strategyNames)) {
-            $this->alert("This pattern strategy does not exist !!! ");
+            $this->alert('This pattern strategy does not exist !!! ');
             exit;
         }
     }
 
     public function checkDatabasesExist()
     {
-
         $entityName = Str::singular(ucfirst(Str::camel($this->argument('table_name'))));
-        $mysql = config('repository.path.relative.repositories') . DIRECTORY_SEPARATOR . $entityName . DIRECTORY_SEPARATOR . "MySql" . $entityName . "Repository.php";
-        $redis = config('repository.path.relative.repositories') . DIRECTORY_SEPARATOR . $entityName . DIRECTORY_SEPARATOR . "Redis" . $entityName . "Repository.php";
+        $mysql = config('repository.path.relative.repositories') . DIRECTORY_SEPARATOR . $entityName . DIRECTORY_SEPARATOR . 'MySql' . $entityName . 'Repository.php';
+        $redis = config('repository.path.relative.repositories') . DIRECTORY_SEPARATOR . $entityName . DIRECTORY_SEPARATOR . 'Redis' . $entityName . 'Repository.php';
+
         if (!(file_exists($mysql) && file_exists($redis))) {
             $this->alert("First create the class databases!!!");
             exit;
