@@ -2,14 +2,17 @@
 
 namespace Eghamat24\DatabaseRepository\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Eghamat24\DatabaseRepository\Creators\BaseCreator;
 use Eghamat24\DatabaseRepository\Creators\CreatorResource;
 use Eghamat24\DatabaseRepository\CustomMySqlQueries;
+use Illuminate\Support\Collection;
 
 class MakeResource extends BaseCommand
 {
+    use CustomMySqlQueries;
+
+    private const OBJECT_NAME = 'Resource';
+
     /**
      * The name and signature of the console command.
      *
@@ -28,30 +31,59 @@ class MakeResource extends BaseCommand
      */
     protected $description = 'Create new resource';
 
-    use CustomMySqlQueries;
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle(): void
     {
         $this->setArguments();
-        $resourceName = $this->entityName . "Resource";
+        $resourceName = $this->entityName . self::OBJECT_NAME;
         $resourceNamespace = config('repository.path.namespace.resources');
         $relativeResourcesPath = config('repository.path.relative.resources');
-        $resourceStubsPath = __DIR__ . '/../../' . config('repository.path.stub.resources');
+
         $filenameWithPath = $relativeResourcesPath . $resourceName . '.php';
 
-        $this->checkDelete($filenameWithPath, $resourceName, "Resource");
+        $this->checkAndPrepare($filenameWithPath, $resourceName, $relativeResourcesPath, $resourceNamespace);
+
+        $RepoCreator = $this->getResourceCreator($resourceNamespace, $resourceName);
+        $baseContent = $this->generateBaseContent($RepoCreator, $filenameWithPath);
+
+        $this->finalized($filenameWithPath, $resourceName, $baseContent);
+    }
+
+    /**
+     * @param string $filenameWithPath
+     * @param string $resourceName
+     * @param mixed $relativeResourcesPath
+     * @param mixed $resourceNamespace
+     * @return void
+     */
+    private function checkAndPrepare(string $filenameWithPath, string $resourceName, mixed $relativeResourcesPath, mixed $resourceNamespace): void
+    {
+        $this->checkDelete($filenameWithPath, $resourceName, self::OBJECT_NAME);
         $this->checkDirectory($relativeResourcesPath);
-        $this->checkClassExist($resourceNamespace, $resourceName, "Resource");
+        $this->checkClassExist($resourceNamespace, $resourceName, self::OBJECT_NAME);
+    }
 
-        $columns = $this->getAllColumnsInTable($this->tableName);
-        $this->checkEmpty($columns, $this->tableName);
+    /**
+     * @param string $tableName
+     * @return Collection
+     */
+    private function getColumnsOf(string $tableName): Collection
+    {
+        $columns = $this->getAllColumnsInTable($tableName);
+        $this->checkEmpty($columns, $tableName);
 
-        $RepoCreator = new CreatorResource($columns,
+        return $columns;
+    }
+
+    /**
+     * @param mixed $resourceNamespace
+     * @param string $resourceName
+     * @return CreatorResource
+     */
+    private function getResourceCreator(mixed $resourceNamespace, string $resourceName): CreatorResource
+    {
+        $resourceStubsPath = __DIR__ . '/../../' . config('repository.path.stub.resources');
+
+        return new CreatorResource($this->getColumnsOf($this->tableName),
             $this->tableName,
             $this->entityName,
             $this->entityNamespace,
@@ -60,10 +92,17 @@ class MakeResource extends BaseCommand
             $resourceStubsPath,
             $this->detectForeignKeys,
             $this->entityVariableName);
-        $creator = new BaseCreator($RepoCreator);
-        $baseContent = $creator->createClass($filenameWithPath, $this);
-        $this->finalized($filenameWithPath, $resourceName, $baseContent);
+    }
 
+    /**
+     * @param CreatorResource $RepoCreator
+     * @param string $filenameWithPath
+     * @return string
+     */
+    private function generateBaseContent(CreatorResource $RepoCreator, string $filenameWithPath): string
+    {
+        $creator = new BaseCreator($RepoCreator);
+        return $creator->createClass($filenameWithPath, $this);
     }
 
 }

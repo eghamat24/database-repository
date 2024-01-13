@@ -48,7 +48,7 @@ class MakeEntity extends BaseCommand
         }
 
         $entityCreator = $this->getCreatorEntity($columns);
-        $baseContent = $this->createBaseContent($entityCreator, $filenameWithPath);
+        $baseContent = $this->getBaseContent($entityCreator, $filenameWithPath);
 
         $this->finalized($filenameWithPath, $this->entityName, $baseContent);
     }
@@ -96,8 +96,7 @@ class MakeEntity extends BaseCommand
      * @param string $filenameWithPath
      * @return string
      */
-    public function createBaseContent(CreatorEntity $entityCreator, string $filenameWithPath): string
-    {
+    private function getBaseContent(CreatorEntity $entityCreator, string $filenameWithPath): string
         $creator = new BaseCreator($entityCreator);
         return $creator->createClass($filenameWithPath, $this);
     }
