@@ -97,6 +97,7 @@ class MakeEntity extends BaseCommand
      * @return string
      */
     private function getBaseContent(CreatorEntity $entityCreator, string $filenameWithPath): string
+    {
         $creator = new BaseCreator($entityCreator);
         return $creator->createClass($filenameWithPath, $this);
     }
