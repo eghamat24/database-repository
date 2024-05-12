@@ -42,7 +42,9 @@ class MakeAll extends BaseCommand
             'TemporaryCacheStrategy'
         ];
 
-        if (in_array($this->option('strategy_name'), $strategyNames) === false) {
+        $strategy = $this->option('strategy_name');
+
+        if ($strategy !== null && in_array($strategy, $strategyNames) === false) {
             $this->alert('This pattern strategy does not exist !!! ');
             exit;
         }
@@ -53,7 +55,6 @@ class MakeAll extends BaseCommand
         $delete = $this->option('delete');
         $detectForeignKeys = $this->option('foreign-keys');
         $addToGit = $this->option('add-to-git');
-        $strategy = $this->option('strategy_name');
 
         if ($this->option('all-tables')) {
             $tableNames = $this->getAllTableNames()->pluck('TABLE_NAME');
@@ -93,9 +94,12 @@ class MakeAll extends BaseCommand
             'repository:make-resource' => $arguments,
             'repository:make-interface-repository' => $arguments,
             'repository:make-mysql-repository' => $arguments,
-            'repository:make-redis-repository' => $arguments + ['strategy' => $strategy],
             'repository:make-repository' => $arguments + ['strategy' => $strategy, 'selected_db' => $selectedDb]
         ];
+
+        if ($strategy !== null) {
+            $commands['repository:make-redis-repository'] = $arguments + ['strategy' => $strategy];
+        }
 
         foreach ($commands as $command => $args) {
             $this->call($command, $args);
