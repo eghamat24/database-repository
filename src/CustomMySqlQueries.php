@@ -19,6 +19,7 @@ trait CustomMySqlQueries
         'mediumint' => 'int',
         'bigint' => 'int',
         'float' => 'float',
+        'decimal' => 'float',
         'double' => 'float',
         'json' => 'string',
         'char' => 'string',
