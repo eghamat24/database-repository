@@ -11,27 +11,9 @@ abstract class Entity implements JsonSerializable, Arrayable
     // contain originals value of attributes
     private $originals = [];
 
-    abstract public function getId(): int;
-
     public function __construct()
     {
 
-    }
-
-    public function __set($name, $value)
-    {
-        if (property_exists($this, $name)) {
-            $function = Str::camel('set_' . Str::snake($name));
-            $this->$function($value);
-        }
-    }
-
-    public function __get($name)
-    {
-        if (property_exists($this, $name)) {
-            $function = Str::camel('get_' . Str::snake($name));
-            return $this->$function();
-        }
     }
 
     public function __isset($name)

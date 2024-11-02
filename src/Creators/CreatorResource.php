@@ -55,14 +55,14 @@ class CreatorResource implements IClassCreator
 
     public function createFunctions(): array
     {
-        $getterStub = file_get_contents($this->resourceStubsPath . 'getter.default.stub');
+        $getsStub = file_get_contents($this->resourceStubsPath . 'getter.default.stub');
         $foreignGetterStub = file_get_contents($this->resourceStubsPath . 'getter.foreign.stub');
         $foreignFunStub = file_get_contents($this->resourceStubsPath . 'function.foreign.stub');
         $getterFunStub = file_get_contents($this->resourceStubsPath . 'function.getter.stub');
 
         $getters = '';
         foreach ($this->columns as $_column) {
-            $getters .= $this->writeGetter($getterStub, $_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME)) . "\t\t\t";
+            $getters .= $this->writeGet($getsStub, $_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME)) . "\t\t\t";
         }
 
         $foreignGetterFunctions = '';
@@ -82,11 +82,11 @@ class CreatorResource implements IClassCreator
         return $functions;
     }
 
-    public function writeGetter(string $getterStub, string $columnName, string $attributeName): array|string
+    public function writeGet(string $getterStub, string $columnName, string $attributeName): array|string
     {
         $replaceMapping = [
             '{{ ColumnName }}' => $columnName,
-            '{{ GetterName }}' => ucfirst($attributeName),
+            '{{ AttributeName }}' => Str::camel($attributeName),
         ];
 
         return str_replace(array_keys($replaceMapping), array_values($replaceMapping), $getterStub);

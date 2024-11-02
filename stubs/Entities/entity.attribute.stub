@@ -1,1 +1,1 @@
-protected {{ AttributeType }} ${{ AttributeName }};
+public {{ AttributeType }} ${{ AttributeName }};

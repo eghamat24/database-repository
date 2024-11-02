@@ -7,7 +7,7 @@
                 {{ GetterFunctions }}
             ]);
 
-        ${{ EntityVariableName }}->setId($id);
+        ${{ EntityVariableName }}->id = $id;
 
         return ${{ EntityVariableName }};
     }

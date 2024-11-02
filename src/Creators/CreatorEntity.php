@@ -97,54 +97,7 @@ class CreatorEntity implements IClassCreator
 
     public function createFunctions(): array
     {
-        $settersAndGetters = [];
-
-        foreach ($this->columns as $_column) {
-            $dataType = $this->getDataType($_column->COLUMN_TYPE, $_column->DATA_TYPE);
-
-            $settersAndGetters['get' . ucwords($_column->COLUMN_NAME)] =
-                $this->writeAccessors(
-                    $this->entityStubsPath,
-                    $_column->COLUMN_NAME,
-                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType,
-                    'getter'
-                );
-
-            $settersAndGetters['set' . ucwords($_column->COLUMN_NAME)] =
-                $this->writeAccessors(
-                    $this->entityStubsPath,
-                    $_column->COLUMN_NAME,
-                    ($_column->IS_NULLABLE === 'YES' ? 'null|' : '') . $dataType,
-                    'setter'
-                );
-
-        }
-
-        if ($this->detectForeignKeys) {
-            $foreignKeys = $this->extractForeignKeys($this->tableName);
-
-            // Create Additional Setters and Getters from Foreign keys
-            foreach ($foreignKeys as $_foreignKey) {
-
-                $settersAndGetters['get' . ucwords($_foreignKey->COLUMN_NAME)] =
-                    $this->writeAccessors(
-                        $this->entityStubsPath,
-                        $_foreignKey->VARIABLE_NAME,
-                        $_foreignKey->ENTITY_DATA_TYPE,
-                        'getter'
-                    );
-
-                $settersAndGetters['set' . ucwords($_foreignKey->COLUMN_NAME)] =
-                    $this->writeAccessors(
-                        $this->entityStubsPath,
-                        $_foreignKey->VARIABLE_NAME,
-                        $_foreignKey->ENTITY_DATA_TYPE,
-                        'setter'
-                    );
-            }
-        }
-
-        return $settersAndGetters;
+        return [];
     }
 
     private function writeAttribute(string $entityStubsPath, string $attributeName, string $attributeType): string

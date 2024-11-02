@@ -1,1 +1,1 @@
-	${{ EntityVariableName }}->set{{ SetterName }}(date('Y-m-d H:i:s'));
+	${{ EntityVariableName }}->{{ AttributeName }} = date('Y-m-d H:i:s');

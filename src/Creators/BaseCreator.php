@@ -33,8 +33,13 @@ class BaseCreator extends BaseCommand
         $attributesArray = $this->checkDiffrence($filenameWithPath, $attributesArray, $command, $specificPattern, $generalPattern);
 
         $attributes = trim(implode("\n\t", $attributesArray));
-        $functions = trim(implode("\n", $functionsArray));
-        $functions = (!empty($attributes)) ? "\n\n\t" . $functions : $functions;
+
+        $functions = '';
+        if (count($functionsArray) > 0) {
+            $functions = trim(implode("\n", $functionsArray));
+            $functions = (!empty($attributes)) ? "\n\n\t" . $functions : $functions;
+        }
+
         $uses = implode(PHP_EOL, $usesArray);
 
         $type = (isset($this->creator->enum)) ? self::ENUM_TYPE : self::CLASS_TYPE;

@@ -1,1 +1,1 @@
-	'{{ ColumnName }}' => ${{ EntityVariableName }}->get{{ GetterName }}(),
+	'{{ ColumnName }}' => ${{ EntityVariableName }}->{{ AttributeName }},

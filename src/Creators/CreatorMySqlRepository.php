@@ -153,21 +153,7 @@ class CreatorMySqlRepository implements IClassCreator
             $getOneStub);
     }
 
-    private function writeGetterFunction(string $getterStub, string $columnName): string
-    {
-        return str_replace(['{{ ColumnName }}', '{{ GetterName }}'],
-            [$columnName, ucfirst(Str::camel($columnName))],
-            $getterStub);
-    }
-
-    private function writeSetterFunction(string $setterStub, string $columnName): string
-    {
-        return str_replace('{{ SetterName }}',
-            ucfirst(Str::camel($columnName)),
-            $setterStub);
-    }
-
-    private function getConstruct(string $tableName, string $factoryName, bool $hasSoftDelete, string $constructContent)
+     private function getConstruct(string $tableName, string $factoryName, bool $hasSoftDelete, string $constructContent)
     {
         return str_replace(
             ['{{ TableName }}', '{{ FactoryName }}', '{{ HasSoftDelete }}'],
@@ -186,11 +172,11 @@ class CreatorMySqlRepository implements IClassCreator
     {
         foreach ($this->columns as $_column) {
             if (!in_array($_column->COLUMN_NAME, ['id', 'deleted_at'])) {
-                $getterFunctions .= trim($this->writeGetterFunction($stubContent['getterStub'], $_column->COLUMN_NAME)) . "\n\t\t\t\t";
+                $getterFunctions .= trim(str_replace(['{{ ColumnName }}', '{{ AttributeName }}'], [$_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME)], $stubContent['getterStub'])) . "\n\t\t\t\t";
             }
 
             if (in_array($_column->COLUMN_NAME, ['created_at', 'updated_at'], true)) {
-                $setterFunctions .= trim($this->writeSetterFunction($stubContent['setterStub'], $_column->COLUMN_NAME)) . "\n\t\t";
+                $setterFunctions .= trim(str_replace('{{ AttributeName }}', Str::camel($_column->COLUMN_NAME), $stubContent['setterStub'])) . "\n\t\t";
             }
         }
 
@@ -216,11 +202,11 @@ class CreatorMySqlRepository implements IClassCreator
         foreach ($this->columns as $_column) {
 
             if (!in_array($_column->COLUMN_NAME, ['id', 'created_at', 'deleted_at'])) {
-                $getterFunctions .= trim($this->writeGetterFunction($stubContent['getterStub'], $_column->COLUMN_NAME)) . "\n\t\t\t\t";
+                $getterFunctions .= trim(str_replace(['{{ ColumnName }}', '{{ AttributeName }}'], [$_column->COLUMN_NAME, Str::camel($_column->COLUMN_NAME)], $stubContent['getterStub'])) . "\n\t\t\t\t";;
             }
 
             if ($_column->COLUMN_NAME === 'updated_at') {
-                $setterFunctions .= trim($this->writeSetterFunction($stubContent['setterStub'], $_column->COLUMN_NAME)) . "\n\t\t";
+                $setterFunctions .= trim(str_replace('{{ AttributeName }}', Str::camel($_column->COLUMN_NAME), $stubContent['setterStub'])). "\n\t\t";;
             }
         }
 

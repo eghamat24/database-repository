@@ -2,6 +2,6 @@
     {
         ${{ EntityVariableName }} = new {{ EntityName }}();
 
-        {{ SetterFunctions }}
+        {{ Sets }}
         return ${{ EntityVariableName }};
     }
